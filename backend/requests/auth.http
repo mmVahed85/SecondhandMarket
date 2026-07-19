@@ -21,3 +21,18 @@ Content-Type: application/json
     "phone": "09123456789",
     "email": "ali@test.com"
 }
+
+###
+
+### Register
+POST http://localhost:8080/api/auth/register
+Content-Type: application/json
+
+{
+    "username": "mohammad",
+    "password": "123456",
+    "firstName": "Mohammad",
+    "lastName": "Vahed",
+    "phone": "09120000000",
+    "email": "mohammad@test.com"
+}

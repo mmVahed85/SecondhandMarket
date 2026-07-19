@@ -4,6 +4,9 @@ import com.secondhand.dto.LoginRequest;
 import com.secondhand.dto.LoginResponse;
 import com.secondhand.dto.RegisterRequest;
 import com.secondhand.service.AuthService;
+
+import javax.validation.Valid;
+
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -17,9 +20,8 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@RequestBody RegisterRequest request) {
+    public String register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
-
     }
 
     @PostMapping("/login")
