@@ -11,6 +11,7 @@ import javafx.scene.control.TextField;
 public class RegisterController {
 
     @FXML private TextField firstNameField;
+    @FXML private TextField lastNameField; // متغیر جدید
     @FXML private TextField usernameField;
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
@@ -22,13 +23,15 @@ public class RegisterController {
     @FXML
     public void handleRegister(ActionEvent event) {
         String firstName = firstNameField.getText();
+        String lastName = lastNameField.getText(); // گرفتن مقدار
         String username = usernameField.getText();
         String email = emailField.getText();
         String phone = phoneField.getText();
         String password = passwordField.getText();
 
-        // اعتبارسنجی فرانت‌اند: چک کردن خالی نبودن فیلدها
+        // اعتبارسنجی فرانت‌اند: چک کردن خالی نبودن فیلدها (نام خانوادگی هم اضافه شد)
         if (firstName == null || firstName.trim().isEmpty() ||
+                lastName == null || lastName.trim().isEmpty() ||
                 username == null || username.trim().isEmpty() ||
                 email == null || email.trim().isEmpty() ||
                 phone == null || phone.trim().isEmpty() ||
@@ -42,7 +45,7 @@ public class RegisterController {
         // ساخت آبجکت درخواست
         RegisterRequest request = new RegisterRequest();
         request.setFirstName(firstName);
-        request.setLastName(""); // چون در فرم UI نام خانوادگی نداشتیم، خالی می‌فرستیم
+        request.setLastName(lastName); // ست کردن نام خانوادگی
         request.setUsername(username);
         request.setEmail(email);
         request.setPhone(phone);
@@ -56,7 +59,6 @@ public class RegisterController {
             errorLabel.setText("ثبت‌نام با موفقیت انجام شد.");
             System.out.println("Server Response: " + response);
 
-            // قدم بعدی: انتقال خودکار کاربر به صفحه ورود
         } catch (Exception e) {
             errorLabel.setStyle("-fx-text-fill: red;");
             errorLabel.setText("خطا در ارتباط با سرور!");
@@ -65,15 +67,15 @@ public class RegisterController {
     }
 
     @FXML
-    public void goToLogin(javafx.event.ActionEvent event) {
+    public void goToLogin(ActionEvent event) {
         try {
-            // ۱. بارگذاری فایل گرافیکی صفحه ورود
+            // بارگذاری فایل گرافیکی صفحه ورود
             javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/login.fxml"));
 
-            // ۲. پیدا کردن صحنه (Scene) فعلی از روی لینکی که کلیک شده
+            // پیدا کردن صحنه (Scene) فعلی از روی لینکی که کلیک شده
             javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
 
-            // ۳. تغییر محتوای صحنه (بدون تغییر دادن خود پنجره و تنظیمات فول‌اسکرین)
+            // تغییر محتوای صحنه (برای جلوگیری از به هم ریختن فول اسکرین)
             currentScene.setRoot(root);
 
         } catch (Exception e) {
