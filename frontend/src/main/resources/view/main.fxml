@@ -2,18 +2,34 @@
 
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.VBox?>
+<?import javafx.scene.text.Font?>
 
-<VBox xmlns:fx="http://javafx.com/fxml"
+<VBox xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/21"
       fx:controller="com.secondhand.controller.MainController"
-      spacing="15"
+      prefHeight="792.0" prefWidth="1328.0"
+      spacing="25"
       alignment="CENTER">
 
-    <Button
-            text="Test Backend"
-            onAction="#testBackend"/>
+    <Label text="به سامانه خرید و فروش دست دوم خوش آمدید" style="-fx-font-size: 24px; -fx-font-weight: bold;" />
 
-    <Label
-            fx:id="resultLabel"
-            text="Waiting..."/>
+    <!-- دکمه ورود -->
+    <Button text="ورود به حساب کاربری" onAction="#goToLogin" prefHeight="45.0" prefWidth="200.0">
+        <font>
+            <Font name="B Yekan" size="16.0" />
+        </font>
+    </Button>
+
+    <!-- دکمه ثبت‌نام -->
+    <Button text="ثبت‌نام کاربر جدید" onAction="#goToRegister" prefHeight="45.0" prefWidth="200.0">
+        <font>
+            <Font name="B Yekan" size="16.0" />
+        </font>
+    </Button>
+
+    <Separator prefWidth="200.0" />
+
+    <!-- دکمه تست بک‌اند که از قبل داشتید -->
+    <Button text="تست ارتباط با سرور" onAction="#testBackend"/>
+    <Label fx:id="resultLabel" text="وضعیت: در انتظار..."/>
 
 </VBox>
