@@ -5,6 +5,7 @@ import com.secondhand.dto.LoginResponse;
 import com.secondhand.dto.RegisterRequest;
 import com.secondhand.entity.User;
 import com.secondhand.repository.UserRepository;
+import com.secondhand.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -14,11 +15,13 @@ public class AuthService {
 
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
 
 
-    public AuthService(UserRepository userRepository,PasswordEncoder passwordEncoder) {
+    public AuthService(UserRepository userRepository,PasswordEncoder passwordEncoder, JwtService jwtService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
     }
 
     public String register(RegisterRequest request) {
@@ -54,18 +57,12 @@ public class AuthService {
         User user = userRepository.findByUsername(request.getUsername());
 
         if(user != null && passwordEncoder.matches(request.getPassword(),user.getPassword())) {
-            return new LoginResponse(
-                    true,
-                    "Login successful",
-                    "TOKEN_123456"
-            );
-        }
 
-        return new LoginResponse(
-                false,
-                "Wrong username or password",
-                ""
-        );
+            String token = jwtService.generateToken(user.getUsername());
+
+            return new LoginResponse(true,"Login successful",token);
+        }
+        return new LoginResponse(false,"Wrong username or password","");
     }
 
 }
