@@ -1,0 +1,5 @@
+com\secondhand\Main.class
+com\secondhand\controller\MainController.class
+com\secondhand\model\User.class
+com\secondhand\util\ApiConfig.class
+com\secondhand\service\ApiClient.class
