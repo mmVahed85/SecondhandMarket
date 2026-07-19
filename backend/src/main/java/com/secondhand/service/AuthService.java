@@ -1,8 +1,6 @@
 package com.secondhand.service;
 
-import com.secondhand.dto.LoginRequest;
-import com.secondhand.dto.LoginResponse;
-import com.secondhand.dto.RegisterRequest;
+import com.secondhand.dto.*;
 import com.secondhand.entity.User;
 import com.secondhand.repository.UserRepository;
 import com.secondhand.security.JwtService;
@@ -24,12 +22,12 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public String register(RegisterRequest request) {
+    public RegisterResponse register(RegisterRequest request) {
         if(userRepository.findByUsername(request.getUsername()) != null){
-            throw new RuntimeException("Username already exists");
+            return new RegisterResponse(false, "Username already exists");
         }
         else if(userRepository.findByPhone(request.getPhone()) != null){
-            throw new RuntimeException("Phone already exists");
+            return new RegisterResponse(false, "Phone already exists");
         }
 
         User user = new User();
@@ -45,9 +43,9 @@ public class AuthService {
             userRepository.save(user);
         }
         catch(Exception e) {
-            return "Database error";
+            return new RegisterResponse(false, "Database error");
         }
-        return "User registered successfully";
+        return new RegisterResponse(true,"User registered successfully");
     }
 
 
@@ -57,10 +55,13 @@ public class AuthService {
         User user = userRepository.findByUsername(request.getUsername());
 
         if(user != null && passwordEncoder.matches(request.getPassword(),user.getPassword())) {
-
-            String token = jwtService.generateToken(user.getUsername());
-
-            return new LoginResponse(true,"Login successful",token);
+            if(user.isEnabled()) {
+                String token = jwtService.generateToken(user.getUsername());
+                return new LoginResponse(true,"Login successful",token);
+            }
+            else {
+                return new LoginResponse(false,"Your account has been blocked","");
+            }
         }
         return new LoginResponse(false,"Wrong username or password","");
     }
