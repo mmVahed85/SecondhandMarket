@@ -45,4 +45,21 @@ public class JwtService {
                 .getSubject();
 
     }
+
+    public boolean isTokenValid(String token, String username) {
+
+        String extractedUsername = extractUsername(token);
+        return extractedUsername.equals(username) && !isTokenExpired(token);
+        }
+
+        private boolean isTokenExpired(String token) {
+
+        Date expiration = Jwts.parser()
+                .setSigningKey(SECRET_KEY)
+                .parseClaimsJws(token)
+                .getBody()
+                .getExpiration();
+
+        return expiration.before(new Date());
+        }
 }

@@ -1,8 +1,6 @@
 package com.secondhand.controller;
 
-import com.secondhand.dto.LoginRequest;
-import com.secondhand.dto.LoginResponse;
-import com.secondhand.dto.RegisterRequest;
+import com.secondhand.dto.*;
 import com.secondhand.service.AuthService;
 
 import javax.validation.Valid;
@@ -20,7 +18,7 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public String register(@Valid @RequestBody RegisterRequest request) {
+    public RegisterResponse register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
 
