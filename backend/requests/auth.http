@@ -36,3 +36,9 @@ Content-Type: application/json
     "phone": "09120000000",
     "email": "mohammad@test.com"
 }
+
+###
+
+### Token
+GET http://localhost:8080/api/test
+Authorization: Bearer eyJhsdGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGkiLCJpYXQiOjE3ODQ0ODc5NDMsImV4cCI6MTc4NDU3NDM0M30.fCXPWPVU5VRZtBYcE41G_AuMdIdWULhBdT_E9ofNhgI
