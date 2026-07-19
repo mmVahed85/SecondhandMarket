@@ -1,13 +1,36 @@
 package com.secondhand.dto;
 
+import javax.validation.constraints.*;
+
 public class RegisterRequest {
 
+    @NotBlank(message = "Username is required")
+    @Size(max = 50, message = "Username must be less than 50 characters")
     private String username;
+
+
+    @NotBlank(message = "Password is required")
     private String password;
+
+
+    @NotBlank(message = "First name is required")
+    @Size(max = 50)
     private String firstName;
+
+
+    @NotBlank(message = "Last name is required")
+    @Size(max = 50)
     private String lastName;
-    private String phone;
+
+
+    @Email(message = "Invalid email")
+    @NotBlank(message = "Email is required")
     private String email;
+
+
+    @NotBlank(message = "Phone is required")
+    @Size(max = 20)
+    private String phone;
 
     public RegisterRequest() {
     }

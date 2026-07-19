@@ -3,32 +3,66 @@ package com.secondhand.service;
 import com.secondhand.dto.LoginRequest;
 import com.secondhand.dto.LoginResponse;
 import com.secondhand.dto.RegisterRequest;
+import com.secondhand.entity.User;
+import com.secondhand.repository.UserRepository;
+import com.secondhand.security.JwtService;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+
 
 @Service
 public class AuthService {
 
+    private final UserRepository userRepository;
+    private final PasswordEncoder passwordEncoder;
+    private final JwtService jwtService;
+
+
+    public AuthService(UserRepository userRepository,PasswordEncoder passwordEncoder, JwtService jwtService) {
+        this.userRepository = userRepository;
+        this.passwordEncoder = passwordEncoder;
+        this.jwtService = jwtService;
+    }
+
     public String register(RegisterRequest request) {
+        if(userRepository.findByUsername(request.getUsername()) != null){
+            throw new RuntimeException("Username already exists");
+        }
+        else if(userRepository.findByPhone(request.getPhone()) != null){
+            throw new RuntimeException("Phone already exists");
+        }
 
-        System.out.println("Register : " + request.getUsername());
+        User user = new User();
 
+        user.setUsername(request.getUsername());
+        user.setPassword(passwordEncoder.encode(request.getPassword()));
+        user.setFirstName(request.getFirstName());
+        user.setLastName(request.getLastName());
+        user.setPhone(request.getPhone());
+        user.setEmail(request.getEmail());
+
+        try {
+            userRepository.save(user);
+        }
+        catch(Exception e) {
+            return "Database error";
+        }
         return "User registered successfully";
     }
 
+
+
     public LoginResponse login(LoginRequest request) {
 
-        if (request.getUsername().equals("admin") && request.getPassword().equals("123456")) {
-            return new LoginResponse(
-                    true,
-                    "Login successful",
-                    "TOKEN_123456"
-            );
+        User user = userRepository.findByUsername(request.getUsername());
+
+        if(user != null && passwordEncoder.matches(request.getPassword(),user.getPassword())) {
+
+            String token = jwtService.generateToken(user.getUsername());
+
+            return new LoginResponse(true,"Login successful",token);
         }
-        return new LoginResponse(
-                false,
-                "Wrong username or password",
-                ""
-        );
+        return new LoginResponse(false,"Wrong username or password","");
     }
 
 }
