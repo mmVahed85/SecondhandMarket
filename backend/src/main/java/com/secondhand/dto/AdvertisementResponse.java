@@ -1,5 +1,9 @@
 package com.secondhand.dto;
 
+import java.time.LocalDateTime;
+
+import com.secondhand.entity.AdvertisementStatus;
+
 public class AdvertisementResponse {
 
     private Long id;
@@ -9,8 +13,22 @@ public class AdvertisementResponse {
     private String city;
     private String ownerUsername;
     private String status;
+    private Long viewCount;
+    private LocalDateTime createdAt;
 
     public AdvertisementResponse() {
+    }
+
+    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, String status, Long viewCount, LocalDateTime createdAt) {
+        this.id = id;
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.city = city;
+        this.ownerUsername = ownerUsername;
+        this.status = status;
+        this.viewCount = viewCount;
+        this.createdAt = createdAt;
     }
 
     public Long getId() {
@@ -67,5 +85,21 @@ public class AdvertisementResponse {
 
     public void setStatus(String status) {
         this.status = status;
+    }
+
+    public Long getViewCount() {
+        return viewCount;
+    }
+
+    public void setViewCount(Long viewCount) {
+        this.viewCount = viewCount;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
     }
 }

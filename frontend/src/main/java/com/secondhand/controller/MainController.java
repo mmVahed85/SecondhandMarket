@@ -1,5 +1,6 @@
 package com.secondhand.controller;
 
+import com.secondhand.dto.ApiResponse;
 import com.secondhand.dto.LoginRequest;
 import com.secondhand.dto.LoginResponse;
 import com.secondhand.model.User;
@@ -29,11 +30,11 @@ public class MainController {
         LoginRequest request = new LoginRequest("admin", "123456"); // مطمئن شوید این کاربر در دیتابیس هم‌گروهی شما وجود دارد
 
         try {
-            LoginResponse response = authApi.login(request);
+            ApiResponse<LoginResponse> response = authApi.login(request);
 
             // اگر لاگین موفق بود، توکن را ذخیره کن
-            if (response.isSuccess() && response.getToken() != null) {
-                com.secondhand.util.SessionManager.setToken(response.getToken());
+            if (response.isSuccess() && response.getData().getToken() != null) {
+                com.secondhand.util.SessionManager.setToken(response.getData().getToken());
 
                 // حالا که توکن ذخیره شده، درخواست بعدی (GET) با موفقیت انجام می‌شود
                 User user = userApi.getTestUser();

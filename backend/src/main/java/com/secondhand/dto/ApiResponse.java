@@ -1,16 +1,18 @@
 package com.secondhand.dto;
 
-public class RegisterResponse {
+public class ApiResponse<T> {
 
     private boolean success;
     private String message;
+    private T data;
 
-    public RegisterResponse() {
+    public ApiResponse() {
     }
 
-    public RegisterResponse(boolean success, String message) {
+    public ApiResponse(boolean success, String message, T data) {
         this.success = success;
         this.message = message;
+        this.data = data;
     }
 
     public boolean isSuccess() {
@@ -27,5 +29,13 @@ public class RegisterResponse {
 
     public void setMessage(String message) {
         this.message = message;
+    }
+
+    public T getData() {
+        return data;
+    }
+
+    public void setData(T data) {
+        this.data = data;
     }
 }

@@ -8,12 +8,13 @@ import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 public class ApiClient {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public <T> T get(String endpoint, Class<T> responseType) {
+    public <T> T get(String endpoint, TypeReference<T> typeReference) {
         try {
             URL url = new URL(ApiConfig.BASE_URL + endpoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -46,11 +47,7 @@ public class ApiClient {
                 throw new RuntimeException("Server Error: " + status);
             }
 
-            if (responseType == String.class) {
-                return (T) response.toString();
-            }
-
-            return objectMapper.readValue(response.toString(), responseType);
+            return objectMapper.readValue(response.toString(), typeReference);
 
         } catch (Exception e) {
             System.err.println("شکست در ارسال درخواست GET به: " + endpoint);
@@ -59,7 +56,7 @@ public class ApiClient {
         }
     }
 
-    public <T> T post(String endpoint, Object body, Class<T> responseType) {
+    public <T> T post(String endpoint, Object body, TypeReference<T> typeReference) {
         try {
             URL url = new URL(ApiConfig.BASE_URL + endpoint);
             HttpURLConnection connection = (HttpURLConnection) url.openConnection();
@@ -100,11 +97,7 @@ public class ApiClient {
                 throw new RuntimeException("Server Error: " + status);
             }
 
-            if (responseType == String.class) {
-                return (T) response.toString();
-            }
-
-            return objectMapper.readValue(response.toString(), responseType);
+            return objectMapper.readValue(response.toString(), typeReference);
 
         } catch (Exception e) {
             System.err.println("شکست در ارسال درخواست POST به: " + endpoint);

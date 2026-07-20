@@ -2,8 +2,8 @@ package com.secondhand.controller;
 
 import com.secondhand.dto.*;
 import com.secondhand.service.AuthService;
-
 import javax.validation.Valid;
+import javax.validation.constraints.Null;
 
 import org.springframework.web.bind.annotation.*;
 
@@ -18,12 +18,12 @@ public class AuthController {
     }
 
     @PostMapping("/register")
-    public RegisterResponse register(@Valid @RequestBody RegisterRequest request) {
+    public ApiResponse<Null> register(@Valid @RequestBody RegisterRequest request) {
         return authService.register(request);
     }
 
     @PostMapping("/login")
-    public LoginResponse login(@RequestBody LoginRequest request) {
+    public ApiResponse<LoginResponse> login(@RequestBody LoginRequest request) {
 
         return authService.login(request);
 

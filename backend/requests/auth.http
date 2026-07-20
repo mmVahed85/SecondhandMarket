@@ -3,8 +3,8 @@ POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-    "username": "vahed1385",
-    "password": "mahdi"
+    "username": "ali",
+    "password": "1234"
 }
 
 ###
@@ -41,4 +41,23 @@ Content-Type: application/json
 
 ### Token
 GET http://localhost:8080/api/test
-Authorization: Bearer eyJhsdGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGkiLCJpYXQiOjE3ODQ0ODc5NDMsImV4cCI6MTc4NDU3NDM0M30.fCXPWPVU5VRZtBYcE41G_AuMdIdWULhBdT_E9ofNhgI
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGkiLCJpYXQiOjE3ODQ1Nzk5OTAsImV4cCI6MTc4NDY2NjM5MH0.kDrSoKXhdbfijUUqpkCkIR783U4T3xd-75fr_U4JI5U
+
+###
+
+### Advertisement create
+POST http://localhost:8080/api/advertisements
+Authorization: eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGkiLCJpYXQiOjE3ODQ1Nzk5OTAsImV4cCI6MTc4NDY2NjM5MH0.kDrSoKXhdbfijUUqpkCkIR783U4T3xd-75fr_U4JI5U
+Content-Type: application/json
+
+{
+  "title":"isPhone 13",
+  "description":"fsd",
+  "price":35000000,
+  "city":"Tehran"
+}
+
+###
+
+### Advertisement all
+GET http://localhost:8080/api/advertisements

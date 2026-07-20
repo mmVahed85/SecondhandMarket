@@ -1,5 +1,6 @@
 package com.secondhand.controller;
 
+import com.secondhand.dto.ApiResponse;
 import com.secondhand.dto.RegisterRequest;
 import com.secondhand.dto.RegisterResponse;
 import com.secondhand.service.AuthApi;
@@ -54,7 +55,7 @@ public class RegisterController {
 
         try {
             // ارسال درخواست به بک‌اند
-            RegisterResponse response = authApi.register(request);
+            ApiResponse<RegisterResponse> response = authApi.register(request);
             
             if(response.isSuccess()) {
                 errorLabel.setStyle("-fx-text-fill: green;");

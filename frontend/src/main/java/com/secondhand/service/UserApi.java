@@ -1,5 +1,7 @@
 package com.secondhand.service;
 
+import com.fasterxml.jackson.core.type.TypeReference;
+import com.secondhand.dto.ApiResponse;
 import com.secondhand.model.User;
 
 public class UserApi {
@@ -10,7 +12,7 @@ public class UserApi {
 
         return apiClient.get(
                 "/api/users/test",
-                User.class
+                new TypeReference<User>() {}
         );
 
     }

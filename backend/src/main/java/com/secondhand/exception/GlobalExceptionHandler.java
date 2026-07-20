@@ -2,13 +2,11 @@ package com.secondhand.exception;
 
 
 import java.util.HashMap;
-
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.*;
 import java.util.Map;
-import java.util.HashMap;
 
 
 @RestControllerAdvice
@@ -18,11 +16,7 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(Exception.class)
     public ResponseEntity<ErrorResponse> handleGeneralException(Exception e){
 
-        ErrorResponse error =
-                new ErrorResponse(
-                        "Something went wrong",
-                        500
-                );
+        ErrorResponse error =new ErrorResponse("Something went wrong",500);
 
         return new ResponseEntity<>(
                 error,
@@ -34,16 +28,9 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ErrorResponse> handleRuntimeException(RuntimeException e){
 
-        ErrorResponse error =
-                new ErrorResponse(
-                        e.getMessage(),
-                        400
-                );
+        ErrorResponse error = new ErrorResponse(e.getMessage(),400);
 
-        return new ResponseEntity<>(
-                error,
-                HttpStatus.BAD_REQUEST
-        );
+        return new ResponseEntity<>(error,HttpStatus.BAD_REQUEST);
     }
 
     @ExceptionHandler(MethodArgumentNotValidException.class)

@@ -1,12 +1,16 @@
 package com.secondhand.service;
 
 import com.secondhand.dto.AdvertisementResponse;
+import com.secondhand.dto.ApiResponse;
 import com.secondhand.dto.CreateAdvertisementRequest;
 import com.secondhand.entity.Advertisement;
 import com.secondhand.entity.AdvertisementStatus;
 import com.secondhand.entity.User;
 import com.secondhand.repository.AdvertisementRepository;
-import com.secondhand.repository.UserRepository;
+
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.stereotype.Service;
 
 @Service
@@ -20,14 +24,12 @@ public class AdvertisementService {
         this.userService = userService;
     }
 
-    public AdvertisementResponse create(
-            CreateAdvertisementRequest request,
-            String username) {
+    public ApiResponse<AdvertisementResponse> create(CreateAdvertisementRequest request, String username) {
 
         User owner = userService.findByUsername(username);
-
-        if (owner == null)
-            throw new RuntimeException("User not found");
+        if(owner == null) {
+            return new ApiResponse<>(false, "You don't have a accont!", null);
+        }
 
         Advertisement ad = new Advertisement();
 
@@ -38,17 +40,27 @@ public class AdvertisementService {
         ad.setOwner(owner);
         ad.setStatus(AdvertisementStatus.PENDING);
 
-        advertisementRepository.save(ad);
+        ad = advertisementRepository.save(ad);
 
-        AdvertisementResponse response = new AdvertisementResponse();
+        AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), owner.getUsername(), ad.getStatus().name(), ad.getViewCount(), ad.getCreatedAt());
+        
+        return new ApiResponse<>(true, "Ad successfully made", response);
+    }
 
-        response.setId(ad.getId());
-        response.setTitle(ad.getTitle());
-        response.setDescription(ad.getDescription());
-        response.setPrice(ad.getPrice());
-        response.setCity(ad.getCity());
+    public ApiResponse<List<AdvertisementResponse>> getAllActive() {
 
-        return response;
+        List<Advertisement> advertisements = advertisementRepository.findByStatus(AdvertisementStatus.ACTIVE);
+
+        List<AdvertisementResponse> response = new ArrayList<>();
+
+        for (Advertisement ad : advertisements) {
+
+            AdvertisementResponse dto = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), ad.getOwner().getUsername(), ad.getStatus().name(), ad.getViewCount(), ad.getCreatedAt());
+
+            response.add(dto);
+        }
+
+        return new ApiResponse<>(true, "Active ads list:", response);
     }
 
 }

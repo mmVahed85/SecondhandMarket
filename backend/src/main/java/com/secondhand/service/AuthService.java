@@ -5,6 +5,9 @@ import com.secondhand.entity.User;
 import com.secondhand.entity.Role;
 import com.secondhand.repository.UserRepository;
 import com.secondhand.security.JwtService;
+
+import javax.validation.constraints.Null;
+
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
@@ -23,12 +26,15 @@ public class AuthService {
         this.jwtService = jwtService;
     }
 
-    public RegisterResponse register(RegisterRequest request) {
+    public ApiResponse<Null> register(RegisterRequest request) {
         if(userRepository.findByUsername(request.getUsername()) != null){
-            return new RegisterResponse(false, "Username already exists");
+            return new ApiResponse<>(false,"Username already exists",null);
         }
         else if(userRepository.findByPhone(request.getPhone()) != null){
-            return new RegisterResponse(false, "Phone already exists");
+            return new ApiResponse<>(false,"Phone already exists",null);
+        }
+        else if(userRepository.findByEmail(request.getEmail()) != null){
+            return new ApiResponse<>(false,"Email already exists",null);
         }
 
         User user = new User();
@@ -45,27 +51,27 @@ public class AuthService {
             userRepository.save(user);
         }
         catch(Exception e) {
-            return new RegisterResponse(false, "Database error");
+            return new ApiResponse<>(false,"Database error",null);
         }
-        return new RegisterResponse(true,"User registered successfully");
+        return new ApiResponse<>(true,"User registered successfully",null);
     }
 
 
 
-    public LoginResponse login(LoginRequest request) {
+    public ApiResponse<LoginResponse> login(LoginRequest request) {
 
         User user = userRepository.findByUsername(request.getUsername());
 
         if(user != null && passwordEncoder.matches(request.getPassword(),user.getPassword())) {
             if(user.isEnabled()) {
                 String token = jwtService.generateToken(user.getUsername());
-                return new LoginResponse(true,"Login successful",token, user.getRole().name());
+                return new ApiResponse<>(true,"Login successful",new LoginResponse(token, user.getRole().name()));
             }
             else {
-                return new LoginResponse(false,"Your account has been blocked","", user.getRole().name());
+                return new ApiResponse<>(false,"Your account has been blocked",null);
             }
         }
-        return new LoginResponse(false,"Wrong username or password","", user.getRole().name());
+        return new ApiResponse<>(false,"Wrong username or password",null);
     }
 
 }

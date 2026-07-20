@@ -2,6 +2,7 @@ package com.secondhand.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
 @Table(name = "advertisements")
@@ -38,8 +39,9 @@ public class Advertisement {
         createdAt = LocalDateTime.now();
     }
 
+    @JsonBackReference
     @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "owner_id",nullable = false)
+    @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
     public Advertisement() {

@@ -1,5 +1,6 @@
 package com.secondhand.controller;
 
+import com.secondhand.dto.ApiResponse;
 import com.secondhand.dto.LoginRequest;
 import com.secondhand.dto.LoginResponse;
 import com.secondhand.service.AuthApi;
@@ -36,13 +37,13 @@ public class LoginController {
         LoginRequest request = new LoginRequest(username, password);
 
         try {
-            LoginResponse response = authApi.login(request);
+            ApiResponse<LoginResponse> response = authApi.login(request);
 
             // ۴. بررسی پاسخ سرور
             if (response.isSuccess()) {
                 errorLabel.setStyle("-fx-text-fill: green;");
                 errorLabel.setText("ورود موفق! توکن دریافت شد.");
-                System.out.println("Token: " + response.getToken());
+                System.out.println("Token: " + response.getData().getToken());
 
                 // قدم بعدی: ذخیره توکن در SessionManager و رفتن به صفحه آگهی‌ها
             } else {
