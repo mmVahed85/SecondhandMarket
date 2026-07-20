@@ -26,16 +26,25 @@ public class MainController {
     public void testBackend(){
         AuthApi authApi = new AuthApi();
 
-        LoginRequest request = new LoginRequest("admin", "123456");
+        LoginRequest request = new LoginRequest("admin", "123456"); // مطمئن شوید این کاربر در دیتابیس هم‌گروهی شما وجود دارد
 
         try {
             LoginResponse response = authApi.login(request);
-            resultLabel.setText(response.getMessage());
 
-            User user = userApi.getTestUser();
-            resultLabel.setText("ID : " + user.getId() + "\nUsername : " + user.getUsername());
+            // اگر لاگین موفق بود، توکن را ذخیره کن
+            if (response.isSuccess() && response.getToken() != null) {
+                com.secondhand.util.SessionManager.setToken(response.getToken());
+
+                // حالا که توکن ذخیره شده، درخواست بعدی (GET) با موفقیت انجام می‌شود
+                User user = userApi.getTestUser();
+                resultLabel.setText("اتصال موفق!\nID : " + user.getId() + "\nUsername : " + user.getUsername());
+            } else {
+                resultLabel.setText("لاگین ناموفق: " + response.getMessage());
+            }
+
         } catch (Exception e) {
-            resultLabel.setText("خطا در ارتباط با سرور");
+            resultLabel.setText("خطا در ارتباط با سرور (کنسول را ببینید)");
+            e.printStackTrace();
         }
     }
 
