@@ -1,5 +1,4 @@
 com\secondhand\model\User.class
-com\secondhand\model\RegisterRequest.class
 com\secondhand\util\ApiConfig.class
 com\secondhand\service\ApiClient.class
 com\secondhand\controller\RegisterController.class

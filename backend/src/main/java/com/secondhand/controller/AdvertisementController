@@ -1,0 +1,16 @@
+@RestController
+@RequestMapping("/api/advertisements")
+public class AdvertisementController {
+
+    private final AdvertisementService advertisementService;
+
+    public AdvertisementController(AdvertisementService advertisementService) {
+        this.advertisementService = advertisementService;
+    }
+
+    @PostMapping
+    public AdvertisementResponse create(@RequestBody CreateAdvertisementRequest request, Authentication authentication) {
+
+        return advertisementService.create(request,authentication.getName());
+    }
+}

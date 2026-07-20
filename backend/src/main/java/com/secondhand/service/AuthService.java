@@ -2,6 +2,7 @@ package com.secondhand.service;
 
 import com.secondhand.dto.*;
 import com.secondhand.entity.User;
+import com.secondhand.entity.Role;
 import com.secondhand.repository.UserRepository;
 import com.secondhand.security.JwtService;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -38,6 +39,7 @@ public class AuthService {
         user.setLastName(request.getLastName());
         user.setPhone(request.getPhone());
         user.setEmail(request.getEmail());
+        user.setRole(Role.USER);
 
         try {
             userRepository.save(user);
@@ -57,13 +59,13 @@ public class AuthService {
         if(user != null && passwordEncoder.matches(request.getPassword(),user.getPassword())) {
             if(user.isEnabled()) {
                 String token = jwtService.generateToken(user.getUsername());
-                return new LoginResponse(true,"Login successful",token);
+                return new LoginResponse(true,"Login successful",token, user.getRole().name());
             }
             else {
-                return new LoginResponse(false,"Your account has been blocked","");
+                return new LoginResponse(false,"Your account has been blocked","", user.getRole().name());
             }
         }
-        return new LoginResponse(false,"Wrong username or password","");
+        return new LoginResponse(false,"Wrong username or password","", user.getRole().name());
     }
 
 }

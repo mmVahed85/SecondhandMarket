@@ -2,6 +2,9 @@ package com.secondhand.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table(name = "users")
@@ -29,11 +32,18 @@ public class User {
     @Column(nullable = false, unique = true, length = 20)
     private String phone;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Role role = Role.USER;
+
     @Column(nullable = false)
     private boolean enabled = true;
 
     @Column(nullable = false)
     private LocalDateTime createdAt = LocalDateTime.now();
+
+    @OneToMany(mappedBy = "owner")
+    private List<Advertisement> advertisements = new ArrayList<>();
 
     public User() {
     }
@@ -88,6 +98,14 @@ public class User {
 
     public void setPhone(String phone) {
         this.phone = phone;
+    }
+
+    public Role getRole() {
+        return role;
+    }
+
+    public void setRole(Role role) {
+        this.role = role;
     }
 
     public boolean isEnabled() {

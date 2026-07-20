@@ -1,6 +1,7 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.RegisterRequest;
+import com.secondhand.dto.RegisterRequest;
+import com.secondhand.dto.RegisterResponse;
 import com.secondhand.service.AuthApi;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -53,11 +54,17 @@ public class RegisterController {
 
         try {
             // ارسال درخواست به بک‌اند
-            String response = authApi.register(request);
-
-            errorLabel.setStyle("-fx-text-fill: green;");
-            errorLabel.setText("ثبت‌نام با موفقیت انجام شد.");
-            System.out.println("Server Response: " + response);
+            RegisterResponse response = authApi.register(request);
+            
+            if(response.isSuccess()) {
+                errorLabel.setStyle("-fx-text-fill: green;");
+                errorLabel.setText("ثبت‌نام با موفقیت انجام شد.");
+                System.out.println("Server Response: " + response.getMessage());
+            }
+            else {
+                errorLabel.setStyle("-fx-text-fill: red;");
+                errorLabel.setText(response.getMessage());
+            }
 
         } catch (Exception e) {
             errorLabel.setStyle("-fx-text-fill: red;");

@@ -1,7 +1,7 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.LoginRequest;
-import com.secondhand.model.LoginResponse;
+import com.secondhand.dto.LoginRequest;
+import com.secondhand.dto.LoginResponse;
 import com.secondhand.service.AuthApi;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
