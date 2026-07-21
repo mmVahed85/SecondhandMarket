@@ -13,6 +13,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
@@ -20,38 +21,95 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Base64;
+import java.util.List;
+import java.util.stream.Collectors;
 
 public class DashboardController {
 
-    @FXML
-    private TilePane adsContainer;
+    @FXML private TilePane adsContainer;
+
+    // المان‌های فیلتر
+    @FXML private TextField searchField;
+    @FXML private TextField cityFilterField;
+    @FXML private TextField categoryFilterField;
 
     private final AdApi adApi = new AdApi();
+
+    // یک لیست برای نگهداری تمام آگهی‌های دریافتی از سرور (برای سرعت در فیلتر کردن)
+    private List<Ad> allAds = new ArrayList<>();
 
     @FXML
     public void initialize() {
         loadAdsFromServer();
     }
 
-    // متد دریافت و نمایش آگهی‌ها
     private void loadAdsFromServer() {
-        adsContainer.getChildren().clear();
-        Ad[] ads = adApi.getActiveAds();
+        Ad[] adsArray = adApi.getActiveAds();
 
-        // تغییر جدید: اگر سرور دیتایی نداشت، داده‌های تقلبی خودمان را لود کن
-        if (ads == null || ads.length == 0) {
+        if (adsArray == null || adsArray.length == 0) {
             System.out.println("دریافت از سرور خالی بود. بارگذاری داده‌های تستی...");
-            ads = getMockAds();
+            adsArray = getMockAds();
         }
 
-        for (Ad ad : ads) {
+        // تبدیل آرایه به لیست و ذخیره در متغیر allAds
+        allAds = Arrays.asList(adsArray);
+
+        // نمایش همه آگهی‌ها در ابتدا
+        displayAds(allAds);
+    }
+
+    // متد جدید برای نمایش یک لیست مشخص از آگهی‌ها
+    private void displayAds(List<Ad> adsToDisplay) {
+        adsContainer.getChildren().clear();
+
+        if (adsToDisplay == null || adsToDisplay.isEmpty()) {
+            Label noAdLabel = new Label("هیچ آگهی‌ای با این مشخصات یافت نشد.");
+            noAdLabel.setFont(new Font("B Yekan", 18));
+            adsContainer.getChildren().add(noAdLabel);
+            return;
+        }
+
+        for (Ad ad : adsToDisplay) {
             VBox adCard = createAdCard(ad);
             adsContainer.getChildren().add(adCard);
         }
     }
 
-    // متد ساخت ظاهر کارت آگهی (داینامیک)
+    // متد اعمال فیلترها (هنگام کلیک روی دکمه جستجو)
+    @FXML
+    public void handleFilter(ActionEvent event) {
+        String searchText = searchField.getText().trim().toLowerCase();
+        String cityText = cityFilterField.getText().trim().toLowerCase();
+        String categoryText = categoryFilterField.getText().trim().toLowerCase();
+
+        // فیلتر کردن لیست اصلی با استفاده از Stream های جاوا
+        List<Ad> filteredAds = allAds.stream().filter(ad -> {
+            boolean matchesSearch = searchText.isEmpty() || ad.getTitle().toLowerCase().contains(searchText);
+            boolean matchesCity = cityText.isEmpty() || (ad.getCity() != null && ad.getCity().toLowerCase().contains(cityText));
+            boolean matchesCategory = categoryText.isEmpty() || (ad.getCategory() != null && ad.getCategory().toLowerCase().contains(categoryText));
+
+            return matchesSearch && matchesCity && matchesCategory;
+        }).collect(Collectors.toList());
+
+        // نمایش لیست فیلتر شده
+        displayAds(filteredAds);
+    }
+
+    // متد پاک کردن فیلترها
+    @FXML
+    public void clearFilters(ActionEvent event) {
+        searchField.clear();
+        cityFilterField.clear();
+        categoryFilterField.clear();
+
+        // نمایش دوباره تمام آگهی‌ها
+        displayAds(allAds);
+    }
+
+    // متد ساخت ظاهر کارت آگهی (بدون تغییر نسبت به قبل)
     private VBox createAdCard(Ad ad) {
         VBox card = new VBox();
         card.setSpacing(10);
@@ -60,7 +118,6 @@ public class DashboardController {
         card.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
         card.setPrefSize(250, 300);
 
-        // ۱. بخش عکس آگهی
         ImageView imageView = new ImageView();
         imageView.setFitWidth(200);
         imageView.setFitHeight(150);
@@ -70,41 +127,29 @@ public class DashboardController {
             try {
                 byte[] imageBytes = Base64.getDecoder().decode(ad.getImageBase64());
                 imageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-            } catch (Exception e) {
-                // اگر عکس نامعتبر بود، می‌توانید یک عکس پیش‌فرض قرار دهید
-            }
+            } catch (Exception e) {}
         }
 
-        // ۲. عنوان آگهی
         Label titleLabel = new Label(ad.getTitle());
         titleLabel.setFont(new Font("B Yekan", 16));
         titleLabel.setStyle("-fx-font-weight: bold;");
 
-        // ۳. قیمت
         Label priceLabel = new Label("قیمت: " + ad.getPrice() + " تومان");
         priceLabel.setFont(new Font("B Yekan", 14));
         priceLabel.setStyle("-fx-text-fill: #4CAF50;");
 
-        // ۴. شهر
         Label cityLabel = new Label("شهر: " + ad.getCity());
         cityLabel.setFont(new Font("B Yekan", 12));
         cityLabel.setStyle("-fx-text-fill: #757575;");
 
-        // ۵. دکمه مشاهده جزئیات
-        // ۵. دکمه مشاهده جزئیات
         Button detailsButton = new Button("مشاهده جزئیات");
         detailsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
         detailsButton.setOnAction(e -> {
             try {
-                // الف: لود کردن فایل گرافیکی بدون اینکه فوراً نمایشش دهیم
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ad-details.fxml"));
                 Parent root = loader.load();
-
-                // ب: گرفتن کنترلر صفحه بعد و تزریق اطلاعات آگهی به آن
                 AdDetailsController detailsController = loader.getController();
                 detailsController.setAd(ad);
-
-                // ج: حالا که اطلاعات ست شد، صفحه را تغییر می‌دهیم
                 Scene currentScene = ((Node) e.getSource()).getScene();
                 currentScene.setRoot(root);
             } catch (Exception ex) {
@@ -112,20 +157,27 @@ public class DashboardController {
             }
         });
 
-        // اضافه کردن همه المان‌ها به کارت
         card.getChildren().addAll(imageView, titleLabel, priceLabel, cityLabel, detailsButton);
         return card;
     }
 
+    // متدهای مسیریابی (بدون تغییر)
     @FXML
     public void goToCreateAd(ActionEvent event) {
         try {
             Parent root = FXMLLoader.load(getClass().getResource("/view/create-ad.fxml"));
             Scene currentScene = ((Node) event.getSource()).getScene();
             currentScene.setRoot(root);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    public void goToFavorites(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/view/favorites.fxml"));
+            Scene currentScene = ((Node) event.getSource()).getScene();
+            currentScene.setRoot(root);
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     @FXML
@@ -135,9 +187,7 @@ public class DashboardController {
             Parent root = FXMLLoader.load(getClass().getResource("/view/login.fxml"));
             Scene currentScene = ((Node) event.getSource()).getScene();
             currentScene.setRoot(root);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        } catch (Exception e) { e.printStackTrace(); }
     }
 
     private Ad[] getMockAds() {
@@ -151,17 +201,11 @@ public class DashboardController {
         mock2.setCategory("ورزشی");
         mock2.setSellerName("سارا رضایی");
 
-        return new Ad[]{mock1, mock2};
-    }
+        Ad mock3 = new Ad(3L, "گوشی سامسونگ S23", 40000000L, "تهران", "");
+        mock3.setDescription("در حد نو، دارای گارانتی");
+        mock3.setCategory("الکترونیک");
+        mock3.setSellerName("رضا محمدی");
 
-    @FXML
-    public void goToFavorites(ActionEvent event) {
-        try {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/favorites.fxml"));
-            Scene currentScene = ((Node) event.getSource()).getScene();
-            currentScene.setRoot(root);
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
+        return new Ad[]{mock1, mock2, mock3};
     }
 }
