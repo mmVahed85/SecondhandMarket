@@ -17,6 +17,10 @@ public class AdvertisementSpecification {
             List<Predicate> predicates = new ArrayList<>();
 
             predicates.add(criteriaBuilder.equal(root.get("status"),AdvertisementStatus.ACTIVE));
+            if (request.getKeyword() != null && !request.getKeyword().isBlank()) {
+                String keyword = "%" + request.getKeyword().toLowerCase() + "%";   
+                predicates.add(criteriaBuilder.or(criteriaBuilder.like(criteriaBuilder.lower(root.get("title")),keyword), criteriaBuilder.like(criteriaBuilder.lower(root.get("description")),keyword)));
+            }
             if (request.getCategory() != null) {
                 predicates.add(criteriaBuilder.equal(root.get("category"),request.getCategory()));
             }

@@ -1,15 +1,31 @@
 package com.secondhand.dto;
 
+import com.secondhand.entity.SortType;
 import com.secondhand.entity.Category;
 
 public class AdvertisementFilterRequest {
 
+    private String keyword;
+
     private Category category;
+
     private String city;
+
     private Long minPrice;
+
     private Long maxPrice;
 
+    private SortType sortType;
+
     public AdvertisementFilterRequest() {
+    }
+
+    public String getKeyword() {
+        return keyword;
+    }
+
+    public void setKeyword(String keyword) {
+        this.keyword = keyword;
     }
 
     public Category getCategory() {
@@ -42,5 +58,13 @@ public class AdvertisementFilterRequest {
 
     public void setMaxPrice(Long maxPrice) {
         this.maxPrice = maxPrice;
+    }
+
+    public SortType getSortType() {
+        return sortType;
+    }
+
+    public void setSortType(SortType sortType) {
+        this.sortType = sortType;
     }
 }

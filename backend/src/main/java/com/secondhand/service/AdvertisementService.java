@@ -9,6 +9,8 @@ import com.secondhand.repository.AdvertisementImageRepository;
 import com.secondhand.specification.AdvertisementSpecification;
 import java.util.ArrayList;
 import java.util.List;
+import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -190,7 +192,25 @@ public class AdvertisementService {
 
     public ApiResponse<List<AdvertisementResponse>> search(AdvertisementFilterRequest request) {
 
-        List<Advertisement> advertisements = advertisementRepository.findAll(AdvertisementSpecification.filter(request));
+        Specification<Advertisement> specification = AdvertisementSpecification.filter(request);
+        Sort sort = Sort.unsorted();
+        if (request.getSortType() != null) {
+            switch (request.getSortType()) {
+                case NEWEST:
+                    sort = Sort.by("createdAt").descending();
+                    break;
+                case OLDEST:
+                    sort = Sort.by("createdAt").ascending();
+                    break;
+                case PRICE_ASC:
+                    sort = Sort.by("price").ascending();
+                    break;
+                case PRICE_DESC:
+                    sort = Sort.by("price").descending();
+                    break;
+            }
+        }
+        List<Advertisement> advertisements = advertisementRepository.findAll(specification, sort);
         List<AdvertisementResponse> response = advertisements.stream().map(this::toResponse).toList();
         return new ApiResponse<>(true, "Search successfully done", response);
 
