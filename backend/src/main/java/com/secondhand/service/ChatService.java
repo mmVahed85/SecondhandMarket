@@ -3,8 +3,9 @@ package com.secondhand.service;
 import com.secondhand.dto.*;
 import com.secondhand.entity.*;
 import com.secondhand.repository.*;
+import com.secondhand.util.ApiResponse;
 import org.springframework.stereotype.Service;
-
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,6 +39,16 @@ public class ChatService {
             return new ApiResponse<>(false,
                     "Advertisement not found",
                     null);
+        }
+
+        if (advertisement.getStatus() != AdvertisementStatus.ACTIVE) {
+
+            return new ApiResponse<>(
+                    false,
+                    "Advertisement is not active",
+                    null
+            );
+
         }
 
         User sender = userService.findByUsername(username);
@@ -132,6 +143,19 @@ public class ChatService {
                 messageRepository
                         .findByChatRoomOrderByCreatedAtAsc(chatRoom);
 
+        for (Message message : messages) {
+
+            if (!message.getSender().getUsername().equals(username)
+                    && !message.isSeen()) {
+
+                message.setSeen(true);
+
+                messageRepository.save(message);
+
+            }
+
+        }
+
         List<MessageResponse> response =
                 new ArrayList<>();
 
@@ -167,8 +191,7 @@ public class ChatService {
 
     public ApiResponse<List<ChatRoomResponse>> getChats(String username) {
 
-        User user =
-                userService.findByUsername(username);
+        User user = userService.findByUsername(username);
 
         if (user == null) {
             return new ApiResponse<>(false,
@@ -177,10 +200,7 @@ public class ChatService {
         }
 
         List<ChatRoom> rooms =
-                chatRoomRepository.findByBuyerOrSeller(
-                        user,
-                        user
-                );
+                chatRoomRepository.findByBuyerOrSeller(user, user);
 
         List<ChatRoomResponse> response = new ArrayList<>();
 
@@ -194,21 +214,50 @@ public class ChatService {
                 otherUser = room.getBuyer().getUsername();
             }
 
-            response.add(
+            List<Message> messages =
+                    messageRepository.findByChatRoomOrderByCreatedAtAsc(room);
 
+            String lastMessage = "";
+
+            LocalDateTime lastMessageTime = null;
+
+            boolean hasUnreadMessages = false;
+
+            if (!messages.isEmpty()) {
+
+                Message last = messages.get(messages.size() - 1);
+
+                lastMessage = last.getText();
+
+                lastMessageTime = last.getCreatedAt();
+
+                for (Message message : messages) {
+
+                    if (!message.getSender().getUsername().equals(username)
+                            && !message.isSeen()) {
+
+                        hasUnreadMessages = true;
+                        break;
+
+                    }
+
+                }
+
+            }
+
+            ChatRoomResponse dto =
                     new ChatRoomResponse(
-
                             room.getId(),
-
                             room.getAdvertisement().getId(),
-
                             room.getAdvertisement().getTitle(),
+                            otherUser,
+                            lastMessage,
+                            lastMessageTime
+                    );
 
-                            otherUser
+            dto.setHasUnreadMessages(hasUnreadMessages);
 
-                    )
-
-            );
+            response.add(dto);
 
         }
 

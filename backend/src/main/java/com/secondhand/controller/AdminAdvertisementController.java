@@ -2,8 +2,11 @@ package com.secondhand.controller;
 
 import com.secondhand.dto.*;
 import com.secondhand.service.AdvertisementService;
+import com.secondhand.util.ApiResponse;
+
+import java.util.List;
+
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.bind.annotation.PathVariable;
 
 @RestController
 @RequestMapping("/api/admin/advertisements")
@@ -26,6 +29,14 @@ public class AdminAdvertisementController {
     public ApiResponse<AdvertisementResponse> reject(@PathVariable Long id) {
 
         return advertisementService.reject(id);
+    }
+
+    @GetMapping("/pending")
+    public ApiResponse<List<AdvertisementResponse>>
+    getPendingAdvertisements() {
+
+        return advertisementService.getPendingAdvertisements();
+
     }
 
 }
