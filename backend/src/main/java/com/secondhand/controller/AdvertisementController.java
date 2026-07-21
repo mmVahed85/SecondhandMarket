@@ -2,6 +2,7 @@ package com.secondhand.controller;
 
 import com.secondhand.dto.*;
 import com.secondhand.service.AdvertisementService;
+import com.secondhand.service.RatingService;
 
 import java.util.List;
 
@@ -12,14 +13,17 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
 
+
 @RestController
 @RequestMapping("/api/advertisements")
 public class AdvertisementController {
 
     private final AdvertisementService advertisementService;
+    private final RatingService ratingService;
 
-    public AdvertisementController(AdvertisementService advertisementService) {
+    public AdvertisementController(AdvertisementService advertisementService, RatingService ratingService) {
         this.advertisementService = advertisementService;
+        this.ratingService = ratingService;
     }
 
     @PostMapping
@@ -87,5 +91,48 @@ public class AdvertisementController {
     public ApiResponse<List<CommentResponse>> getComments(@PathVariable Long advertisementId) {
 
         return advertisementService.getAllComments(advertisementId);
+    }
+
+    @PostMapping("/{advertisementId}/rating")
+    public ApiResponse<RatingResponse> rateAdvertisement(@PathVariable Long advertisementId, @Valid @RequestBody RatingRequest request, Authentication authentication) {
+
+        return ratingService.rate(advertisementId, request, authentication.getName()
+
+        );
+
+    }
+
+    @PostMapping("/{advertisementId}/favorite")
+    public ApiResponse<String> addFavorite(
+            @PathVariable Long advertisementId,
+            Authentication authentication) {
+
+        return advertisementService.addFavorite(
+                advertisementId,
+                authentication.getName()
+        );
+
+    }
+
+    @DeleteMapping("/{advertisementId}/favorite")
+    public ApiResponse<String> removeFavorite(
+            @PathVariable Long advertisementId,
+            Authentication authentication) {
+
+        return advertisementService.removeFavorite(
+                advertisementId,
+                authentication.getName()
+        );
+
+    }
+
+    @GetMapping("/me/favorites")
+    public ApiResponse<List<AdvertisementResponse>>
+    getFavorites(Authentication authentication) {
+
+        return advertisementService.getFavorites(
+                authentication.getName()
+        );
+
     }
 }

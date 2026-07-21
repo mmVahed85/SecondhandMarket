@@ -18,6 +18,8 @@ public class AdvertisementResponse {
     private LocalDateTime createdAt;
     private Category category;
     private List<ImageResponse> images = new ArrayList<>();
+    private Double averageRating;
+    private Integer ratingCount;
 
     public AdvertisementResponse() {
     }
@@ -121,5 +123,21 @@ public class AdvertisementResponse {
 
     public void setImages(List<ImageResponse> images) {
         this.images = images;
+    }
+
+    public Double getAverageRating() {
+        return averageRating;
+    }
+
+    public void setAverageRating(Double averageRating) {
+        this.averageRating = averageRating;
+    }
+
+    public Integer getRatingCount() {
+        return ratingCount;
+    }
+
+    public void setRatingCount(Integer ratingCount) {
+        this.ratingCount = ratingCount;
     }
 }

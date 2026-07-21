@@ -49,6 +49,17 @@ public class User {
     @OneToMany(mappedBy = "author")
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "user")
+    private List<Rating> ratings = new ArrayList<>();
+
+    @ManyToMany
+    @JoinTable(
+            name = "favorite_advertisements",
+            joinColumns = @JoinColumn(name = "user_id"),
+            inverseJoinColumns = @JoinColumn(name = "advertisement_id")
+    )
+    private List<Advertisement> favoriteAdvertisements =new ArrayList<>();
+
     public User() {
     }
 
@@ -130,5 +141,21 @@ public class User {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    public List<Advertisement> getFavoriteAdvertisements() {
+        return favoriteAdvertisements;
+    }
+
+    public void setFavoriteAdvertisements(List<Advertisement> favoriteAdvertisements) {
+        this.favoriteAdvertisements = favoriteAdvertisements;
     }
 }
