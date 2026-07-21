@@ -16,13 +16,13 @@ public class AdminAdvertisementController {
         this.advertisementService = advertisementService;
     }
 
-    @PatchMapping("/approve/{id}")
+    @PatchMapping("/{id}/approve")
     public ApiResponse<AdvertisementResponse> approve(@PathVariable Long id) {
 
         return advertisementService.approve(id);
     }
 
-    @PatchMapping("/reject/{id}")
+    @PatchMapping("/{id}/reject")
     public ApiResponse<AdvertisementResponse> reject(@PathVariable Long id) {
 
         return advertisementService.reject(id);

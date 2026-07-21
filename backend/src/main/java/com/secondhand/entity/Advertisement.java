@@ -2,6 +2,9 @@ package com.secondhand.entity;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
+
 import com.fasterxml.jackson.annotation.JsonBackReference;
 
 @Entity
@@ -47,6 +50,9 @@ public class Advertisement {
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
     private Category category;
+
+    @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL, orphanRemoval = true)
+    private List<AdvertisementImage> images = new ArrayList<>();
 
     public Advertisement() {
     }
@@ -121,5 +127,13 @@ public class Advertisement {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public List<AdvertisementImage> getImages() {
+        return images;
+    }
+
+    public void setImages(List<AdvertisementImage> images) {
+        this.images = images;
     }
 }

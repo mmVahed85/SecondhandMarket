@@ -7,6 +7,7 @@ import java.util.List;
 
 import javax.validation.Valid;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.multipart.MultipartFile;
 import org.springframework.security.core.Authentication;
 
 
@@ -60,5 +61,17 @@ public class AdvertisementController {
     public ApiResponse<List<AdvertisementResponse>> search(@RequestBody AdvertisementFilterRequest request) {
 
         return advertisementService.search(request);
+    }
+
+    @PostMapping("/{id}/images")
+    public ApiResponse<String> uploadImage(@PathVariable Long id, @RequestParam("image") MultipartFile image, Authentication authentication) {
+
+        return advertisementService.addImage(id, image, authentication.getName());
+    }
+
+    @DeleteMapping("/images/{imageId}")
+    public ApiResponse<String> deleteImage(@PathVariable Long imageId,Authentication authentication) {
+
+        return advertisementService.deleteImage(imageId,authentication.getName());
     }
 }

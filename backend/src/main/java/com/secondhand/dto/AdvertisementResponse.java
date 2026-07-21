@@ -1,6 +1,8 @@
 package com.secondhand.dto;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
+import java.util.List;
 import com.secondhand.entity.Category;
 
 public class AdvertisementResponse {
@@ -15,6 +17,7 @@ public class AdvertisementResponse {
     private Long viewCount;
     private LocalDateTime createdAt;
     private Category category;
+    private List<ImageResponse> images = new ArrayList<>();
 
     public AdvertisementResponse() {
     }
@@ -110,5 +113,13 @@ public class AdvertisementResponse {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public List<ImageResponse> getImages() {
+        return images;
+    }
+
+    public void setImages(List<ImageResponse> images) {
+        this.images = images;
     }
 }

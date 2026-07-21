@@ -1,36 +1,42 @@
 package com.secondhand.service;
 
-import com.secondhand.dto.AdvertisementFilterRequest;
-import com.secondhand.dto.AdvertisementResponse;
-import com.secondhand.dto.ApiResponse;
-import com.secondhand.dto.CreateAdvertisementRequest;
-import com.secondhand.dto.UpdateAdvertisementRequest;
-import com.secondhand.entity.Advertisement;
-import com.secondhand.entity.AdvertisementStatus;
-import com.secondhand.entity.User;
+import com.secondhand.config.AppProperties;
+import com.secondhand.dto.*;
+import com.secondhand.entity.*;
+import com.secondhand.service.ImageService;
 import com.secondhand.repository.AdvertisementRepository;
+import com.secondhand.repository.AdvertisementImageRepository;
 import com.secondhand.specification.AdvertisementSpecification;
-
 import java.util.ArrayList;
 import java.util.List;
-
 import org.springframework.stereotype.Service;
+import org.springframework.web.multipart.MultipartFile;
 
 @Service
 public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepository;
+    private final AdvertisementImageRepository advertisementImageRepository;
     private final UserService userService;
+    private final ImageService imageService;
+    private final AppProperties appProperties;
 
-    public AdvertisementService(AdvertisementRepository advertisementRepository, UserService userService) {
+    public AdvertisementService(AdvertisementRepository advertisementRepository, AdvertisementImageRepository advertisementImageRepository, UserService userService, ImageService imageService, AppProperties appProperties) {
         this.advertisementRepository = advertisementRepository;
         this.userService = userService;
+        this.advertisementImageRepository = advertisementImageRepository;
+        this.imageService = imageService;
+        this.appProperties = appProperties;
     }
 
     private AdvertisementResponse toResponse(Advertisement ad) {
 
         AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), ad.getOwner().getUsername(), ad.getStatus().name(), ad.getViewCount(), ad.getCreatedAt(), ad.getCategory());
-
+        List<ImageResponse> images = new ArrayList<>();
+        for (AdvertisementImage image : ad.getImages()) {
+            images.add(new ImageResponse(image.getId(), appProperties.getBaseUrl() + "/uploads/" + image.getImageUrl()));
+        }
+        response.setImages(images);
         return response;
     }
 
@@ -184,11 +190,47 @@ public class AdvertisementService {
 
     public ApiResponse<List<AdvertisementResponse>> search(AdvertisementFilterRequest request) {
 
-    List<Advertisement> advertisements = advertisementRepository.findAll(AdvertisementSpecification.filter(request));
+        List<Advertisement> advertisements = advertisementRepository.findAll(AdvertisementSpecification.filter(request));
+        List<AdvertisementResponse> response = advertisements.stream().map(this::toResponse).toList();
+        return new ApiResponse<>(true, "Search successfully done", response);
 
-    List<AdvertisementResponse> response = advertisements.stream().map(this::toResponse).toList();
+    }
 
-    return new ApiResponse<>(true, "Search successfully done", response);
+    public ApiResponse<String> addImage(Long id, MultipartFile file, String username) {
 
+        Advertisement ad = advertisementRepository.findById(id).orElse(null);
+
+        if (ad == null) {
+            return new ApiResponse<>(false,"Advertisement not found",null);
+        }
+        else if (!ad.getOwner().getUsername().equals(username)) {
+            return new ApiResponse<>(false,"User is not the owner of this ad",null);
+        }
+
+        String fileName = imageService.saveImage(file);
+        AdvertisementImage image = new AdvertisementImage();
+
+        image.setAdvertisement(ad);
+        image.setImageUrl(fileName);
+
+        advertisementImageRepository.save(image);
+
+        ad.getImages().add(image);
+
+        return new ApiResponse<>(true, "Image uploaded successfully", null);
+    }
+
+    public ApiResponse<String> deleteImage(Long imageId, String username) {
+
+        AdvertisementImage image = advertisementImageRepository.findById(imageId).orElse(null);
+        if (image == null) {
+            return new ApiResponse<>(false,"Image not found",null);
+        }
+        Advertisement ad = image.getAdvertisement();
+        if (!ad.getOwner().getUsername().equals(username)) {
+            return new ApiResponse<>(false,"User is not the owner of this ad",null);
+        }
+        advertisementImageRepository.delete(image);
+        return new ApiResponse<>(true, "Image deleted successfully", null);
     }
 }
