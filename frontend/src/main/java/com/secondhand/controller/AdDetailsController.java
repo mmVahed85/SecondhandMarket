@@ -111,8 +111,22 @@ public class AdDetailsController {
 
     @FXML
     public void startChat(ActionEvent event) {
-        messageLabel.setStyle("-fx-text-fill: blue;");
-        messageLabel.setText("در حال انتقال به صفحه چت...");
-        // بعداً کد رفتن به صفحه گفت‌وگو را اینجا می‌نویسیم
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/chat.fxml"));
+            Parent root = loader.load();
+
+            // گرفتن کنترلر چت و پاس دادن اسم فروشنده و عنوان آگهی به آن
+            ChatController chatController = loader.getController();
+            String seller = currentAd.getSellerName() != null ? currentAd.getSellerName() : "فروشنده";
+            chatController.initData(seller, currentAd.getTitle());
+
+            Scene currentScene = ((Node) event.getSource()).getScene();
+            currentScene.setRoot(root);
+        } catch (Exception e) {
+            System.err.println("خطا در باز کردن صفحه چت:");
+            e.printStackTrace();
+            messageLabel.setStyle("-fx-text-fill: red;");
+            messageLabel.setText("خطا در باز کردن صفحه گفت‌وگو!");
+        }
     }
 }

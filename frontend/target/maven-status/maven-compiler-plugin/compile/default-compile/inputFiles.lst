@@ -1,5 +1,6 @@
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\controller\AdDetailsController.java
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\controller\AdminPanelController.java
+G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\controller\ChatController.java
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\controller\CreateAdController.java
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\controller\DashboardController.java
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\controller\FavoritesController.java
@@ -11,6 +12,7 @@ G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\model\CreateAdRequest.java
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\model\LoginRequest.java
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\model\LoginResponse.java
+G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\model\Message.java
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\model\RegisterRequest.java
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\model\User.java
 G:\Javad\university\Term2\AP\AP Project\SecondhandMarket\frontend\src\main\java\com\secondhand\service\AdApi.java

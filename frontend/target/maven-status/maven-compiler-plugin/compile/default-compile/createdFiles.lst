@@ -7,6 +7,7 @@ com\secondhand\Main.class
 com\secondhand\controller\MainController.class
 com\secondhand\controller\CreateAdController.class
 com\secondhand\service\AuthApi.class
+com\secondhand\model\Message.class
 com\secondhand\model\LoginRequest.class
 com\secondhand\service\AdApi.class
 com\secondhand\model\User.class
@@ -17,5 +18,6 @@ com\secondhand\controller\FavoritesController.class
 com\secondhand\util\SessionManager.class
 com\secondhand\controller\RegisterController.class
 com\secondhand\model\LoginResponse.class
+com\secondhand\controller\ChatController.class
 com\secondhand\controller\LoginController.class
 com\secondhand\controller\DashboardController.class
