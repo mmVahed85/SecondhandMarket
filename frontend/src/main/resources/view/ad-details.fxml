@@ -2,8 +2,10 @@
 
 <?import javafx.geometry.Insets?>
 <?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.Separator?>
+<?import javafx.scene.control.TextField?>
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.HBox?>
@@ -12,7 +14,6 @@
 
 <AnchorPane prefHeight="792.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.AdDetailsController">
     <children>
-        <!-- کانتینر اصلی که در مرکز صفحه قرار می‌گیرد -->
         <VBox alignment="CENTER" spacing="25.0" AnchorPane.bottomAnchor="50.0" AnchorPane.leftAnchor="100.0" AnchorPane.rightAnchor="100.0" AnchorPane.topAnchor="50.0">
             <children>
 
@@ -25,74 +26,70 @@
                 <!-- بخش بالایی: عکس و مشخصات اصلی -->
                 <HBox alignment="CENTER" spacing="50.0">
                     <children>
-
-                        <!-- ستون سمت راست: مشخصات متنی (راست‌چین) -->
                         <VBox alignment="CENTER_RIGHT" nodeOrientation="RIGHT_TO_LEFT" prefWidth="500.0" spacing="15.0">
                             <children>
                                 <Label fx:id="titleLabel" text="عنوان آگهی..." wrapText="true">
-                                    <font>
-                                        <Font name="B Yekan" size="24.0" />
-                                    </font>
+                                    <font><Font name="B Yekan" size="24.0" /></font>
                                 </Label>
-
                                 <Label fx:id="priceLabel" text="قیمت: ..." textFill="#4CAF50">
-                                    <font>
-                                        <Font name="B Yekan" size="18.0" />
-                                    </font>
+                                    <font><Font name="B Yekan" size="18.0" /></font>
                                 </Label>
-
                                 <Label fx:id="cityLabel" text="شهر: ..." textFill="#757575">
-                                    <font>
-                                        <Font name="B Yekan" size="16.0" />
-                                    </font>
+                                    <font><Font name="B Yekan" size="16.0" /></font>
                                 </Label>
-
                                 <Label fx:id="categoryLabel" text="دسته‌بندی: ..." textFill="#757575">
-                                    <font>
-                                        <Font name="B Yekan" size="16.0" />
-                                    </font>
+                                    <font><Font name="B Yekan" size="16.0" /></font>
                                 </Label>
-
                                 <Separator prefWidth="200.0" />
-
                                 <Label text="توضیحات:">
-                                    <font>
-                                        <Font name="B Yekan" size="18.0" />
-                                    </font>
+                                    <font><Font name="B Yekan" size="18.0" /></font>
                                 </Label>
-
-                                <!-- لیبل توضیحات که قابلیت شکستن خطوط را دارد -->
                                 <Label fx:id="descriptionLabel" alignment="TOP_LEFT" prefHeight="100.0" text="..." wrapText="true">
-                                    <font>
-                                        <Font name="B Yekan" size="14.0" />
-                                    </font>
+                                    <font><Font name="B Yekan" size="14.0" /></font>
                                 </Label>
                             </children>
                         </VBox>
 
-                        <!-- ستون سمت چپ: قاب عکس آگهی -->
                         <ImageView fx:id="adImageView" fitHeight="300.0" fitWidth="400.0" preserveRatio="true" style="-fx-border-color: #ccc; -fx-border-width: 2;" />
-
                     </children>
                 </HBox>
 
                 <Separator prefWidth="800.0" />
 
-                <!-- بخش اطلاعات فروشنده -->
-                <HBox alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT" spacing="40.0">
+                <!-- بخش اطلاعات فروشنده و امتیازدهی -->
+                <VBox alignment="CENTER" spacing="15.0">
                     <children>
-                        <Label fx:id="sellerNameLabel" text="فروشنده: ...">
-                            <font>
-                                <Font name="B Yekan" size="16.0" />
-                            </font>
-                        </Label>
-                        <Label fx:id="sellerRatingLabel" text="امتیاز فروشنده: ..." textFill="#ff9800">
-                            <font>
-                                <Font name="B Yekan" size="16.0" />
-                            </font>
-                        </Label>
+                        <HBox alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT" spacing="40.0">
+                            <children>
+                                <Label fx:id="sellerNameLabel" text="فروشنده: ...">
+                                    <font><Font name="B Yekan" size="16.0" /></font>
+                                </Label>
+                                <Label fx:id="sellerRatingLabel" text="میانگین امتیاز: ..." textFill="#ff9800">
+                                    <font><Font name="B Yekan" size="16.0" /></font>
+                                </Label>
+                            </children>
+                        </HBox>
+
+                        <!-- کنترل‌های ثبت امتیاز و نظر (آپدیت شده) -->
+                        <HBox alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT" spacing="15.0" style="-fx-background-color: #fff3e0; -fx-padding: 10; -fx-background-radius: 5;">
+                            <children>
+                                <Label text="امتیاز شما:">
+                                    <font><Font name="B Yekan" size="14.0" /></font>
+                                </Label>
+                                <ComboBox fx:id="ratingComboBox" prefWidth="80.0" promptText="امتیاز" />
+
+                                <!-- فیلد جدید نظر اختیاری -->
+                                <TextField fx:id="reviewCommentField" prefHeight="35.0" prefWidth="300.0" promptText="نظر شما درباره فروشنده (اختیاری)...">
+                                    <font><Font name="B Yekan" size="14.0" /></font>
+                                </TextField>
+
+                                <Button mnemonicParsing="false" onAction="#submitRating" prefHeight="35.0" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="ثبت">
+                                    <font><Font name="B Yekan" size="14.0" /></font>
+                                </Button>
+                            </children>
+                        </HBox>
                     </children>
-                </HBox>
+                </VBox>
 
                 <!-- پیام‌های سیستم (خطا یا موفقیت) -->
                 <Label fx:id="messageLabel" textFill="RED">
@@ -105,21 +102,13 @@
                 <HBox alignment="CENTER" spacing="20.0">
                     <children>
                         <Button mnemonicParsing="false" onAction="#goBack" prefHeight="45.0" prefWidth="120.0" text="بازگشت">
-                            <font>
-                                <Font name="B Yekan" size="16.0" />
-                            </font>
+                            <font><Font name="B Yekan" size="16.0" /></font>
                         </Button>
-
                         <Button mnemonicParsing="false" onAction="#addToFavorites" prefHeight="45.0" prefWidth="180.0" style="-fx-background-color: #FF9800; -fx-text-fill: white;" text="افزودن به علاقه‌مندی">
-                            <font>
-                                <Font name="B Yekan" size="16.0" />
-                            </font>
+                            <font><Font name="B Yekan" size="16.0" /></font>
                         </Button>
-
                         <Button mnemonicParsing="false" onAction="#startChat" prefHeight="45.0" prefWidth="180.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="شروع گفت‌وگو">
-                            <font>
-                                <Font name="B Yekan" size="16.0" />
-                            </font>
+                            <font><Font name="B Yekan" size="16.0" /></font>
                         </Button>
                     </children>
                 </HBox>

@@ -1,13 +1,17 @@
 package com.secondhand.controller;
 
 import com.secondhand.model.Ad;
+import com.secondhand.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
+import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 
@@ -26,9 +30,18 @@ public class AdDetailsController {
     @FXML private Label sellerRatingLabel;
     @FXML private Label messageLabel;
 
-    private Ad currentAd; // آگهی فعلی که در حال نمایش است
+    // المان‌های جدید امتیاز و نظر
+    @FXML private ComboBox<Integer> ratingComboBox;
+    @FXML private TextField reviewCommentField;
 
-    // داشبورد این متد را صدا می‌زند و آگهی را به آن پاس می‌دهد
+    private Ad currentAd;
+
+    @FXML
+    public void initialize() {
+        // پر کردن منوی کشویی با اعداد ۱ تا ۵
+        ratingComboBox.getItems().addAll(1, 2, 3, 4, 5);
+    }
+
     public void setAd(Ad ad) {
         this.currentAd = ad;
 
@@ -38,9 +51,8 @@ public class AdDetailsController {
         categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory() : "نامشخص"));
         descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
         sellerNameLabel.setText("فروشنده: " + (ad.getSellerName() != null ? ad.getSellerName() : "کاربر سامانه"));
-        sellerRatingLabel.setText("امتیاز فروشنده: ۴.۵ از ۵"); // فعلاً یک عدد فرضی
+        sellerRatingLabel.setText("میانگین امتیاز: ۴.۵ از ۵");
 
-        // نمایش عکس اگر وجود داشت
         if (ad.getImageBase64() != null && !ad.getImageBase64().isEmpty()) {
             try {
                 byte[] imageBytes = Base64.getDecoder().decode(ad.getImageBase64());
@@ -65,12 +77,36 @@ public class AdDetailsController {
     @FXML
     public void addToFavorites(ActionEvent event) {
         if (currentAd != null) {
-            // صدا زدن متدی که در SessionManager ساختیم
-            com.secondhand.util.SessionManager.addToFavorites(currentAd);
-
+            SessionManager.addToFavorites(currentAd);
             messageLabel.setStyle("-fx-text-fill: green;");
             messageLabel.setText("این آگهی با موفقیت به لیست علاقه‌مندی‌های شما اضافه شد!");
         }
+    }
+
+    @FXML
+    public void submitRating(ActionEvent event) {
+        Integer selectedRating = ratingComboBox.getValue();
+        String comment = reviewCommentField.getText();
+
+        if (selectedRating == null) {
+            messageLabel.setStyle("-fx-text-fill: red;");
+            messageLabel.setText("خطا: لطفاً ابتدا یک امتیاز (بین ۱ تا ۵) انتخاب کنید.");
+            return;
+        }
+
+        // چاپ در ترمینال برای تست
+        System.out.println("امتیاز " + selectedRating + " برای فروشنده '" + currentAd.getSellerName() + "' ثبت شد.");
+        if (comment != null && !comment.trim().isEmpty()) {
+            System.out.println("نظر ثبت شده کاربر: " + comment);
+        }
+
+        messageLabel.setStyle("-fx-text-fill: green;");
+        messageLabel.setText("سپاس از شما! امتیاز و نظر شما با موفقیت ثبت شد.");
+
+        // غیرفعال کردن فیلدها و دکمه پس از ثبت
+        ratingComboBox.setDisable(true);
+        reviewCommentField.setDisable(true);
+        ((Button) event.getSource()).setDisable(true);
     }
 
     @FXML
