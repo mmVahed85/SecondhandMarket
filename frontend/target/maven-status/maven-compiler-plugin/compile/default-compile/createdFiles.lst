@@ -6,3 +6,4 @@ com\secondhand\controller\RegisterController.class
 com\secondhand\Main.class
 com\secondhand\controller\MainController.class
 com\secondhand\controller\LoginController.class
+com\secondhand\controller\DashboardController.class
