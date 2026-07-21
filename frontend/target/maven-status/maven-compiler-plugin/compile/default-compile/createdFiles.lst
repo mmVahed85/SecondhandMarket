@@ -10,6 +10,7 @@ com\secondhand\service\AuthApi.class
 com\secondhand\model\Message.class
 com\secondhand\model\LoginRequest.class
 com\secondhand\controller\ProfileController.class
+com\secondhand\controller\EditAdController.class
 com\secondhand\service\AdApi.class
 com\secondhand\model\User.class
 com\secondhand\model\RegisterRequest.class

@@ -33,7 +33,6 @@ public class ProfileController {
 
     @FXML
     public void initialize() {
-        // دریافت نام کاربری لاگین شده
         currentUser = SessionManager.getLoggedInUsername();
         if (currentUser != null) {
             usernameLabel.setText(currentUser);
@@ -48,13 +47,10 @@ public class ProfileController {
     private void loadMyAds() {
         myAdsContainer.getChildren().clear();
 
-        // در اینجا باید از سرور فقط آگهی‌های این کاربر را بگیریم
-        // فعلاً به صورت تستی چند آگهی می‌سازیم که نام فروشنده‌شان نام خودمان باشد
         if (myAds.isEmpty()) {
             myAds.add(new Ad(10L, "مبل راحتی ۷ نفره", 12000000L, "تهران", null));
             myAds.add(new Ad(11L, "میز تحریر چوبی", 1500000L, "تهران", null));
 
-            // ست کردن نام ما به عنوان فروشنده
             for (Ad ad : myAds) {
                 ad.setSellerName(currentUser);
             }
@@ -75,15 +71,15 @@ public class ProfileController {
 
     private VBox createMyAdCard(Ad ad) {
         VBox card = new VBox();
-        card.setSpacing(10);
+        card.setSpacing(8);
         card.setAlignment(Pos.CENTER);
         card.setPadding(new Insets(15));
         card.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
-        card.setPrefSize(250, 300);
+        card.setPrefSize(250, 360); // ارتفاع را کمی بیشتر کردیم تا دکمه‌ها جا بشوند
 
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
+        imageView.setFitWidth(180);
+        imageView.setFitHeight(130);
         imageView.setPreserveRatio(true);
 
         if (ad.getImageBase64() != null && !ad.getImageBase64().isEmpty()) {
@@ -99,21 +95,56 @@ public class ProfileController {
 
         Label priceLabel = new Label("قیمت: " + ad.getPrice() + " تومان");
         priceLabel.setFont(new Font("B Yekan", 14));
-        priceLabel.setStyle("-fx-text-fill: #4CAF50;");
+        priceLabel.setStyle("-fx-text-fill: #2c3e50;");
 
-        // دکمه حذف آگهی (چون این آگهی مال خودمان است)
-        Button deleteButton = new Button("حذف آگهی");
+        // وضعیت فعلی آگهی
+        Label statusLabel = new Label("وضعیت: فعال");
+        statusLabel.setFont(new Font("B Yekan", 12));
+        statusLabel.setStyle("-fx-text-fill: #4CAF50;"); // رنگ سبز برای فعال
+
+        // --- دکمه‌های جدید ---
+
+        Button editButton = new Button("✏ ویرایش آگهی");
+        editButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
+        editButton.setMaxWidth(Double.MAX_VALUE);
+        editButton.setOnAction(e -> {
+            try {
+                FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/edit-ad.fxml"));
+                Parent root = loader.load();
+
+                // ارسال اطلاعات آگهی انتخاب شده به صفحه ویرایش
+                EditAdController editController = loader.getController();
+                editController.initData(ad);
+
+                Scene currentScene = ((Node) e.getSource()).getScene();
+                currentScene.setRoot(root);
+            } catch (Exception ex) {
+                System.err.println("خطا در باز کردن صفحه ویرایش:");
+                ex.printStackTrace();
+            }
+        });
+
+        Button soldButton = new Button("✔ تغییر به فروخته شده");
+        soldButton.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white;");
+        soldButton.setMaxWidth(Double.MAX_VALUE);
+        soldButton.setOnAction(e -> {
+            statusLabel.setText("وضعیت: فروخته شده");
+            statusLabel.setStyle("-fx-text-fill: #7f8c8d;"); // رنگ خاکستری
+            // غیرفعال کردن دکمه پس از فروش
+            ((Button) e.getSource()).setDisable(true);
+            System.out.println("وضعیت آگهی به فروخته شده تغییر کرد.");
+        });
+
+        Button deleteButton = new Button("🗑 حذف آگهی");
         deleteButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
         deleteButton.setMaxWidth(Double.MAX_VALUE);
         deleteButton.setOnAction(e -> {
-            // حذف از لیست
             myAds.remove(ad);
-            // رفرش کردن صفحه
             loadMyAds();
-            System.out.println("درخواست حذف آگهی " + ad.getTitle() + " به سرور ارسال شد.");
+            System.out.println("آگهی با موفقیت حذف شد.");
         });
 
-        card.getChildren().addAll(imageView, titleLabel, priceLabel, deleteButton);
+        card.getChildren().addAll(imageView, titleLabel, priceLabel, statusLabel, editButton, soldButton, deleteButton);
         return card;
     }
 
