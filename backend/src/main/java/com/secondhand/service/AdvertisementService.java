@@ -121,7 +121,7 @@ public class AdvertisementService {
         List<Advertisement> advertisements = advertisementRepository.findByOwner(owner);
         List<AdvertisementResponse> response = advertisements.stream().map(this::toResponse).toList();
 
-        return new ApiResponse<>(true, "User's ads list:", response);
+        return new ApiResponse<>(true, "Advertisements loaded successfully", response);
     }
 
     public ApiResponse<AdvertisementResponse> update(Long id, UpdateAdvertisementRequest request, String username) {
