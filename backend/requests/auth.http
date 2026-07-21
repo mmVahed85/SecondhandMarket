@@ -3,8 +3,8 @@ POST http://localhost:8080/api/auth/login
 Content-Type: application/json
 
 {
-    "username": "ali",
-    "password": "1234"
+    "username": "mohammad",
+    "password": "123456"
 }
 
 ###
@@ -41,4 +41,43 @@ Content-Type: application/json
 
 ### Token
 GET http://localhost:8080/api/test
-Authorization: Bearer eyJhsdGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGkiLCJpYXQiOjE3ODQ0ODc5NDMsImV4cCI6MTc4NDU3NDM0M30.fCXPWPVU5VRZtBYcE41G_AuMdIdWULhBdT_E9ofNhgI
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhbGkiLCJpYXQiOjE3ODQ1Nzk5OTAsImV4cCI6MTc4NDY2NjM5MH0.kDrSoKXhdbfijUUqpkCkIR783U4T3xd-75fr_U4JI5U
+
+###
+
+### Advertisement create
+POST http://localhost:8080/api/advertisements
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2hhbW1hZCIsImlhdCI6MTc4NDU4Nzk4MiwiZXhwIjoxNzg0Njc0MzgyfQ.5EwSMvkJ19dwo0o7Gnj2dGB2KHeZAWVteJkWQu07qmY
+Content-Type: application/json
+
+{
+  "title":"isPhone 13",
+  "description":"fsd",
+  "price":35000000,
+  "city":"Tehran",
+  "category":"DIGITAL"
+}
+
+###
+
+### Advertisement all
+GET http://localhost:8080/api/advertisements
+
+###
+
+### User Advertisement
+GET http://localhost:8080/api/advertisements/my
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2hhbW1hZCIsImlhdCI6MTc4NDU4ODI0MCwiZXhwIjoxNzg0Njc0NjQwfQ.HmrFv4WQaqly9bTn9hbL5IFzcRur6cQ0G57bu9Gfhm4
+
+###
+
+### User Advertisement
+PUT http://localhost:8080/api/advertisements/1
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2hhbW1hZCIsImlhdCI6MTc4NDU4ODM3NCwiZXhwIjoxNzg0Njc0Nzc0fQ.D3mw46qqeDT9xwfQWAu1KD3-61WhjBG9LpUudm6D0MU
+Content-Type: application/json
+
+{
+  "title":"iPhone 13",
+  "description":"128G",
+  "price":45000000
+}
