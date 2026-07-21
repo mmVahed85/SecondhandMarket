@@ -1,4 +1,4 @@
-package com.secondhand.dto;
+package com.secondhand.util;
 
 public class ApiResponse<T> {
 

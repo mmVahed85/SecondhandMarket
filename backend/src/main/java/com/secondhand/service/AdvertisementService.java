@@ -6,6 +6,8 @@ import com.secondhand.entity.*;
 import com.secondhand.service.ImageService;
 import com.secondhand.repository.*;
 import com.secondhand.specification.AdvertisementSpecification;
+import com.secondhand.util.ApiResponse;
+
 import java.util.ArrayList;
 import java.util.List;
 import org.springframework.data.domain.Sort;
@@ -396,6 +398,30 @@ public class AdvertisementService {
         return new ApiResponse<>(
                 true,
                 "Favorite advertisements loaded successfully",
+                response
+        );
+
+    }
+
+    public ApiResponse<List<AdvertisementResponse>> getPendingAdvertisements() {
+
+        List<Advertisement> advertisements =
+                advertisementRepository.findByStatus(
+                        AdvertisementStatus.PENDING
+                );
+
+        List<AdvertisementResponse> response =
+                new ArrayList<>();
+
+        for (Advertisement ad : advertisements) {
+
+            response.add(toResponse(ad));
+
+        }
+
+        return new ApiResponse<>(
+                true,
+                "Pending advertisements loaded successfully",
                 response
         );
 

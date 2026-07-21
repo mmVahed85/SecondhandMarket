@@ -2,7 +2,7 @@ package com.secondhand.service;
 
 import java.util.List;
 import org.springframework.stereotype.Service;
-import com.secondhand.dto.ApiResponse;
+
 import com.secondhand.dto.RatingRequest;
 import com.secondhand.dto.RatingResponse;
 import com.secondhand.entity.Advertisement;
@@ -10,6 +10,7 @@ import com.secondhand.entity.Rating;
 import com.secondhand.entity.User;
 import com.secondhand.repository.AdvertisementRepository;
 import com.secondhand.repository.RatingRepository;
+import com.secondhand.util.ApiResponse;
 
 @Service
 public class RatingService {

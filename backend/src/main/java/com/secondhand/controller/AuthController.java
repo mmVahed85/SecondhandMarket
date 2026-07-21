@@ -2,6 +2,8 @@ package com.secondhand.controller;
 
 import com.secondhand.dto.*;
 import com.secondhand.service.AuthService;
+import com.secondhand.util.ApiResponse;
+
 import javax.validation.Valid;
 import javax.validation.constraints.Null;
 

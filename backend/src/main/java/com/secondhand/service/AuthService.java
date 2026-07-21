@@ -5,6 +5,7 @@ import com.secondhand.entity.User;
 import com.secondhand.entity.Role;
 import com.secondhand.repository.UserRepository;
 import com.secondhand.security.JwtService;
+import com.secondhand.util.ApiResponse;
 
 import javax.validation.constraints.Null;
 

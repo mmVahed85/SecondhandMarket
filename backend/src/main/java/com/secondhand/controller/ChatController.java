@@ -44,21 +44,17 @@ public class ChatController {
         );
     }
 
-    @PostMapping("/{advertisementId}/chat")
+    @PostMapping("/{chatId}/messages")
     public ApiResponse<MessageResponse> sendMessage(
-
-            @PathVariable Long advertisementId,
-
+            @PathVariable Long chatId,
             @Valid @RequestBody SendMessageRequest request,
-
             Authentication authentication) {
 
         return chatService.sendMessage(
-                advertisementId,
+                chatId,
                 request,
                 authentication.getName()
         );
-
     }
 
 }
