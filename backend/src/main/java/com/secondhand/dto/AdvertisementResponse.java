@@ -1,8 +1,7 @@
 package com.secondhand.dto;
 
 import java.time.LocalDateTime;
-
-import com.secondhand.entity.AdvertisementStatus;
+import com.secondhand.entity.Category;
 
 public class AdvertisementResponse {
 
@@ -15,11 +14,12 @@ public class AdvertisementResponse {
     private String status;
     private Long viewCount;
     private LocalDateTime createdAt;
+    private Category category;
 
     public AdvertisementResponse() {
     }
 
-    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, String status, Long viewCount, LocalDateTime createdAt) {
+    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, String status, Long viewCount, LocalDateTime createdAt, Category category) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -29,6 +29,7 @@ public class AdvertisementResponse {
         this.status = status;
         this.viewCount = viewCount;
         this.createdAt = createdAt;
+        this.category = category;
     }
 
     public Long getId() {
@@ -101,5 +102,13 @@ public class AdvertisementResponse {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
+    }
+
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
     }
 }

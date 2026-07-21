@@ -1,28 +1,18 @@
 package com.secondhand.dto;
 
+import com.secondhand.entity.AdvertisementStatus;
 import com.secondhand.entity.Category;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
 
-public class CreateAdvertisementRequest {
+public class UpdateAdvertisementRequest {
 
-    @NotBlank
     private String title;
-
-    @NotBlank
     private String description;
-
-    @NotNull
     private Long price;
-
-    @NotBlank
     private String city;
-
-    @NotNull
     private Category category;
+    private AdvertisementStatus status;
 
-    public CreateAdvertisementRequest() {
-    }
+    public UpdateAdvertisementRequest() {}
 
     public String getTitle() {
         return title;
@@ -62,5 +52,13 @@ public class CreateAdvertisementRequest {
 
     public void setCategory(Category category) {
         this.category = category;
+    }
+
+    public AdvertisementStatus getStatus() {
+        return status;
+    }
+
+    public void setStatus(AdvertisementStatus status) {
+        this.status = status;
     }
 }

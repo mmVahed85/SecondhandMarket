@@ -32,5 +32,33 @@ public class AdvertisementController {
         return advertisementService.getAllActive();
 
     }
-    
+
+    @GetMapping("/{id}")
+    public ApiResponse<AdvertisementResponse> getById(@PathVariable Long id) {
+        return advertisementService.getById(id);
+    }
+
+    @GetMapping("/my")
+    public ApiResponse<List<AdvertisementResponse>> myAdvertisements(Authentication authentication) {
+
+        return advertisementService.getMyAdvertisements(authentication.getName());
+    }
+
+    @PutMapping("/{id}")
+    public ApiResponse<AdvertisementResponse> update(@PathVariable Long id, @RequestBody @Valid UpdateAdvertisementRequest request, Authentication authentication) {
+
+        return advertisementService.update(id, request, authentication.getName());
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<AdvertisementResponse> delete(@PathVariable Long id, Authentication authentication) {
+
+        return advertisementService.delete(id, authentication.getName());
+    }
+
+    @PostMapping("/search")
+    public ApiResponse<List<AdvertisementResponse>> search(@RequestBody AdvertisementFilterRequest request) {
+
+        return advertisementService.search(request);
+    }
 }

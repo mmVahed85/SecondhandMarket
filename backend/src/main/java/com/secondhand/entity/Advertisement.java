@@ -44,6 +44,10 @@ public class Advertisement {
     @JoinColumn(name = "owner_id", nullable = false)
     private User owner;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private Category category;
+
     public Advertisement() {
     }
 
@@ -111,5 +115,11 @@ public class Advertisement {
         this.owner = owner;
     }
 
-    // Getter & Setter
+    public Category getCategory() {
+        return category;
+    }
+
+    public void setCategory(Category category) {
+        this.category = category;
+    }
 }
