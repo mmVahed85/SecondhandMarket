@@ -57,6 +57,12 @@ public class Advertisement {
     @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL)
     private List<Comment> comments = new ArrayList<>();
 
+    @OneToMany(mappedBy = "advertisement")
+    private List<Rating> ratings = new ArrayList<>();
+
+    @ManyToMany(mappedBy = "favoriteAdvertisements")
+    private List<User> usersWhoFavorited = new ArrayList<>();
+
     public Advertisement() {
     }
 
@@ -146,5 +152,21 @@ public class Advertisement {
 
     public void setComments(List<Comment> comments) {
         this.comments = comments;
+    }
+
+    public List<Rating> getRatings() {
+        return ratings;
+    }
+
+    public void setRatings(List<Rating> ratings) {
+        this.ratings = ratings;
+    }
+
+    public List<User> getUsersWhoFavorited() {
+        return usersWhoFavorited;
+    }
+
+    public void setUsersWhoFavorited(List<User> usersWhoFavorited) {
+        this.usersWhoFavorited = usersWhoFavorited;
     }
 }

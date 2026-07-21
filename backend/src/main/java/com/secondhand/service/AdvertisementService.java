@@ -4,9 +4,7 @@ import com.secondhand.config.AppProperties;
 import com.secondhand.dto.*;
 import com.secondhand.entity.*;
 import com.secondhand.service.ImageService;
-import com.secondhand.repository.AdvertisementRepository;
-import com.secondhand.repository.AdvertisementImageRepository;
-import com.secondhand.repository.CommentRepository;
+import com.secondhand.repository.*;
 import com.secondhand.specification.AdvertisementSpecification;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,17 +19,21 @@ public class AdvertisementService {
     private final AdvertisementRepository advertisementRepository;
     private final AdvertisementImageRepository advertisementImageRepository;
     private final CommentRepository commentRepository;
+    private final UserRepository userRepository;
+    private final RatingRepository ratingRepository;
     private final UserService userService;
     private final ImageService imageService;
     private final AppProperties appProperties;
 
-    public AdvertisementService(AdvertisementRepository advertisementRepository, AdvertisementImageRepository advertisementImageRepository, CommentRepository commentRepository, UserService userService, ImageService imageService, AppProperties appProperties) {
+    public AdvertisementService(AdvertisementRepository advertisementRepository, UserRepository userRepository, AdvertisementImageRepository advertisementImageRepository, CommentRepository commentRepository, UserService userService, ImageService imageService, AppProperties appProperties, RatingRepository ratingRepository) {
         this.advertisementRepository = advertisementRepository;
         this.userService = userService;
         this.advertisementImageRepository = advertisementImageRepository;
         this.imageService = imageService;
         this.appProperties = appProperties;
         this.commentRepository = commentRepository;
+        this.ratingRepository = ratingRepository;
+        this.userRepository = userRepository;
     }
 
     private AdvertisementResponse toResponse(Advertisement ad) {
@@ -42,6 +44,20 @@ public class AdvertisementService {
             images.add(new ImageResponse(image.getId(), appProperties.getBaseUrl() + "/uploads/" + image.getImageUrl()));
         }
         response.setImages(images);
+        List<Rating> ratings = ratingRepository.findByAdvertisement(ad);
+
+    double average = 0;
+
+    for (Rating rating : ratings) {
+        average += rating.getScore();
+    }
+
+    if (!ratings.isEmpty()) {
+        average /= ratings.size();
+    }
+
+    response.setAverageRating(average);
+    response.setRatingCount(ratings.size());
         return response;
     }
 
@@ -271,8 +287,6 @@ public class AdvertisementService {
         }
         Comment comment = new Comment(ad, author, request.getText());
         
-        ad.getComments().add(comment);
-        author.getComments().add(comment);
         commentRepository.save(comment);
 
         CommentResponse response = new CommentResponse(comment.getId(), comment.getAuthor().getUsername(), comment.getText(), comment.getCreatedAt());
@@ -294,6 +308,96 @@ public class AdvertisementService {
             responses.add(new CommentResponse(cm.getId(), cm.getAuthor().getUsername(), cm.getText(), cm.getCreatedAt()));
         }
 
-        return new ApiResponse<>(true, "Advertisment comments list:", responses);
+        return new ApiResponse<>(true, "Comments loaded successfully", responses);
+    }
+
+    public ApiResponse<String> addFavorite(Long advertisementId, String username) {
+
+        Advertisement advertisement = advertisementRepository.findById(advertisementId).orElse(null);
+
+        if (advertisement == null) {
+            return new ApiResponse<>(false,
+                    "Advertisement not found",
+                    null);
+        }
+
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return new ApiResponse<>(false,
+                    "User not found",
+                    null);
+        }
+
+        if (!user.getFavoriteAdvertisements().contains(advertisement)) {
+
+            user.getFavoriteAdvertisements().add(advertisement);
+
+            userRepository.save(user);
+
+        }
+
+        return new ApiResponse<>(
+                true,
+                "Advertisement added to favorites",
+                null
+        );
+
+    }
+
+    public ApiResponse<String> removeFavorite(Long advertisementId,
+                                          String username) {
+
+        Advertisement advertisement =
+                advertisementRepository.findById(advertisementId).orElse(null);
+
+        if (advertisement == null) {
+            return new ApiResponse<>(false,
+                    "Advertisement not found",
+                    null);
+        }
+
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return new ApiResponse<>(false,
+                    "User not found",
+                    null);
+        }
+
+        user.getFavoriteAdvertisements().remove(advertisement);
+
+        userRepository.save(user);
+
+        return new ApiResponse<>(
+                true,
+                "Advertisement removed from favorites",
+                null
+        );
+
+    }
+
+    public ApiResponse<List<AdvertisementResponse>> getFavorites(String username) {
+
+        User user = userService.findByUsername(username);
+
+        if (user == null) {
+            return new ApiResponse<>(false,
+                    "User not found",
+                    null);
+        }
+
+        List<AdvertisementResponse> response =
+                user.getFavoriteAdvertisements()
+                        .stream()
+                        .map(this::toResponse)
+                        .toList();
+
+        return new ApiResponse<>(
+                true,
+                "Favorite advertisements loaded successfully",
+                response
+        );
+
     }
 }
