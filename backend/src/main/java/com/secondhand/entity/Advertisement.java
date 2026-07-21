@@ -63,6 +63,9 @@ public class Advertisement {
     @ManyToMany(mappedBy = "favoriteAdvertisements")
     private List<User> usersWhoFavorited = new ArrayList<>();
 
+    @OneToMany(mappedBy = "advertisement")
+    private List<ChatRoom> chatRooms = new ArrayList<>();
+
     public Advertisement() {
     }
 
@@ -168,5 +171,13 @@ public class Advertisement {
 
     public void setUsersWhoFavorited(List<User> usersWhoFavorited) {
         this.usersWhoFavorited = usersWhoFavorited;
+    }
+
+    public List<ChatRoom> getChatRooms() {
+        return chatRooms;
+    }
+
+    public void setChatRooms(List<ChatRoom> chatRooms) {
+        this.chatRooms = chatRooms;
     }
 }
