@@ -2,14 +2,15 @@ package com.secondhand.controller;
 
 import com.secondhand.dto.*;
 import com.secondhand.service.AdvertisementService;
+import com.secondhand.service.ChatService;
 import com.secondhand.service.RatingService;
+import com.secondhand.util.ApiResponse;
 
 import java.util.List;
 
 import javax.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
 
@@ -20,10 +21,12 @@ public class AdvertisementController {
 
     private final AdvertisementService advertisementService;
     private final RatingService ratingService;
+    private final ChatService chatService;
 
-    public AdvertisementController(AdvertisementService advertisementService, RatingService ratingService) {
+    public AdvertisementController(AdvertisementService advertisementService, RatingService ratingService, ChatService chatService) {
         this.advertisementService = advertisementService;
         this.ratingService = ratingService;
+        this.chatService = chatService;
     }
 
     @PostMapping
@@ -131,6 +134,23 @@ public class AdvertisementController {
     getFavorites(Authentication authentication) {
 
         return advertisementService.getFavorites(
+                authentication.getName()
+        );
+
+    }
+
+    @PostMapping("/{advertisementId}/chat")
+    public ApiResponse<MessageResponse> sendMessage(
+
+            @PathVariable Long advertisementId,
+
+            @Valid @RequestBody SendMessageRequest request,
+
+            Authentication authentication) {
+
+        return chatService.sendMessage(
+                advertisementId,
+                request,
                 authentication.getName()
         );
 

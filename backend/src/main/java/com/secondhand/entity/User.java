@@ -60,6 +60,15 @@ public class User {
     )
     private List<Advertisement> favoriteAdvertisements =new ArrayList<>();
 
+    @OneToMany(mappedBy = "buyer")
+    private List<ChatRoom> buyerChats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "seller")
+    private List<ChatRoom> sellerChats = new ArrayList<>();
+
+    @OneToMany(mappedBy = "sender")
+    private List<Message> messages = new ArrayList<>();
+
     public User() {
     }
 
@@ -157,5 +166,29 @@ public class User {
 
     public void setFavoriteAdvertisements(List<Advertisement> favoriteAdvertisements) {
         this.favoriteAdvertisements = favoriteAdvertisements;
+    }
+
+    public List<ChatRoom> getBuyerChats() {
+        return buyerChats;
+    }
+
+    public void setBuyerChats(List<ChatRoom> buyerChats) {
+        this.buyerChats = buyerChats;
+    }
+
+    public List<ChatRoom> getSellerChats() {
+        return sellerChats;
+    }
+
+    public void setSellerChats(List<ChatRoom> sellerChats) {
+        this.sellerChats = sellerChats;
+    }
+
+    public List<Message> getMessages() {
+        return messages;
+    }
+
+    public void setMessages(List<Message> messages) {
+        this.messages = messages;
     }
 }
