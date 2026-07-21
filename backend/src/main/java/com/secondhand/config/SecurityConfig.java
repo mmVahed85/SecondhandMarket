@@ -9,7 +9,7 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.authentication.UsernamePasswordAuthenticationFilter;
 import org.springframework.security.config.http.SessionCreationPolicy;
-
+import org.springframework.http.HttpMethod;
 import com.secondhand.security.JwtAuthenticationFilter;
 
 
@@ -33,7 +33,12 @@ public class SecurityConfig {
     @Bean
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
-        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests().antMatchers("/api/auth/**").permitAll().anyRequest().authenticated();
+        http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+        .antMatchers("/api/auth/**").permitAll()
+        .antMatchers(HttpMethod.GET, "/api/advertisements/**").permitAll()
+        .antMatchers("/api/admin/**").hasRole("ADMIN")
+        .antMatchers(HttpMethod.POST,"/api/advertisements/search").permitAll()
+        .anyRequest().authenticated();
         http.addFilterBefore(jwtAuthenticationFilter, UsernamePasswordAuthenticationFilter.class);
 
         return http.build();

@@ -2,33 +2,15 @@ package com.secondhand.dto;
 
 public class LoginResponse {
 
-    private boolean success;
-    private String message;
     private String token;
+    private String role;
 
     public LoginResponse() {
     }
 
-    public LoginResponse(boolean success, String message, String token) {
-        this.success = success;
-        this.message = message;
+    public LoginResponse(String token, String role) {
         this.token = token;
-    }
-
-    public boolean isSuccess() {
-        return success;
-    }
-
-    public void setSuccess(boolean success) {
-        this.success = success;
-    }
-
-    public String getMessage() {
-        return message;
-    }
-
-    public void setMessage(String message) {
-        this.message = message;
+        this.role = role;
     }
 
     public String getToken() {
@@ -37,5 +19,13 @@ public class LoginResponse {
 
     public void setToken(String token) {
         this.token = token;
+    }
+
+    public String getRole() {
+        return role;
+    }
+
+    public void setRole(String role) {
+        this.role = role;
     }
 }
