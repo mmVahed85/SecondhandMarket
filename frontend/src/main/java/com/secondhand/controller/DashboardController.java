@@ -181,6 +181,15 @@ public class DashboardController {
     }
 
     @FXML
+    public void goToProfile(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/view/profile.fxml"));
+            Scene currentScene = ((Node) event.getSource()).getScene();
+            currentScene.setRoot(root);
+        } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML
     public void handleLogout(ActionEvent event) {
         SessionManager.logout();
         try {
