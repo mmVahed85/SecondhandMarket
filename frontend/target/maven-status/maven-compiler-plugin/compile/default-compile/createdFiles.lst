@@ -1,3 +1,4 @@
+com\secondhand\model\CreateAdRequest.class
 com\secondhand\model\User.class
 com\secondhand\model\RegisterRequest.class
 com\secondhand\util\ApiConfig.class
@@ -5,5 +6,7 @@ com\secondhand\service\ApiClient.class
 com\secondhand\controller\RegisterController.class
 com\secondhand\Main.class
 com\secondhand\controller\MainController.class
+com\secondhand\controller\CreateAdController.class
 com\secondhand\controller\LoginController.class
 com\secondhand\controller\DashboardController.class
+com\secondhand\service\AdApi.class

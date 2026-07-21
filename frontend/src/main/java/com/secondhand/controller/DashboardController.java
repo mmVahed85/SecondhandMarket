@@ -24,8 +24,20 @@ public class DashboardController {
     // انتقال به صفحه ثبت آگهی
     @FXML
     public void goToCreateAd(ActionEvent event) {
-        System.out.println("اینجا به صفحه ثبت آگهی منتقل می‌شویم...");
-        // فعلا خالی می‌گذاریم تا صفحه‌اش را بسازیم
+        try {
+            // ۱. بارگذاری فایل گرافیکی صفحه ثبت آگهی
+            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/create-ad.fxml"));
+
+            // ۲. پیدا کردن صحنه (Scene) فعلی از روی دکمه‌ای که کلیک شده
+            javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
+
+            // ۳. تغییر محتوای صحنه به فرم ثبت آگهی
+            currentScene.setRoot(root);
+
+        } catch (Exception e) {
+            System.err.println("خطا در بارگذاری صفحه ثبت آگهی:");
+            e.printStackTrace();
+        }
     }
 
     // خروج از حساب کاربری

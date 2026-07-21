@@ -1,30 +1,60 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.Hyperlink?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.PasswordField?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane maxHeight="-Infinity" maxWidth="-Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="792.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.LoginController">
+<AnchorPane prefHeight="792.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.LoginController">
    <children>
-      <TextField fx:id="usernameField" alignment="CENTER_RIGHT" layoutX="652.0" layoutY="431.0" prefHeight="41.0" prefWidth="229.0" promptText="نام کاربری" />
-      <PasswordField fx:id="passwordField" alignment="CENTER_RIGHT" layoutX="652.0" layoutY="478.0" prefHeight="41.0" prefWidth="229.0" promptText="رمز عبور" />
+      <!-- یک VBox که به چهار طرف صفحه چسبیده است تا دقیقاً مرکز صفحه را پیدا کند -->
+      <VBox alignment="CENTER" spacing="25.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
+         <children>
 
-      <Label fx:id="errorLabel" alignment="CENTER" layoutX="277.0" layoutY="170.0" prefHeight="20.0" prefWidth="229.0" textFill="RED" />
+            <Label text="ورود به سامانه">
+               <font>
+                  <Font name="B Yekan" size="32.0" />
+               </font>
+            </Label>
 
-      <Button layoutX="725.0" layoutY="540.0" mnemonicParsing="false" onAction="#handleLogin" prefHeight="34.0" prefWidth="83.0" text="ورود">
-         <font>
-            <Font name="B Yekan" size="16.0" />
-         </font>
-      </Button>
+            <!-- لیبل نمایش خطاها -->
+            <Label fx:id="errorLabel" alignment="CENTER" prefWidth="400.0" textFill="RED">
+               <font>
+                  <Font name="B Yekan" size="14.0" />
+               </font>
+            </Label>
 
-      <Hyperlink layoutX="652.0" layoutY="581.0" onAction="#goToRegister" text="ثبت نام!" textAlignment="CENTER">
-         <font>
-            <Font name="B Yekan" size="17.0" />
-         </font>
-      </Hyperlink>
+            <!-- فیلدهای ورودی (maxWidth تنظیم شده تا کل صفحه را پر نکنند) -->
+            <TextField fx:id="usernameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="نام کاربری">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+
+            <PasswordField fx:id="passwordField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="رمز عبور">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </PasswordField>
+
+            <!-- دکمه ورود -->
+            <Button mnemonicParsing="false" onAction="#handleLogin" prefHeight="50.0" prefWidth="350.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="ورود">
+               <font>
+                  <Font name="B Yekan" size="18.0" />
+               </font>
+            </Button>
+
+            <!-- دکمه انتقال به ثبت‌نام -->
+            <Button mnemonicParsing="false" onAction="#goToRegister" prefHeight="40.0" prefWidth="350.0" style="-fx-background-color: transparent; -fx-text-fill: #2196F3; -fx-border-color: #2196F3; -fx-border-radius: 5;" text="حساب کاربری ندارید؟ ثبت‌نام کنید">
+               <font>
+                  <Font name="B Yekan" size="14.0" />
+               </font>
+            </Button>
+
+         </children>
+      </VBox>
    </children>
 </AnchorPane>
