@@ -153,4 +153,15 @@ public class DashboardController {
 
         return new Ad[]{mock1, mock2};
     }
+
+    @FXML
+    public void goToFavorites(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/view/favorites.fxml"));
+            Scene currentScene = ((Node) event.getSource()).getScene();
+            currentScene.setRoot(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

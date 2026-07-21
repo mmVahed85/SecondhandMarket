@@ -64,9 +64,13 @@ public class AdDetailsController {
 
     @FXML
     public void addToFavorites(ActionEvent event) {
-        messageLabel.setStyle("-fx-text-fill: green;");
-        messageLabel.setText("به لیست علاقه‌مندی‌ها اضافه شد!");
-        // بعداً درخواست به سرور را اینجا اضافه می‌کنیم
+        if (currentAd != null) {
+            // صدا زدن متدی که در SessionManager ساختیم
+            com.secondhand.util.SessionManager.addToFavorites(currentAd);
+
+            messageLabel.setStyle("-fx-text-fill: green;");
+            messageLabel.setText("این آگهی با موفقیت به لیست علاقه‌مندی‌های شما اضافه شد!");
+        }
     }
 
     @FXML
