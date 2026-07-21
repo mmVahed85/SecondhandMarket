@@ -6,6 +6,7 @@ import com.secondhand.entity.*;
 import com.secondhand.service.ImageService;
 import com.secondhand.repository.AdvertisementRepository;
 import com.secondhand.repository.AdvertisementImageRepository;
+import com.secondhand.repository.CommentRepository;
 import com.secondhand.specification.AdvertisementSpecification;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,16 +20,18 @@ public class AdvertisementService {
 
     private final AdvertisementRepository advertisementRepository;
     private final AdvertisementImageRepository advertisementImageRepository;
+    private final CommentRepository commentRepository;
     private final UserService userService;
     private final ImageService imageService;
     private final AppProperties appProperties;
 
-    public AdvertisementService(AdvertisementRepository advertisementRepository, AdvertisementImageRepository advertisementImageRepository, UserService userService, ImageService imageService, AppProperties appProperties) {
+    public AdvertisementService(AdvertisementRepository advertisementRepository, AdvertisementImageRepository advertisementImageRepository, CommentRepository commentRepository, UserService userService, ImageService imageService, AppProperties appProperties) {
         this.advertisementRepository = advertisementRepository;
         this.userService = userService;
         this.advertisementImageRepository = advertisementImageRepository;
         this.imageService = imageService;
         this.appProperties = appProperties;
+        this.commentRepository = commentRepository;
     }
 
     private AdvertisementResponse toResponse(Advertisement ad) {
@@ -252,5 +255,45 @@ public class AdvertisementService {
         }
         advertisementImageRepository.delete(image);
         return new ApiResponse<>(true, "Image deleted successfully", null);
+    }
+
+    public ApiResponse<CommentResponse> addComment(Long advertisementId, CreateCommentRequest request, String username) {
+
+        Advertisement ad = advertisementRepository.findById(advertisementId).orElse(null);
+
+        if (ad == null) {
+            return new ApiResponse<>(false,"Advertisement not found",null);
+        }
+        
+        User author = userService.findByUsername(username);
+        if(author == null){
+            return new ApiResponse<>(false,"User not found",null);
+        }
+        Comment comment = new Comment(ad, author, request.getText());
+        
+        ad.getComments().add(comment);
+        author.getComments().add(comment);
+        commentRepository.save(comment);
+
+        CommentResponse response = new CommentResponse(comment.getId(), comment.getAuthor().getUsername(), comment.getText(), comment.getCreatedAt());
+        return new ApiResponse<>(true, "comment saved successfully", response);
+    }
+
+    public ApiResponse<List<CommentResponse>> getAllComments(Long advertisementId) {
+
+        Advertisement ad = advertisementRepository.findById(advertisementId).orElse(null);
+
+        if (ad == null) {
+            return new ApiResponse<>(false,"Advertisement not found",null);
+        }
+
+        List<CommentResponse> responses = new ArrayList<CommentResponse>();
+        List<Comment> comments = commentRepository.findByAdvertisementOrderByCreatedAtAsc(ad);
+
+        for(Comment cm : comments) {
+            responses.add(new CommentResponse(cm.getId(), cm.getAuthor().getUsername(), cm.getText(), cm.getCreatedAt()));
+        }
+
+        return new ApiResponse<>(true, "Advertisment comments list:", responses);
     }
 }

@@ -8,6 +8,7 @@ import java.util.List;
 import javax.validation.Valid;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 
 
@@ -73,5 +74,18 @@ public class AdvertisementController {
     public ApiResponse<String> deleteImage(@PathVariable Long imageId,Authentication authentication) {
 
         return advertisementService.deleteImage(imageId,authentication.getName());
+    }
+
+    @PostMapping("/{advertisementId}/comments")
+    public ApiResponse<CommentResponse> createComment(@PathVariable Long advertisementId, @Valid @RequestBody CreateCommentRequest request, Authentication authentication) {
+
+        return advertisementService.addComment(advertisementId, request, authentication.getName());
+    }
+
+
+    @GetMapping("/{advertisementId}/comments")
+    public ApiResponse<List<CommentResponse>> getComments(@PathVariable Long advertisementId) {
+
+        return advertisementService.getAllComments(advertisementId);
     }
 }

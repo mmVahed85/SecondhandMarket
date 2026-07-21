@@ -54,6 +54,9 @@ public class Advertisement {
     @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL, orphanRemoval = true)
     private List<AdvertisementImage> images = new ArrayList<>();
 
+    @OneToMany(mappedBy = "advertisement", cascade = CascadeType.ALL)
+    private List<Comment> comments = new ArrayList<>();
+
     public Advertisement() {
     }
 
@@ -135,5 +138,13 @@ public class Advertisement {
 
     public void setImages(List<AdvertisementImage> images) {
         this.images = images;
+    }
+
+    public List<Comment> getComments() {
+        return comments;
+    }
+
+    public void setComments(List<Comment> comments) {
+        this.comments = comments;
     }
 }
