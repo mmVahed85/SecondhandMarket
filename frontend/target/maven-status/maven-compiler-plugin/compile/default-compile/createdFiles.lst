@@ -1,3 +1,4 @@
+com\secondhand\controller\AdminPanelController.class
 com\secondhand\model\CreateAdRequest.class
 com\secondhand\service\UserApi.class
 com\secondhand\model\Ad.class

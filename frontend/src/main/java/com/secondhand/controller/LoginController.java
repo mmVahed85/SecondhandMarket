@@ -28,6 +28,25 @@ public class LoginController {
             return;
         }
 
+        // --- بخش جدید: راه مخفی برای ورود ادمین بدون نیاز به سرور ---
+        if (username.equalsIgnoreCase("admin")) {
+            com.secondhand.util.SessionManager.login("admin"); // ذخیره نام کاربری ادمین در سشن
+            errorLabel.setStyle("-fx-text-fill: green;");
+            errorLabel.setText("ورود مدیر سیستم! در حال انتقال...");
+
+            try {
+                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/admin-panel.fxml"));
+                javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
+                currentScene.setRoot(root);
+            } catch (Exception ex) {
+                System.err.println("خطا در بارگذاری پنل مدیریت:");
+                ex.printStackTrace();
+            }
+            return; // خروج از متد تا دیگر به سرور درخواست ندهد
+        }
+        // -----------------------------------------------------------
+
+        // روند عادی برای سایر کاربران (درخواست به سرور)
         LoginRequest request = new LoginRequest(username, password);
 
         try {
@@ -36,11 +55,12 @@ public class LoginController {
             if (response.isSuccess() && response.getToken() != null) {
                 // ۱. ذخیره توکن در نشست (Session)
                 com.secondhand.util.SessionManager.setToken(response.getToken());
+                com.secondhand.util.SessionManager.login(username); // ذخیره نام کاربری
 
                 errorLabel.setStyle("-fx-text-fill: green;");
                 errorLabel.setText("ورود موفق! در حال انتقال...");
 
-                // ۲. انتقال به صفحه اصلی برنامه (فعلاً به main.fxml برمی‌گردیم)
+                // ۲. انتقال به صفحه اصلی برنامه (داشبورد)
                 try {
                     javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/dashboard.fxml"));
                     javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
