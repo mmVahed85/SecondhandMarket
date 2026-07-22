@@ -81,3 +81,9 @@ Content-Type: application/json
   "description":"128G",
   "price":45000000
 }
+
+###
+
+### User Advertisement
+GET http://localhost:8080/api/admin/advertisements/pending
+Authorization: Bearer eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJtb2hhbW1hZCIsImlhdCI6MTc4NDc1ODczMywiZXhwIjoxNzg0ODQ1MTMzfQ.HtvHPYMuBny-wrZgrs1Nj_KXyhOz13-_Ry4xiy46sBY

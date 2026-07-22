@@ -1,5 +1,8 @@
 package com.secondhand.util;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
 public class ApiResponse<T> {
 
     private boolean success;

@@ -1,28 +1,53 @@
 package com.secondhand.model;
 
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
 
-public class Message {
-    private String sender;
-    private String receiver;
-    private String text;
-    private LocalDateTime timestamp;
+public class Message{ public Long id;
+    public String sender,text;
+    public LocalDateTime createdAt;
+    public boolean seen;
 
-    public Message(String sender, String receiver, String text) {
-        this.sender = sender;
-        this.receiver = receiver;
-        this.text = text;
-        this.timestamp = LocalDateTime.now(); // زمان فعلی
+    public Message() {
+
     }
 
-    public String getSender() { return sender; }
-    public String getReceiver() { return receiver; }
-    public String getText() { return text; }
+    public Long getId() {
+        return id;
+    }
 
-    // یک متد کمکی برای نمایش ساعت و دقیقه (مثلا 14:30)
-    public String getFormattedTime() {
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
-        return timestamp.format(formatter);
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public String getSender() {
+        return sender;
+    }
+
+    public void setSender(String sender) {
+        this.sender = sender;
+    }
+
+    public String getText() {
+        return text;
+    }
+
+    public void setText(String text) {
+        this.text = text;
+    }
+
+    public LocalDateTime getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(LocalDateTime createdAt) {
+        this.createdAt = createdAt;
+    }
+
+    public boolean isSeen() {
+        return seen;
+    }
+
+    public void setSeen(boolean seen) {
+        this.seen = seen;
     }
 }

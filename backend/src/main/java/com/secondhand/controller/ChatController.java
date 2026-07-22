@@ -33,6 +33,20 @@ public class ChatController {
         );
     }
 
+    @PostMapping("/{advertisementId}/room")
+    public ApiResponse<ChatRoomResponse> createOrGetRoom(
+
+            @PathVariable Long advertisementId,
+
+            Authentication authentication) {
+
+        return chatService.createOrGetRoom(
+                advertisementId,
+                authentication.getName()
+        );
+
+    }
+
     @GetMapping("/{chatId}")
     public ApiResponse<List<MessageResponse>> getMessages(
             @PathVariable Long chatId,

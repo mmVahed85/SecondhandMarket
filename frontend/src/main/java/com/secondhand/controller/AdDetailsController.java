@@ -1,8 +1,10 @@
 package com.secondhand.controller;
 
 import com.secondhand.dto.AdvertisementResponse;
-import com.secondhand.model.Advertisement;
-import com.secondhand.util.SessionManager;
+import com.secondhand.dto.ChatRoomResponse;
+import com.secondhand.service.ChatApi;
+import com.secondhand.util.ApiResponse;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -15,9 +17,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
-import java.io.ByteArrayInputStream;
-import java.util.Base64;
 
 public class AdDetailsController {
 
@@ -36,6 +35,7 @@ public class AdDetailsController {
     @FXML private TextField reviewCommentField;
 
     private AdvertisementResponse currentAd;
+    private final ChatApi chatApi = new ChatApi();
 
     @FXML
     public void initialize() {
@@ -49,10 +49,10 @@ public class AdDetailsController {
         titleLabel.setText(ad.getTitle());
         priceLabel.setText("قیمت: " + ad.getPrice() + " تومان");
         cityLabel.setText("شهر: " + ad.getCity());
-        categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory() : "نامشخص"));
+        categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory().name() : "نامشخص"));
         descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
         sellerNameLabel.setText("فروشنده: " + (ad.getOwnerUsername() != null ? ad.getOwnerUsername() : "کاربر سامانه"));
-        sellerRatingLabel.setText("میانگین امتیاز: ۴.۵ از ۵");
+        sellerRatingLabel.setText("میانگین امتیازدهی: " + ad.getRatingCount());
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
 
@@ -121,22 +121,41 @@ public class AdDetailsController {
 
     @FXML
     public void startChat(ActionEvent event) {
+
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/chat.fxml"));
+
+            ApiResponse<ChatRoomResponse> response =
+                    chatApi.createOrGetRoom(currentAd.getId());
+
+            if (!response.isSuccess()) {
+
+                messageLabel.setStyle("-fx-text-fill:red;");
+                messageLabel.setText(response.getMessage());
+
+                return;
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(getClass().getResource("/view/chat.fxml"));
+
             Parent root = loader.load();
 
-            // گرفتن کنترلر چت و پاس دادن اسم فروشنده و عنوان آگهی به آن
-            ChatController chatController = loader.getController();
-            String seller = currentAd.getOwnerUsername() != null ? currentAd.getOwnerUsername() : "فروشنده";
-            chatController.initData(seller, currentAd.getTitle());
+            ChatController controller = loader.getController();
 
-            Scene currentScene = ((Node) event.getSource()).getScene();
-            currentScene.setRoot(root);
-        } catch (Exception e) {
-            System.err.println("خطا در باز کردن صفحه چت:");
-            e.printStackTrace();
-            messageLabel.setStyle("-fx-text-fill: red;");
-            messageLabel.setText("خطا در باز کردن صفحه گفت‌وگو!");
+            controller.initData(response.getData());
+
+            Scene scene =
+                    ((Node) event.getSource()).getScene();
+
+            scene.setRoot(root);
+
         }
+
+        catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
     }
 }

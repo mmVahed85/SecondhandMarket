@@ -1,56 +1,83 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.Ad;
+import com.secondhand.dto.AdvertisementResponse;
+import com.secondhand.dto.UpdateAdvertisementRequest;
+import com.secondhand.model.*;
+import com.secondhand.service.AdApi;
+import com.secondhand.util.ApiResponse;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 
 public class EditAdController {
 
+    private final AdApi adApi = new AdApi();
+
     @FXML private TextField titleField;
     @FXML private TextField priceField;
     @FXML private TextField cityField;
-    @FXML private TextField categoryField;
+    @FXML private ComboBox<Category> categoryComboBox;
     @FXML private TextArea descriptionArea;
     @FXML private Label messageLabel;
 
-    private Ad currentAd;
+    private UpdateAdvertisementRequest request;
+    private AdvertisementResponse currentAd;
 
-    public void initData(Ad ad) {
+    @FXML
+    public void initialize() {
+        categoryComboBox.getItems().setAll(Category.values());
+        categoryComboBox.getSelectionModel().clearSelection();
+    }
+
+    public void initData(AdvertisementResponse ad) {
         this.currentAd = ad;
         titleField.setText(ad.getTitle());
         priceField.setText(String.valueOf(ad.getPrice()));
         cityField.setText(ad.getCity() != null ? ad.getCity() : "");
-        categoryField.setText(ad.getCategory() != null ? ad.getCategory() : "");
+        categoryComboBox.setValue(ad.getCategory());
         descriptionArea.setText(ad.getDescription() != null ? ad.getDescription() : "");
     }
 
     @FXML
     public void saveChanges(ActionEvent event) {
-        if (titleField.getText().isEmpty() || priceField.getText().isEmpty()) {
-            messageLabel.setStyle("-fx-text-fill: red;");
-            messageLabel.setText("عنوان و قیمت نمی‌توانند خالی باشند.");
-            return;
-        }
 
         try {
-            long newPrice = Long.parseLong(priceField.getText());
-            currentAd.setTitle(titleField.getText());
-            currentAd.setPrice(newPrice);
-            currentAd.setCity(cityField.getText());
-            currentAd.setCategory(categoryField.getText());
-            currentAd.setDescription(descriptionArea.getText());
+            if (!priceField.getText().isEmpty()) {
+                long newPrice = Long.parseLong(priceField.getText());
+                request.setPrice(newPrice);
+            }
+            if(titleField.getText()!= null) {
+                request.setTitle(titleField.getText());
+            }
+            if(cityField.getText()!= null) {
+                request.setCity(cityField.getText());
+            }
+            if(descriptionArea.getText()!= null) {
+                request.setDescription(descriptionArea.getText());
+            }
+            if(categoryComboBox.getValue() != null) {
+                request.setCategory(categoryComboBox.getValue());
+            }
 
-            messageLabel.setStyle("-fx-text-fill: green;");
-            messageLabel.setText("تغییرات با موفقیت ذخیره شد!");
+            ApiResponse<AdvertisementResponse> response = adApi.updateAd(currentAd.getId(), request);
 
-            System.out.println("آگهی ویرایش شد -> عنوان: " + currentAd.getTitle() + " | شهر: " + currentAd.getCity() + " | دسته: " + currentAd.getCategory());
+            if(response.isSuccess()) {
+                messageLabel.setStyle("-fx-text-fill: green;");
+                messageLabel.setText(response.getMessage());
+                initData(response.getData());
+            }
+            else {
+                messageLabel.setStyle("-fx-text-fill: red;");
+                messageLabel.setText(response.getMessage());
+            }
 
         } catch (NumberFormatException e) {
             messageLabel.setStyle("-fx-text-fill: red;");

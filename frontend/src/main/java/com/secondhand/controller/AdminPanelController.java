@@ -1,7 +1,14 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.Ad;
-import com.secondhand.model.User;
+import java.util.List;
+
+import com.secondhand.dto.AdvertisementResponse;
+import com.secondhand.dto.UpdateAdvertisementRequest;
+import com.secondhand.dto.UserResponse;
+import com.secondhand.model.*;
+import com.secondhand.service.AdApi;
+import com.secondhand.service.AdminApi;
+import com.secondhand.util.ApiResponse;
 import com.secondhand.util.SessionManager;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -19,6 +26,8 @@ import javafx.scene.control.cell.PropertyValueFactory;
 
 public class AdminPanelController {
 
+    private final AdminApi adminApi = new AdminApi();
+
     @FXML private Label sectionTitleLabel;
     @FXML private Label messageLabel;
 
@@ -26,33 +35,19 @@ public class AdminPanelController {
     @FXML private Button btnApprove;
     @FXML private Button btnReject;
     @FXML private Button btnDelete;
+    @FXML private Button btnBlock;
+    @FXML private Button btnUnblock;
 
     @SuppressWarnings({"rawtypes", "unchecked"})
     @FXML private TableView dataTable;
 
     private String currentSection = "ADS";
 
-    private ObservableList<Ad> mockAds;
-    private ObservableList<User> mockUsers;
+    private ObservableList<AdvertisementResponse> mockAds;
+    private ObservableList<UserResponse> mockUsers;
 
     @FXML
     public void initialize() {
-        mockAds = FXCollections.observableArrayList(
-                new Ad(1L, "لپ‌تاپ ایسوس گیمینگ", 45000000L, "تهران", null),
-                new Ad(2L, "دوچرخه کوهستان", 8500000L, "اصفهان", null),
-                new Ad(3L, "گوشی سامسونگ S23", 40000000L, "شیراز", null)
-        );
-        mockAds.get(0).setSellerName("علی احمدی");
-        mockAds.get(1).setSellerName("سارا رضایی");
-        mockAds.get(2).setSellerName("رضا محمدی");
-
-        mockUsers = FXCollections.observableArrayList(
-                new User(101, "ali_ahmadi", "کاربر عادی", "فعال"),
-                new User(102, "sara_rezaei", "کاربر عادی", "فعال"),
-                new User(103, "admin_super", "مدیر سیستم", "فعال"),
-                new User(104, "spammer_99", "کاربر عادی", "مسدود")
-        );
-
         showAdsManager(null);
     }
 
@@ -72,20 +67,33 @@ public class AdminPanelController {
 
         dataTable.getColumns().clear();
 
-        TableColumn<Ad, Long> idCol = new TableColumn<>("شناسه");
+        TableColumn<AdvertisementResponse, Long> idCol = new TableColumn<>("شناسه");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TableColumn<Ad, String> titleCol = new TableColumn<>("عنوان آگهی");
+        TableColumn<AdvertisementResponse, String> titleCol = new TableColumn<>("عنوان آگهی");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        TableColumn<Ad, Long> priceCol = new TableColumn<>("قیمت (تومان)");
+        TableColumn<AdvertisementResponse, Long> priceCol = new TableColumn<>("قیمت (تومان)");
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        TableColumn<Ad, String> sellerCol = new TableColumn<>("فروشنده");
+        TableColumn<AdvertisementResponse, String> sellerCol = new TableColumn<>("فروشنده");
         sellerCol.setCellValueFactory(new PropertyValueFactory<>("sellerName"));
 
         dataTable.getColumns().addAll(idCol, titleCol, priceCol, sellerCol);
-        dataTable.setItems(mockAds);
+        
+        ApiResponse<List<AdvertisementResponse>> response = adminApi.getPendingAdvertisements();
+
+        if (response.isSuccess()) {
+
+            ObservableList<AdvertisementResponse> ads = FXCollections.observableArrayList(response.getData());
+
+            dataTable.setItems(ads);
+
+        } else {
+
+            showError(response.getMessage());
+
+        }
     }
 
     @SuppressWarnings("unchecked")
@@ -104,47 +112,86 @@ public class AdminPanelController {
 
         dataTable.getColumns().clear();
 
-        TableColumn<User, Integer> idCol = new TableColumn<>("شناسه کاربر");
+        TableColumn<UserResponse, Integer> idCol = new TableColumn<>("شناسه کاربر");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TableColumn<User, String> usernameCol = new TableColumn<>("نام کاربری");
+        TableColumn<UserResponse, String> usernameCol = new TableColumn<>("نام کاربری");
         usernameCol.setCellValueFactory(new PropertyValueFactory<>("username"));
 
-        TableColumn<User, String> roleCol = new TableColumn<>("نقش کاربری");
+        TableColumn<UserResponse, String> roleCol = new TableColumn<>("نقش کاربری");
         roleCol.setCellValueFactory(new PropertyValueFactory<>("role"));
 
-        TableColumn<User, String> statusCol = new TableColumn<>("وضعیت");
+        TableColumn<UserResponse, String> statusCol = new TableColumn<>("وضعیت");
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         dataTable.getColumns().addAll(idCol, usernameCol, roleCol, statusCol);
-        dataTable.setItems(mockUsers);
-    }
+        
+        ApiResponse<List<UserResponse>> response = adminApi.getUsers();
+
+            if (response.isSuccess()) {
+
+                ObservableList<UserResponse> ads = FXCollections.observableArrayList(response.getData());
+
+                dataTable.setItems(ads);
+
+            } else {
+
+                showError(response.getMessage());
+
+            }
+        }
 
     @FXML
     public void handleApprove(ActionEvent event) {
-        Ad selectedAd = (Ad) dataTable.getSelectionModel().getSelectedItem();
+
+        AdvertisementResponse selectedAd =
+                (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
+
         if (selectedAd == null) {
-            showError("لطفاً ابتدا یک آگهی را برای تایید انتخاب کنید.");
+            showError("لطفاً ابتدا یک آگهی را انتخاب کنید.");
             return;
         }
 
-        // در اینجا باید به سرور درخواست تغییر وضعیت ارسال شود
-        System.out.println("درخواست تایید آگهی " + selectedAd.getId() + " به سرور ارسال شد.");
-        showSuccess("آگهی '" + selectedAd.getTitle() + "' با موفقیت تایید شد و به کاربران نمایش داده می‌شود.");
+        ApiResponse<AdvertisementResponse> response = adminApi.approve(selectedAd.getId());
+
+        if (response.isSuccess()) {
+
+            showSuccess(response.getMessage());
+
+            showAdsManager(null);
+
+        } else {
+
+            showError(response.getMessage());
+
+        }
     }
 
     @FXML
     public void handleReject(ActionEvent event) {
-        Ad selectedAd = (Ad) dataTable.getSelectionModel().getSelectedItem();
+
+        AdvertisementResponse selectedAd =
+                (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
+
         if (selectedAd == null) {
-            showError("لطفاً ابتدا یک آگهی را برای رد کردن انتخاب کنید.");
+            showError("لطفاً ابتدا یک آگهی را انتخاب کنید.");
             return;
         }
 
-        // در اینجا باید به سرور درخواست رد ارسال شود و معمولاً آگهی از لیست ادمین هم حذف می‌شود
-        mockAds.remove(selectedAd);
-        System.out.println("درخواست رد آگهی " + selectedAd.getId() + " به سرور ارسال شد.");
-        showSuccess("آگهی '" + selectedAd.getTitle() + "' رد شد و از سیستم حذف گردید.");
+        ApiResponse<AdvertisementResponse> response =
+                adminApi.reject(selectedAd.getId());
+
+        if (response.isSuccess()) {
+
+            showSuccess("آگهی حذف شد.");
+
+            showAdsManager(null);
+
+        } else {
+
+            showError(response.getMessage());
+
+        }
     }
 
     @FXML
@@ -157,11 +204,76 @@ public class AdminPanelController {
         }
 
         if (currentSection.equals("ADS")) {
-            mockAds.remove((Ad) selectedItem);
-            showSuccess("آگهی با موفقیت حذف شد.");
+            
+            ApiResponse<AdvertisementResponse> response = adminApi.deleteAd(((AdvertisementResponse) selectedItem).getId());
+            if (response.isSuccess()) {
+                showSuccess(response.getMessage());
+                showAdsManager(null);
+            }
+            else {
+                showError(response.getMessage());
+            }
         } else if (currentSection.equals("USERS")) {
-            mockUsers.remove((User) selectedItem);
-            showSuccess("کاربر با موفقیت حذف شد.");
+            ApiResponse<String> response = adminApi.deleteUser(((UserResponse) selectedItem).getId());
+            if (response.isSuccess()) {
+                showSuccess(response.getMessage());
+                showUsersManager(null);
+            }
+            else {
+                showError(response.getMessage());
+            }
+        }
+    }
+
+    @FXML
+    public void handleBlock(ActionEvent event) {
+
+        UserResponse user =
+            (UserResponse) dataTable.getSelectionModel().getSelectedItem();
+
+        if (user == null) {
+            showError("یک کاربر انتخاب کنید.");
+            return;
+        }
+
+        ApiResponse<String> response =
+                adminApi.blockUser(user.getId());
+
+        if (response.isSuccess()) {
+
+            showSuccess(response.getMessage());
+            showUsersManager(null);
+
+        } else {
+
+            showError(response.getMessage());
+
+        }
+    }
+
+    @FXML
+    public void handleUnblock(ActionEvent event) {
+
+        UserResponse user =
+            (UserResponse) dataTable.getSelectionModel().getSelectedItem();
+
+        if (user == null) {
+            showError("یک کاربر انتخاب کنید.");
+            return;
+        }
+
+        ApiResponse<String> response =
+                adminApi.unblockUser(user.getId());
+
+        if (response.isSuccess()) {
+
+            showSuccess(response.getMessage());
+            showUsersManager(null);
+
+        } else {
+
+            showError(response.getMessage());
+
         }
     }
 

@@ -50,6 +50,30 @@
                         <Font name="B Yekan" size="16.0" />
                     </font>
                 </Button>
+
+                <Button fx:id="btnBlock"
+                        visible="false"
+                        managed="false"
+                        text="مسدود کردن"
+                        onAction="#handleBlock">
+
+                    <font>
+                        <Font name="B Yekan" size="16.0"/>
+                    </font>
+
+                </Button>
+
+                <Button fx:id="btnUnblock"
+                        visible="false"
+                        managed="false"
+                        text="رفع مسدودی"
+                        onAction="#handleUnblock">
+
+                    <font>
+                        <Font name="B Yekan" size="16.0"/>
+                    </font>
+
+                </Button>
             </children>
         </VBox>
     </left>

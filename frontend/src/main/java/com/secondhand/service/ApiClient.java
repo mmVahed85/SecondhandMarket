@@ -9,6 +9,7 @@ import com.secondhand.util.SessionManager;
 import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.UUID;
 
 public class ApiClient {
 
@@ -69,6 +70,82 @@ public class ApiClient {
 
     }
 
+    // ---------------------- PUT ----------------------
+
+    public <T> ApiResponse<T> put(
+            String endpoint,
+            Object body,
+            TypeReference<ApiResponse<T>> typeReference) {
+
+        try {
+
+            HttpURLConnection connection =
+                    createConnection(endpoint, "PUT");
+
+            connection.setDoOutput(true);
+
+            String json = objectMapper.writeValueAsString(body);
+
+            try (OutputStream os = connection.getOutputStream()) {
+
+                os.write(json.getBytes("UTF-8"));
+                os.flush();
+
+            }
+
+            String response = readResponse(connection);
+
+            return objectMapper.readValue(response, typeReference);
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+
+        }
+    }
+
+    // ---------------------- PUT ----------------------
+
+    public <T> ApiResponse<T> put(
+            String endpoint,
+            TypeReference<ApiResponse<T>> typeReference) {
+
+        try {
+
+            HttpURLConnection connection =
+                    createConnection(endpoint, "PUT");
+
+            String response = readResponse(connection);
+
+            return objectMapper.readValue(response, typeReference);
+
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+
+    // ---------------------- DELETE ----------------------
+
+    public <T> ApiResponse<T> delete(
+            String endpoint,
+            TypeReference<ApiResponse<T>> typeReference) {
+
+        try {
+
+            HttpURLConnection connection = createConnection(endpoint, "DELETE");
+
+            String response = readResponse(connection);
+
+            return objectMapper.readValue(response, typeReference);
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+
+        }
+
+    }
+
     // ---------------------- PRIVATE ----------------------
 
     private HttpURLConnection createConnection(
@@ -108,13 +185,16 @@ public class ApiClient {
         InputStream is;
 
         if (connection.getResponseCode() >= 400) {
-
             is = connection.getErrorStream();
-
         } else {
-
             is = connection.getInputStream();
+        }
 
+        if (is == null) {
+            throw new RuntimeException(
+                "HTTP " + connection.getResponseCode() +
+                " received but response stream is null."
+            );
         }
 
         BufferedReader reader =
@@ -135,6 +215,91 @@ public class ApiClient {
         reader.close();
 
         return builder.toString();
+
+    }
+
+    public <T> ApiResponse<T> multipart(
+            String endpoint,
+            String fieldName,
+            File file,
+            TypeReference<ApiResponse<T>> typeReference) {
+
+        try {
+
+            String boundary = "----Boundary" + UUID.randomUUID();
+
+            URL url = new URL(ApiConfig.BASE_URL + endpoint);
+
+            HttpURLConnection connection =
+                    (HttpURLConnection) url.openConnection();
+
+            connection.setRequestMethod("POST");
+
+            connection.setDoOutput(true);
+
+            connection.setRequestProperty(
+                    "Content-Type",
+                    "multipart/form-data; boundary=" + boundary);
+
+            connection.setRequestProperty(
+                    "Accept",
+                    "application/json");
+
+            if (SessionManager.isLoggedIn()) {
+
+                connection.setRequestProperty(
+                        "Authorization",
+                        "Bearer " + SessionManager.getToken());
+
+            }
+
+            try (DataOutputStream out =
+                        new DataOutputStream(connection.getOutputStream())) {
+
+                out.writeBytes("--" + boundary + "\r\n");
+
+                out.writeBytes(
+                        "Content-Disposition: form-data; name=\"" +
+                                fieldName +
+                                "\"; filename=\"" +
+                                file.getName() +
+                                "\"\r\n");
+
+                out.writeBytes(
+                        "Content-Type: application/octet-stream\r\n\r\n");
+
+                try (FileInputStream fis =
+                            new FileInputStream(file)) {
+
+                    byte[] buffer = new byte[4096];
+
+                    int bytesRead;
+
+                    while ((bytesRead = fis.read(buffer)) != -1) {
+
+                        out.write(buffer, 0, bytesRead);
+
+                    }
+
+                }
+
+                out.writeBytes("\r\n");
+
+                out.writeBytes("--" + boundary + "--\r\n");
+
+            }
+
+            String response = readResponse(connection);
+
+            return objectMapper.readValue(response, typeReference);
+
+        }
+
+        catch (Exception e) {
+
+            throw new RuntimeException(e);
+
+        }
 
     }
 

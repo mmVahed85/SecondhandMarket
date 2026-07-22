@@ -33,6 +33,13 @@ public class AdminUserController {
         return userService.unblockUser(userId);
     }
 
+    @DeleteMapping("/{userId}")
+    public ApiResponse<String> deleteUser(
+            @PathVariable Long userId) {
+
+        return userService.unblockUser(userId);
+    }
+
     @GetMapping
     public ApiResponse<List<UserResponse>> getAllUsers() {
 

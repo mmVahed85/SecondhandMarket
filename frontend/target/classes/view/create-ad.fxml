@@ -7,6 +7,7 @@
 <?import javafx.scene.image.ImageView?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ComboBox?>
 
 <AnchorPane prefHeight="792.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.CreateAdController">
    <children>
@@ -26,7 +27,7 @@
       <TextField fx:id="titleField" alignment="CENTER_RIGHT" layoutX="600.0" layoutY="140.0" prefHeight="40.0" prefWidth="300.0" promptText="عنوان آگهی" />
       <TextField fx:id="priceField" alignment="CENTER_RIGHT" layoutX="600.0" layoutY="200.0" prefHeight="40.0" prefWidth="300.0" promptText="قیمت (تومان)" />
       <TextField fx:id="cityField" alignment="CENTER_RIGHT" layoutX="600.0" layoutY="260.0" prefHeight="40.0" prefWidth="300.0" promptText="شهر" />
-      <TextField fx:id="categoryField" alignment="CENTER_RIGHT" layoutX="600.0" layoutY="320.0" prefHeight="40.0" prefWidth="300.0" promptText="دسته‌بندی (مثلاً: الکترونیک، مبلمان)" />
+      <ComboBox fx:id="categoryComboBox" nodeOrientation="RIGHT_TO_LEFT" layoutX="600.0" layoutY="320.0" prefHeight="40.0" prefWidth="300.0" promptText="دسته‌بندی" />
       <TextArea fx:id="descriptionField" nodeOrientation="RIGHT_TO_LEFT" layoutX="600.0" layoutY="380.0" prefHeight="120.0" prefWidth="300.0" promptText="توضیحات آگهی..." />
 
       <!-- بخش آپلود عکس (سمت چپ) -->

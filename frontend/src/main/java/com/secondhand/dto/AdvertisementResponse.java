@@ -17,7 +17,7 @@ public class AdvertisementResponse {
     private String ownerUsername;
     private AdvertisementStatus status;
     private Long viewCount;
-    private LocalDateTime createdAt;
+    private String createdAt;
     private Category category;
     private List<ImageResponse> images = new ArrayList<>();
     private Double averageRating;
@@ -26,7 +26,7 @@ public class AdvertisementResponse {
     public AdvertisementResponse() {
     }
 
-    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, AdvertisementStatus status, Long viewCount, LocalDateTime createdAt, Category category) {
+    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, AdvertisementStatus status, Long viewCount, String createdAt, Category category) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -103,11 +103,11 @@ public class AdvertisementResponse {
         this.viewCount = viewCount;
     }
 
-    public LocalDateTime getCreatedAt() {
+    public String getCreatedAt() {
         return createdAt;
     }
 
-    public void setCreatedAt(LocalDateTime createdAt) {
+    public void setCreatedAt(String createdAt) {
         this.createdAt = createdAt;
     }
 
