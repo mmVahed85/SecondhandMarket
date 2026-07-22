@@ -1,6 +1,6 @@
 package com.secondhand.dto;
 
-import com.secondhand.entity.Role;
+import com.secondhand.model.Role;
 
 public class UserResponse {
 

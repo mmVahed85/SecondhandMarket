@@ -1,7 +1,11 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.CreateAdRequest;
+import com.secondhand.dto.*;
+import com.secondhand.model.*;
 import com.secondhand.service.AdApi;
+import com.secondhand.util.ApiConfig;
+import com.secondhand.util.ApiResponse;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -71,10 +75,10 @@ public class CreateAdController {
         String title = titleField.getText();
         String priceStr = priceField.getText();
         String city = cityField.getText();
-        String category = categoryField.getText();
+        Category category = Category.BOOK;
         String description = descriptionField.getText();
 
-        if (title.isEmpty() || priceStr.isEmpty() || city.isEmpty() || category.isEmpty() || description.isEmpty()) {
+        if (title.isEmpty() || priceStr.isEmpty() || city.isEmpty() || description.isEmpty()) {
             messageLabel.setStyle("-fx-text-fill: red;");
             messageLabel.setText("لطفاً تمامی فیلدها را پر کنید.");
             return;
@@ -90,10 +94,10 @@ public class CreateAdController {
         }
 
         // ارسال selectedImageBase64 به همراه سایر اطلاعات
-        CreateAdRequest request = new CreateAdRequest(title, description, price, city, category, selectedImageBase64);
+        CreateAdvertisementRequest request = new CreateAdvertisementRequest(title, description, price, city, category);
 
         try {
-            String response = adApi.createAd(request);
+            ApiResponse<AdvertisementResponse> response = adApi.createAd(request);
             messageLabel.setStyle("-fx-text-fill: green;");
             messageLabel.setText("آگهی شما با موفقیت ثبت شد و در انتظار تایید مدیر است.");
 

@@ -1,16 +1,15 @@
-package com.secondhand.entity;
+package com.secondhand.model;
 
 import java.time.LocalDateTime;
 
-public class Message {
+public class Comment {
     
     public Long id;
-    public String sender,text;
+    public String author,text;
     public LocalDateTime createdAt;
-    public boolean seen;
 
-    public Message() {
-
+    public Comment() {
+        
     }
 
     public Long getId() {
@@ -21,12 +20,12 @@ public class Message {
         this.id = id;
     }
 
-    public String getSender() {
-        return sender;
+    public String getAuthor() {
+        return author;
     }
 
-    public void setSender(String sender) {
-        this.sender = sender;
+    public void setAuthor(String author) {
+        this.author = author;
     }
 
     public String getText() {
@@ -43,13 +42,5 @@ public class Message {
 
     public void setCreatedAt(LocalDateTime createdAt) {
         this.createdAt = createdAt;
-    }
-
-    public boolean isSeen() {
-        return seen;
-    }
-
-    public void setSeen(boolean seen) {
-        this.seen = seen;
     }
 }

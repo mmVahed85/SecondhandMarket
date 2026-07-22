@@ -1,7 +1,7 @@
 package com.secondhand.dto;
 
-import com.secondhand.entity.SortType;
-import com.secondhand.entity.Category;
+import com.secondhand.model.Category;
+import com.secondhand.model.SortType;
 
 public class AdvertisementFilterRequest {
 

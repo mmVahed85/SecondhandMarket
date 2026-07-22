@@ -1,6 +1,8 @@
 package com.secondhand.controller;
 
+import com.secondhand.dto.AdvertisementResponse;
 import com.secondhand.model.Ad;
+import com.secondhand.model.Advertisement;
 import com.secondhand.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -19,6 +21,7 @@ import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 
 import java.io.ByteArrayInputStream;
+import java.util.ArrayList;
 import java.util.Base64;
 import java.util.List;
 
@@ -36,7 +39,7 @@ public class FavoritesController {
         favoritesContainer.getChildren().clear();
 
         // دریافت لیست از حافظه برنامه
-        List<Ad> favoriteAds = SessionManager.getFavoriteAds();
+        List<AdvertisementResponse> favoriteAds = new ArrayList<>();
 
         // اگر لیست خالی بود، یک پیام مناسب نمایش بده
         if (favoriteAds == null || favoriteAds.isEmpty()) {
@@ -47,13 +50,13 @@ public class FavoritesController {
         }
 
         // ساخت کارت برای هر آگهی
-        for (Ad ad : favoriteAds) {
+        for (AdvertisementResponse ad : favoriteAds) {
             VBox adCard = createAdCard(ad);
             favoritesContainer.getChildren().add(adCard);
         }
     }
 
-    private VBox createAdCard(Ad ad) {
+    private VBox createAdCard(AdvertisementResponse ad) {
         VBox card = new VBox();
         card.setSpacing(10);
         card.setAlignment(Pos.CENTER);
@@ -66,11 +69,17 @@ public class FavoritesController {
         imageView.setFitHeight(150);
         imageView.setPreserveRatio(true);
 
-        if (ad.getImageBase64() != null && !ad.getImageBase64().isEmpty()) {
+        if (ad.getImages() != null && !ad.getImages().isEmpty()) {
+
             try {
-                byte[] imageBytes = Base64.getDecoder().decode(ad.getImageBase64());
-                imageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-            } catch (Exception e) {}
+
+                String imageUrl = ad.getImages().get(0).getUrl();
+
+                imageView.setImage(new Image(imageUrl, true));
+
+            } catch (Exception ignored) {
+            }
+
         }
 
         Label titleLabel = new Label(ad.getTitle());

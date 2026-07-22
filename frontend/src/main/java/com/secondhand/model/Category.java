@@ -1,4 +1,4 @@
-package com.secondhand.entity;
+package com.secondhand.model;
 
 public enum Category {
 

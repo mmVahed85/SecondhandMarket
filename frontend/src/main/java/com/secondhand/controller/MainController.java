@@ -1,10 +1,10 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.LoginRequest;
-import com.secondhand.model.LoginResponse;
+import com.secondhand.dto.*;
 import com.secondhand.model.User;
 import com.secondhand.service.AuthApi;
 import com.secondhand.service.UserApi;
+import com.secondhand.util.ApiResponse;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -29,15 +29,15 @@ public class MainController {
         LoginRequest request = new LoginRequest("admin", "123456"); // مطمئن شوید این کاربر در دیتابیس هم‌گروهی شما وجود دارد
 
         try {
-            LoginResponse response = authApi.login(request);
+            ApiResponse<LoginResponse> response = authApi.login(request);
 
             // اگر لاگین موفق بود، توکن را ذخیره کن
-            if (response.isSuccess() && response.getToken() != null) {
-                com.secondhand.util.SessionManager.setToken(response.getToken());
+            if (response.isSuccess() && response.getData().getToken() != null) {
+                com.secondhand.util.SessionManager.setToken(response.getData().getToken());
 
                 // حالا که توکن ذخیره شده، درخواست بعدی (GET) با موفقیت انجام می‌شود
-                User user = userApi.getTestUser();
-                resultLabel.setText("اتصال موفق!\nID : " + user.getId() + "\nUsername : " + user.getUsername());
+                ApiResponse<User> user = userApi.getTestUser();
+                resultLabel.setText("اتصال موفق!\nID : " + user.getData().getId() + "\nUsername : " + user.getData().getUsername());
             } else {
                 resultLabel.setText("لاگین ناموفق: " + response.getMessage());
             }

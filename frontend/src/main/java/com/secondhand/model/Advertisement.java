@@ -1,6 +1,8 @@
-package com.secondhand.entity;
+package com.secondhand.model;
 
 import java.util.List;
+
+import com.secondhand.dto.ImageResponse;
 
 public class Advertisement{
 
@@ -10,7 +12,7 @@ public class Advertisement{
  public Category category;
  public AdvertisementStatus status;
  public Double averageRating;
- public List<String> images;
+ public List<ImageResponse> images;
 
 public Advertisement() {
    
@@ -88,11 +90,11 @@ public Advertisement() {
     this.averageRating = averageRating;
  }
 
- public List<String> getImages() {
+ public List<ImageResponse> getImages() {
     return images;
  }
 
- public void setImages(List<String> images) {
+ public void setImages(List<ImageResponse> images) {
     this.images = images;
  }
 }

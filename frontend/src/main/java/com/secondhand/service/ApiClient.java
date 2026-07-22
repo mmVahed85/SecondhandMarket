@@ -1,11 +1,12 @@
 package com.secondhand.service;
 
-import com.secondhand.util.ApiConfig;
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.io.BufferedReader;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.OutputStream;
+import com.secondhand.util.ApiConfig;
+import com.secondhand.util.ApiResponse;
+import com.secondhand.util.SessionManager;
+
+import java.io.*;
 import java.net.HttpURLConnection;
 import java.net.URL;
 
@@ -13,103 +14,128 @@ public class ApiClient {
 
     private final ObjectMapper objectMapper = new ObjectMapper();
 
-    public <T> T get(String endpoint, Class<T> responseType) {
+    // ---------------------- GET ----------------------
+
+    public <T> ApiResponse<T> get(
+            String endpoint,
+            TypeReference<ApiResponse<T>> typeReference) {
+
         try {
-            URL url = new URL(ApiConfig.BASE_URL + endpoint);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("GET");
-            connection.setRequestProperty("Accept", "application/json");
-            // افزودن توکن به هدر درخواست در صورت وجود
-            if (com.secondhand.util.SessionManager.isLoggedIn()) {
-                connection.setRequestProperty("Authorization", "Bearer " + com.secondhand.util.SessionManager.getToken());
-            }
 
-            int status = connection.getResponseCode();
+            HttpURLConnection connection = createConnection(endpoint, "GET");
 
-            InputStream is = (status >= 200 && status < 300) ? connection.getInputStream() : connection.getErrorStream();
-            StringBuilder response = new StringBuilder();
+            String response = readResponse(connection);
 
-            // بررسی null نبودن استریم قبل از خواندن
-            if (is != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-                reader.close();
-            } else {
-                response.append("بدون پاسخ (No Body)");
-            }
-
-            if (status >= 400) {
-                System.err.println("خطای سرور در متد GET (کد " + status + "): " + response.toString());
-                throw new RuntimeException("Server Error: " + status);
-            }
-
-            if (responseType == String.class) {
-                return (T) response.toString();
-            }
-
-            return objectMapper.readValue(response.toString(), responseType);
+            return objectMapper.readValue(response, typeReference);
 
         } catch (Exception e) {
-            System.err.println("شکست در ارسال درخواست GET به: " + endpoint);
-            e.printStackTrace();
+
             throw new RuntimeException(e);
+
         }
+
     }
 
-    public <T> T post(String endpoint, Object body, Class<T> responseType) {
+    // ---------------------- POST ----------------------
+
+    public <T> ApiResponse<T> post(
+            String endpoint,
+            Object body,
+            TypeReference<ApiResponse<T>> typeReference) {
+
         try {
-            URL url = new URL(ApiConfig.BASE_URL + endpoint);
-            HttpURLConnection connection = (HttpURLConnection) url.openConnection();
-            connection.setRequestMethod("POST");
-            connection.setRequestProperty("Content-Type", "application/json; charset=UTF-8");
-            connection.setRequestProperty("Accept", "application/json");
-            // افزودن توکن به هدر درخواست در صورت وجود
-            if (com.secondhand.util.SessionManager.isLoggedIn()) {
-                connection.setRequestProperty("Authorization", "Bearer " + com.secondhand.util.SessionManager.getToken());
-            }
+
+            HttpURLConnection connection = createConnection(endpoint, "POST");
+
             connection.setDoOutput(true);
 
             String json = objectMapper.writeValueAsString(body);
+
             try (OutputStream os = connection.getOutputStream()) {
+
                 os.write(json.getBytes("UTF-8"));
-                os.flush();
+
             }
 
-            int status = connection.getResponseCode();
+            String response = readResponse(connection);
 
-            InputStream is = (status >= 200 && status < 300) ? connection.getInputStream() : connection.getErrorStream();
-            StringBuilder response = new StringBuilder();
-
-            // بررسی null نبودن استریم قبل از خواندن
-            if (is != null) {
-                BufferedReader reader = new BufferedReader(new InputStreamReader(is, "UTF-8"));
-                String line;
-                while ((line = reader.readLine()) != null) {
-                    response.append(line);
-                }
-                reader.close();
-            } else {
-                response.append("بدون پاسخ (No Body)");
-            }
-
-            if (status >= 400) {
-                System.err.println("خطای سرور در متد POST (کد " + status + "): " + response.toString());
-                throw new RuntimeException("Server Error: " + status);
-            }
-
-            if (responseType == String.class) {
-                return (T) response.toString();
-            }
-
-            return objectMapper.readValue(response.toString(), responseType);
+            return objectMapper.readValue(response, typeReference);
 
         } catch (Exception e) {
-            System.err.println("شکست در ارسال درخواست POST به: " + endpoint);
-            e.printStackTrace();
-            throw new RuntimeException("API Error: " + e.getMessage(), e);
+
+            throw new RuntimeException(e);
+
         }
+
     }
+
+    // ---------------------- PRIVATE ----------------------
+
+    private HttpURLConnection createConnection(
+            String endpoint,
+            String method) throws Exception {
+
+        URL url = new URL(ApiConfig.BASE_URL + endpoint);
+
+        HttpURLConnection connection =
+                (HttpURLConnection) url.openConnection();
+
+        connection.setRequestMethod(method);
+
+        connection.setRequestProperty(
+                "Content-Type",
+                "application/json; charset=UTF-8");
+
+        connection.setRequestProperty(
+                "Accept",
+                "application/json");
+
+        if (SessionManager.isLoggedIn()) {
+
+            connection.setRequestProperty(
+                    "Authorization",
+                    "Bearer " + SessionManager.getToken());
+
+        }
+
+        return connection;
+
+    }
+
+    private String readResponse(
+            HttpURLConnection connection) throws Exception {
+
+        InputStream is;
+
+        if (connection.getResponseCode() >= 400) {
+
+            is = connection.getErrorStream();
+
+        } else {
+
+            is = connection.getInputStream();
+
+        }
+
+        BufferedReader reader =
+                new BufferedReader(
+                        new InputStreamReader(is));
+
+        StringBuilder builder =
+                new StringBuilder();
+
+        String line;
+
+        while ((line = reader.readLine()) != null) {
+
+            builder.append(line);
+
+        }
+
+        reader.close();
+
+        return builder.toString();
+
+    }
+
 }

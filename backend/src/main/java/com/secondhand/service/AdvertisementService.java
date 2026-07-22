@@ -40,7 +40,7 @@ public class AdvertisementService {
 
     private AdvertisementResponse toResponse(Advertisement ad) {
 
-        AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), ad.getOwner().getUsername(), ad.getStatus().name(), ad.getViewCount(), ad.getCreatedAt(), ad.getCategory());
+        AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), ad.getOwner().getUsername(), ad.getStatus(), ad.getViewCount(), ad.getCreatedAt(), ad.getCategory());
         List<ImageResponse> images = new ArrayList<>();
         for (AdvertisementImage image : ad.getImages()) {
             images.add(new ImageResponse(image.getId(), appProperties.getBaseUrl() + "/uploads/" + image.getImageUrl()));
@@ -82,7 +82,7 @@ public class AdvertisementService {
 
         ad = advertisementRepository.save(ad);
 
-        AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), owner.getUsername(), ad.getStatus().name(), ad.getViewCount(), ad.getCreatedAt(), ad.getCategory());
+        AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), owner.getUsername(), ad.getStatus(), ad.getViewCount(), ad.getCreatedAt(), ad.getCategory());
         
         return new ApiResponse<>(true, "Ad successfully made", response);
     }

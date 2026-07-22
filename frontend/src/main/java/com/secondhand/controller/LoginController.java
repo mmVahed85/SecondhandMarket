@@ -1,8 +1,10 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.LoginRequest;
-import com.secondhand.model.LoginResponse;
+import com.secondhand.dto.LoginRequest;
+import com.secondhand.dto.LoginResponse;
 import com.secondhand.service.AuthApi;
+import com.secondhand.util.ApiResponse;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -50,26 +52,37 @@ public class LoginController {
         LoginRequest request = new LoginRequest(username, password);
 
         try {
-            LoginResponse response = authApi.login(request);
+            ApiResponse<LoginResponse> response = authApi.login(request);
 
-            if (response.isSuccess() && response.getToken() != null) {
+            if (response.isSuccess() && response.getData().getToken() != null) {
                 // ۱. ذخیره توکن در نشست (Session)
-                com.secondhand.util.SessionManager.setToken(response.getToken());
+                com.secondhand.util.SessionManager.setToken(response.getData().getToken());
                 com.secondhand.util.SessionManager.login(username); // ذخیره نام کاربری
 
                 errorLabel.setStyle("-fx-text-fill: green;");
                 errorLabel.setText("ورود موفق! در حال انتقال...");
 
-                // ۲. انتقال به صفحه اصلی برنامه (داشبورد)
-                try {
-                    javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/dashboard.fxml"));
-                    javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
-                    currentScene.setRoot(root);
-                } catch (Exception ex) {
-                    System.err.println("خطا در بارگذاری صفحه اصلی:");
-                    ex.printStackTrace();
+                if(response.getData().getRole().equals("ADMIN")) {
+                    try {
+                        javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/admin-panel.fxml"));
+                        javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
+                        currentScene.setRoot(root);
+                    } catch (Exception ex) {
+                        System.err.println("خطا در بارگذاری پنل مدیریت:");
+                        ex.printStackTrace();
+                    }
                 }
-
+                else {
+                    // ۲. انتقال به صفحه اصلی برنامه (داشبورد)
+                    try {
+                        javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/dashboard.fxml"));
+                        javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
+                        currentScene.setRoot(root);
+                    } catch (Exception ex) {
+                        System.err.println("خطا در بارگذاری صفحه اصلی:");
+                        ex.printStackTrace();
+                    }
+                }
             } else {
                 errorLabel.setStyle("-fx-text-fill: red;");
                 errorLabel.setText(response.getMessage() != null ? response.getMessage() : "اطلاعات ورود اشتباه است.");

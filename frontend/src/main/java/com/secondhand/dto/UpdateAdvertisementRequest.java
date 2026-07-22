@@ -1,7 +1,7 @@
 package com.secondhand.dto;
 
-import com.secondhand.entity.AdvertisementStatus;
-import com.secondhand.entity.Category;
+import com.secondhand.model.AdvertisementStatus;
+import com.secondhand.model.Category;
 
 public class UpdateAdvertisementRequest {
 

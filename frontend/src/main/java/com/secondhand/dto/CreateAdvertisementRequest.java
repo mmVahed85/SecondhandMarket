@@ -1,6 +1,6 @@
 package com.secondhand.dto;
 
-import com.secondhand.entity.Category;
+import com.secondhand.model.Category;
 
 public class CreateAdvertisementRequest {
 
@@ -11,6 +11,14 @@ public class CreateAdvertisementRequest {
     private Category category;
 
     public CreateAdvertisementRequest() {
+    }
+
+    public CreateAdvertisementRequest(String title, String description, Long price, String city, Category category) {
+        this.title = title;
+        this.description = description;
+        this.price = price;
+        this.city = city;
+        this.category = category;
     }
 
     public String getTitle() {

@@ -1,7 +1,10 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.RegisterRequest;
+import com.secondhand.dto.RegisterRequest;
+import com.secondhand.dto.RegisterResponse;
 import com.secondhand.service.AuthApi;
+import com.secondhand.util.ApiResponse;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
@@ -51,17 +54,24 @@ public class RegisterController {
         request.setPhone(phone);
         request.setPassword(password);
 
+        ApiResponse<RegisterResponse> response = authApi.register(request);
         try {
             // ارسال درخواست به بک‌اند
-            String response = authApi.register(request);
+            
 
-            errorLabel.setStyle("-fx-text-fill: green;");
-            errorLabel.setText("ثبت‌نام با موفقیت انجام شد.");
-            System.out.println("Server Response: " + response);
+            if(response.isSuccess()) {
+                errorLabel.setStyle("-fx-text-fill: green;");
+                errorLabel.setText(response.getMessage());
+                System.out.println("Server Response: " + response);
+            }
+            else {
+                errorLabel.setStyle("-fx-text-fill: red;");
+                errorLabel.setText(response.getMessage() != null ? response.getMessage() : "اطلاعات ورود اشتباه است.");
+            }
 
         } catch (Exception e) {
             errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setText("خطا در ارتباط با سرور!");
+            errorLabel.setText(response.getMessage());
             e.printStackTrace();
         }
     }

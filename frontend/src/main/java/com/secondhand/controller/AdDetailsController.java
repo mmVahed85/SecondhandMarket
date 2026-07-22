@@ -1,6 +1,7 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.Ad;
+import com.secondhand.dto.AdvertisementResponse;
+import com.secondhand.model.Advertisement;
 import com.secondhand.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -34,7 +35,7 @@ public class AdDetailsController {
     @FXML private ComboBox<Integer> ratingComboBox;
     @FXML private TextField reviewCommentField;
 
-    private Ad currentAd;
+    private AdvertisementResponse currentAd;
 
     @FXML
     public void initialize() {
@@ -42,7 +43,7 @@ public class AdDetailsController {
         ratingComboBox.getItems().addAll(1, 2, 3, 4, 5);
     }
 
-    public void setAd(Ad ad) {
+    public void setAd(AdvertisementResponse ad) {
         this.currentAd = ad;
 
         titleLabel.setText(ad.getTitle());
@@ -50,16 +51,26 @@ public class AdDetailsController {
         cityLabel.setText("شهر: " + ad.getCity());
         categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory() : "نامشخص"));
         descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
-        sellerNameLabel.setText("فروشنده: " + (ad.getSellerName() != null ? ad.getSellerName() : "کاربر سامانه"));
+        sellerNameLabel.setText("فروشنده: " + (ad.getOwnerUsername() != null ? ad.getOwnerUsername() : "کاربر سامانه"));
         sellerRatingLabel.setText("میانگین امتیاز: ۴.۵ از ۵");
 
-        if (ad.getImageBase64() != null && !ad.getImageBase64().isEmpty()) {
+        if (ad.getImages() != null && !ad.getImages().isEmpty()) {
+
             try {
-                byte[] imageBytes = Base64.getDecoder().decode(ad.getImageBase64());
-                adImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
+
+                adImageView.setImage(
+                        new Image(
+                                ad.getImages().get(0).getUrl(),
+                                true
+                        )
+                );
+
             } catch (Exception e) {
+
                 System.err.println("خطا در بارگذاری عکس آگهی");
+
             }
+
         }
     }
 
@@ -77,7 +88,6 @@ public class AdDetailsController {
     @FXML
     public void addToFavorites(ActionEvent event) {
         if (currentAd != null) {
-            SessionManager.addToFavorites(currentAd);
             messageLabel.setStyle("-fx-text-fill: green;");
             messageLabel.setText("این آگهی با موفقیت به لیست علاقه‌مندی‌های شما اضافه شد!");
         }
@@ -95,7 +105,7 @@ public class AdDetailsController {
         }
 
         // چاپ در ترمینال برای تست
-        System.out.println("امتیاز " + selectedRating + " برای فروشنده '" + currentAd.getSellerName() + "' ثبت شد.");
+        System.out.println("امتیاز " + selectedRating + " برای فروشنده '" + currentAd.getOwnerUsername() + "' ثبت شد.");
         if (comment != null && !comment.trim().isEmpty()) {
             System.out.println("نظر ثبت شده کاربر: " + comment);
         }
@@ -117,7 +127,7 @@ public class AdDetailsController {
 
             // گرفتن کنترلر چت و پاس دادن اسم فروشنده و عنوان آگهی به آن
             ChatController chatController = loader.getController();
-            String seller = currentAd.getSellerName() != null ? currentAd.getSellerName() : "فروشنده";
+            String seller = currentAd.getOwnerUsername() != null ? currentAd.getOwnerUsername() : "فروشنده";
             chatController.initData(seller, currentAd.getTitle());
 
             Scene currentScene = ((Node) event.getSource()).getScene();

@@ -11,6 +11,7 @@
 <?import javafx.scene.layout.TilePane?>
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
+<?import javafx.scene.control.ComboBox?>
 
 <AnchorPane prefHeight="792.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.DashboardController">
    <children>
@@ -50,9 +51,12 @@
             <!-- نوار جدید جستجو و فیلتر -->
             <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="15.0" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8;">
                <children>
-                  <TextField fx:id="searchField" prefHeight="40.0" prefWidth="250.0" promptText="جستجو در عنوان آگهی..." />
+                  <TextField fx:id="searchField" prefHeight="40.0" prefWidth="250.0" promptText="جستجو در اطلاعات آگهی..." />
                   <TextField fx:id="cityFilterField" prefHeight="40.0" prefWidth="150.0" promptText="شهر (مثلا تهران)" />
-                  <TextField fx:id="categoryFilterField" prefHeight="40.0" prefWidth="150.0" promptText="دسته‌بندی" />
+                  <ComboBox fx:id="categoryComboBox" prefHeight="40.0" prefWidth="150.0" promptText="دسته‌بندی" />
+                  <ComboBox fx:id="sortTypeComboBox" prefHeight="40.0" prefWidth="150.0" promptText="ترتیب" />
+                  <TextField fx:id="minPriceField" prefHeight="40.0" prefWidth="250.0" promptText= "حداقل قیمت" />
+                  <TextField fx:id="maxPriceField" prefHeight="40.0" prefWidth="250.0" promptText= "حداکثر قیمت" />
 
                   <Region HBox.hgrow="ALWAYS" />
 

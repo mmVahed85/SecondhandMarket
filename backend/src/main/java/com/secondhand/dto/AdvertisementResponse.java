@@ -3,6 +3,8 @@ package com.secondhand.dto;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
+
+import com.secondhand.entity.AdvertisementStatus;
 import com.secondhand.entity.Category;
 
 public class AdvertisementResponse {
@@ -13,7 +15,7 @@ public class AdvertisementResponse {
     private Long price;
     private String city;
     private String ownerUsername;
-    private String status;
+    private AdvertisementStatus status;
     private Long viewCount;
     private LocalDateTime createdAt;
     private Category category;
@@ -24,7 +26,7 @@ public class AdvertisementResponse {
     public AdvertisementResponse() {
     }
 
-    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, String status, Long viewCount, LocalDateTime createdAt, Category category) {
+    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, AdvertisementStatus status, Long viewCount, LocalDateTime createdAt, Category category) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -85,11 +87,11 @@ public class AdvertisementResponse {
         this.ownerUsername = ownerUsername;
     }
 
-    public String getStatus() {
+    public AdvertisementStatus getStatus() {
         return status;
     }
 
-    public void setStatus(String status) {
+    public void setStatus(AdvertisementStatus status) {
         this.status = status;
     }
 
