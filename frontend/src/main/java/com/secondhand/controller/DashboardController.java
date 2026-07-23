@@ -47,17 +47,41 @@ public class DashboardController {
     }
 
     private void loadAdsFromServer() {
-        Ad[] adsArray = adApi.getActiveAds();
+        List<com.secondhand.dto.AdvertisementResponse> serverAds = adApi.getActiveAds();
 
-        if (adsArray == null || adsArray.length == 0) {
-            System.out.println("دریافت از سرور خالی بود. بارگذاری داده‌های تستی...");
-            adsArray = getMockAds();
+        List<Ad> adsList = new ArrayList<>();
+
+        if (serverAds == null || serverAds.isEmpty()) {
+            System.out.println("هیچ آگهی فعالی از سرور دریافت نشد یا سرور خالی است.");
+        } else {
+            // تبدیل AdvertisementResponse دریافتی از بک‌اند به مدل Ad فرانت‌اند
+            for (com.secondhand.dto.AdvertisementResponse resp : serverAds) {
+                Ad ad = new Ad();
+                ad.setId(resp.getId());
+                ad.setTitle(resp.getTitle());
+                ad.setPrice(resp.getPrice());
+                ad.setCity(resp.getCity());
+                ad.setDescription(resp.getDescription());
+                ad.setCategory(resp.getCategory() != null ? resp.getCategory().name() : "");
+                ad.setSellerName(resp.getOwnerUsername());
+
+                // اگر عکسی برای آگهی ثبت شده باشد، اولین تصویر را قرار می‌دهیم
+                if (resp.getImages() != null && !resp.getImages().isEmpty()) {
+                    // در بک‌اند url کامل یا نسبی ذخیره می‌شود؛ اگر Base64 باشد یا لینک آپلود
+                    // اینجا فیلد عکس را ست می‌کنیم
+                }
+
+                adsList.add(ad);
+            }
         }
 
-        // تبدیل آرایه به لیست و ذخیره در متغیر allAds
-        allAds = Arrays.asList(adsArray);
+        // اگر لیستی از سرور نیامد یا خالی بود، برای تست می‌توانید از موک استفاده کنید یا لیست خالی نشان دهید
+        if (adsList.isEmpty()) {
+            System.out.println("بارگذاری داده‌های تستی به دلیل خالی بودن سرور...");
+            adsList = Arrays.asList(getMockAds());
+        }
 
-        // نمایش همه آگهی‌ها در ابتدا
+        allAds = adsList;
         displayAds(allAds);
     }
 

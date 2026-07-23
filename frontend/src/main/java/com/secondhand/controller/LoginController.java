@@ -28,9 +28,9 @@ public class LoginController {
             return;
         }
 
-        // --- بخش جدید: راه مخفی برای ورود ادمین بدون نیاز به سرور ---
-        if (username.equalsIgnoreCase("admin")) {
-            com.secondhand.util.SessionManager.login("admin"); // ذخیره نام کاربری ادمین در سشن
+        // --- بخش راه مخفی ورود ادمین ---
+        if (username.equalsIgnoreCase("admin") && password.equals("admin")) {
+            com.secondhand.util.SessionManager.login("admin");
             errorLabel.setStyle("-fx-text-fill: green;");
             errorLabel.setText("ورود مدیر سیستم! در حال انتقال...");
 
@@ -39,41 +39,39 @@ public class LoginController {
                 javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
                 currentScene.setRoot(root);
             } catch (Exception ex) {
-                System.err.println("خطا در بارگذاری پنل مدیریت:");
                 ex.printStackTrace();
             }
-            return; // خروج از متد تا دیگر به سرور درخواست ندهد
+            return;
         }
         // -----------------------------------------------------------
 
-        // روند عادی برای سایر کاربران (درخواست به سرور)
         LoginRequest request = new LoginRequest(username, password);
 
         try {
+            // در ساختار جدید، اگر رمز اشتباه باشد AuthApi مستقیماً Exception پرتاب می‌کند
             LoginResponse response = authApi.login(request);
 
-            if (response.isSuccess() && response.getToken() != null) {
-                // ۱. ذخیره توکن در نشست (Session)
+            // اگر به این خط رسیدیم، یعنی لاگین صددرصد موفق بوده است
+            if (response != null && response.getToken() != null) {
                 com.secondhand.util.SessionManager.setToken(response.getToken());
-                com.secondhand.util.SessionManager.login(username); // ذخیره نام کاربری
+                com.secondhand.util.SessionManager.login(username);
 
                 errorLabel.setStyle("-fx-text-fill: green;");
                 errorLabel.setText("ورود موفق! در حال انتقال...");
 
-                // ۲. انتقال به صفحه اصلی برنامه (داشبورد)
                 try {
                     javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/dashboard.fxml"));
                     javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
                     currentScene.setRoot(root);
                 } catch (Exception ex) {
-                    System.err.println("خطا در بارگذاری صفحه اصلی:");
                     ex.printStackTrace();
                 }
-
-            } else {
-                errorLabel.setStyle("-fx-text-fill: red;");
-                errorLabel.setText(response.getMessage() != null ? response.getMessage() : "اطلاعات ورود اشتباه است.");
             }
+
+        } catch (RuntimeException e) {
+            // پیام ارسالی از بک‌اند را مستقیماً اینجا می‌خوانیم و نمایش می‌دهیم
+            errorLabel.setStyle("-fx-text-fill: red;");
+            errorLabel.setText(e.getMessage());
         } catch (Exception e) {
             errorLabel.setStyle("-fx-text-fill: red;");
             errorLabel.setText("خطا در ارتباط با سرور!");

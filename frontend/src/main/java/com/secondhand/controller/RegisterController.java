@@ -16,7 +16,7 @@ public class RegisterController {
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
     @FXML private PasswordField passwordField;
-    @FXML private Label errorLabel;
+    @FXML private Label messageLabel;
 
     private final AuthApi authApi = new AuthApi();
 
@@ -37,8 +37,8 @@ public class RegisterController {
                 phone == null || phone.trim().isEmpty() ||
                 password == null || password.trim().isEmpty()) {
 
-            errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setText("لطفاً تمامی فیلدها را پر کنید.");
+            messageLabel.setStyle("-fx-text-fill: red;");
+            messageLabel.setText("لطفاً تمامی فیلدها را پر کنید.");
             return;
         }
 
@@ -55,13 +55,13 @@ public class RegisterController {
             // ارسال درخواست به بک‌اند
             String response = authApi.register(request);
 
-            errorLabel.setStyle("-fx-text-fill: green;");
-            errorLabel.setText("ثبت‌نام با موفقیت انجام شد.");
+            messageLabel.setStyle("-fx-text-fill: green;");
+            messageLabel.setText("ثبت‌نام با موفقیت انجام شد.");
             System.out.println("Server Response: " + response);
 
         } catch (Exception e) {
-            errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setText("خطا در ارتباط با سرور!");
+            messageLabel.setStyle("-fx-text-fill: red;");
+            messageLabel.setText("خطا در ارتباط با سرور!");
             e.printStackTrace();
         }
     }

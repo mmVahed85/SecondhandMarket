@@ -28,7 +28,13 @@
             </Label>
 
             <!-- فیلدهای ورودی -->
-            <TextField fx:id="nameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="نام و نام خانوادگی">
+            <TextField fx:id="firstNameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="نام">
+               <font>
+                  <Font size="14.0" />
+               </font>
+            </TextField>
+
+            <TextField fx:id="lastNameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="نام خانوادگی">
                <font>
                   <Font size="14.0" />
                </font>

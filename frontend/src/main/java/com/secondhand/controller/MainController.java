@@ -26,7 +26,7 @@ public class MainController {
     public void testBackend(){
         AuthApi authApi = new AuthApi();
 
-        LoginRequest request = new LoginRequest("admin", "123456"); // مطمئن شوید این کاربر در دیتابیس هم‌گروهی شما وجود دارد
+        LoginRequest request = new LoginRequest("boss", "123456"); // مطمئن شوید این کاربر در دیتابیس هم‌گروهی شما وجود دارد
 
         try {
             LoginResponse response = authApi.login(request);
