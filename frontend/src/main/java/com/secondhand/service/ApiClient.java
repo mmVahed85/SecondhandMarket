@@ -243,6 +243,9 @@ public class ApiClient {
 
         reader.close();
 
+        System.out.println("HTTP CODE = " + connection.getResponseCode());
+System.out.println("BODY = " + builder.toString());
+
         return builder.toString();
 
     }

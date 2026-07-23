@@ -30,24 +30,7 @@ public class LoginController {
             return;
         }
 
-        // --- Admin backdoor logic ---
-        if (username.equalsIgnoreCase("admin")) {
-            com.secondhand.util.SessionManager.login("admin");
-            errorLabel.setStyle("-fx-text-fill: green;");
-            errorLabel.setText("Admin login successful! Redirecting...");
-
-            try {
-                javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/admin-panel.fxml"));
-                javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
-                currentScene.setRoot(root);
-            } catch (Exception ex) {
-                System.err.println("Error loading admin panel:");
-                ex.printStackTrace();
-            }
-            return;
-        }
-        // -----------------------------------------------------------
-
+        // روند عادی برای سایر کاربران (درخواست به سرور)
         LoginRequest request = new LoginRequest(username, password);
 
         try {
