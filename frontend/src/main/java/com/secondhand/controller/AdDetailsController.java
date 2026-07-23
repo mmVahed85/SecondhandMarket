@@ -1,7 +1,10 @@
 package com.secondhand.controller;
 
+import java.util.List;
+
 import com.secondhand.dto.AdvertisementResponse;
 import com.secondhand.dto.ChatRoomResponse;
+import com.secondhand.dto.CommentResponse;
 import com.secondhand.dto.CreateCommentRequest;
 import com.secondhand.dto.RatingRequest;
 import com.secondhand.dto.RatingResponse;
@@ -23,6 +26,7 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.VBox;
 
 public class AdDetailsController {
 
@@ -35,6 +39,7 @@ public class AdDetailsController {
     @FXML private Label sellerNameLabel;
     @FXML private Label sellerRatingLabel;
     @FXML private Label messageLabel;
+    @FXML private VBox commentsBox;
 
     // المان‌های جدید امتیاز و نظر
     @FXML private ComboBox<Integer> ratingComboBox;
@@ -81,6 +86,8 @@ public class AdDetailsController {
             }
 
         }
+
+        loadComments();
     }
 
     @FXML
@@ -115,49 +122,106 @@ public class AdDetailsController {
 
         Integer selectedRating = ratingComboBox.getValue();
 
-        if (selectedRating == null) {
-
-            messageLabel.setStyle("-fx-text-fill:red;");
-            messageLabel.setText("لطفا امتیاز انتخاب کنید.");
+        if(selectedRating == null){
+            messageLabel.setText("لطفا امتیاز انتخاب کنید");
             return;
-
         }
 
-        RatingRequest ratingRequest = new RatingRequest();
-        ratingRequest.setScore(selectedRating);
+
+        RatingRequest request = new RatingRequest();
+        request.setScore(selectedRating);
+
 
         ApiResponse<RatingResponse> response =
-                ratingApi.submitRating(currentAd.getId(), ratingRequest);
+                ratingApi.submitRating(
+                        currentAd.getId(),
+                        request
+                );
 
-        if (!response.isSuccess()) {
 
-            messageLabel.setStyle("-fx-text-fill:red;");
+        if(response.isSuccess()){
+            messageLabel.setStyle("-fx-text-fill:green");
             messageLabel.setText(response.getMessage());
+            sellerRatingLabel.setText("میانگین امتیازدهی: " + response.getData().getAverageScore());
+        }
+        else{
+            messageLabel.setStyle("-fx-text-fill:red");
+            messageLabel.setText(response.getMessage());
+        }
+
+    }
+
+    @FXML
+    public void submitComment(ActionEvent event){
+
+        String text = reviewCommentField.getText().trim();
+
+
+        if(text.isEmpty()){
+            messageLabel.setText("متن نظر خالی است");
             return;
+        }
+
+
+        CreateCommentRequest request =
+                new CreateCommentRequest();
+
+        request.setText(text);
+
+
+
+        ApiResponse<CommentResponse> response =
+                commentApi.createComment(
+                        currentAd.getId(),
+                        request
+                );
+
+
+        if(response.isSuccess()){
+
+            messageLabel.setStyle("-fx-text-fill:green");
+            messageLabel.setText(response.getMessage());
+
+            reviewCommentField.clear();
+
+            loadComments();
+
+        }
+        else{
+
+            messageLabel.setStyle("-fx-text-fill:red");
+            messageLabel.setText(response.getMessage());
 
         }
 
-        String comment = reviewCommentField.getText().trim();
+    }
 
-        if (!comment.isEmpty()) {
+    private void loadComments(){
 
-            CreateCommentRequest commentRequest =
-                    new CreateCommentRequest();
+        commentsBox.getChildren().clear();
 
-            commentRequest.setText(comment);
+        ApiResponse<List<CommentResponse>> response = commentApi.getComments(currentAd.getId());
 
-            commentApi.createComment(
-                    currentAd.getId(),
-                    commentRequest
-            );
+        if(response.isSuccess()){
+
+            for(CommentResponse c : response.getData()){
+
+                Label label =
+                        new Label(
+                            c.getAuthor()
+                            +" : "
+                            +c.getText()
+                        );
+
+
+                label.setWrapText(true);
+
+                commentsBox.getChildren().add(label);
+
+            }
+
         }
 
-        messageLabel.setStyle("-fx-text-fill:green;");
-        messageLabel.setText("امتیاز و نظر ثبت شد.");
-
-        ratingComboBox.setDisable(true);
-        reviewCommentField.setDisable(true);
-        ((Button) event.getSource()).setDisable(true);
     }
 
     @FXML
