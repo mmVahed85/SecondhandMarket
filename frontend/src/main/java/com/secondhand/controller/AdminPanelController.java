@@ -307,4 +307,15 @@ public class AdminPanelController {
             e.printStackTrace();
         }
     }
+
+    @FXML
+    public void goBack(ActionEvent event) {
+        try {
+            Parent root = FXMLLoader.load(getClass().getResource("/view/dashboard.fxml"));
+            Scene currentScene = ((Node) event.getSource()).getScene();
+            currentScene.setRoot(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+    }
 }

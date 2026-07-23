@@ -1,16 +1,9 @@
 package com.secondhand.util;
 
-import com.secondhand.dto.AdvertisementResponse;
-import com.secondhand.model.*;
-import java.util.ArrayList;
-import java.util.List;
-
 public class SessionManager {
     private static String loggedInUsername = null;
     private static String token = null; // نگهداری توکن کاربر
-
-    // لیستی برای نگهداری موقت آگهی‌های مورد علاقه
-    private static final List<AdvertisementResponse> favoriteAds = new ArrayList<>();
+    private static String role = null;
 
     // --- متدهای مربوط به ورود و توکن ---
     public static void login(String username) {
@@ -32,23 +25,17 @@ public class SessionManager {
     public static void logout() {
         loggedInUsername = null;
         token = null;
-        favoriteAds.clear(); // هنگام خروج، لیست علاقه‌مندی‌ها هم پاک می‌شود
     }
 
     public static String getLoggedInUsername() {
         return loggedInUsername;
     }
 
-    // --- متدهای مربوط به علاقه‌مندی‌ها ---
-    public static void addToFavorites(AdvertisementResponse ad) {
-        // چک می‌کنیم که آگهی تکراری اضافه نشود
-        boolean exists = favoriteAds.stream().anyMatch(a -> a.getId().equals(ad.getId()));
-        if (!exists) {
-            favoriteAds.add(ad);
-        }
+    public static void setRole(String newrole) {
+        role = newrole;
     }
 
-    public static List<AdvertisementResponse> getFavoriteAds() {
-        return favoriteAds;
+    public static String getRole() {
+        return role;
     }
 }

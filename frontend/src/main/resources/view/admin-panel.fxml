@@ -45,6 +45,10 @@
 
                 <VBox VBox.vgrow="ALWAYS" />
 
+                <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#goBack" prefHeight="45.0" style="-fx-background-color: #bde8f8ff; -fx-text-fill: white;" text="بازگشت">
+                    <font><Font name="B Yekan" size="16.0" /></font>
+                </Button>
+
                 <Button maxWidth="Infinity" mnemonicParsing="false" onAction="#handleLogout" prefHeight="45.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="خروج از سیستم">
                     <font>
                         <Font name="B Yekan" size="16.0" />
