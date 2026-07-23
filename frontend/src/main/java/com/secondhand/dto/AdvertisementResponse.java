@@ -15,6 +15,10 @@ public class AdvertisementResponse {
     private Long price;
     private String city;
     private String ownerUsername;
+    private String ownerFirstname;
+    private String ownerLastname;
+    private String ownerEmail;
+    private String ownerPhone;
     private AdvertisementStatus status;
     private Long viewCount;
     private String createdAt;
@@ -23,22 +27,20 @@ public class AdvertisementResponse {
     private Double averageRating;
     private Integer ratingCount;
 
-    // --- فیلدهای اضافه شده برای اطلاعات کامل فروشنده ---
-    private String ownerFullName;
-    private String ownerEmail;
-    private String ownerPhoneNumber;
-    // --------------------------------------------------
-
     public AdvertisementResponse() {
     }
 
-    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, AdvertisementStatus status, Long viewCount, String createdAt, Category category) {
+    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, String ownerFirstname, String ownerLastname, String ownerEmail, String ownerPhone, AdvertisementStatus status, Long viewCount, String createdAt, Category category) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.price = price;
         this.city = city;
         this.ownerUsername = ownerUsername;
+        this.ownerFirstname = ownerFirstname;
+        this.ownerLastname = ownerLastname;
+        this.ownerEmail = ownerEmail;
+        this.ownerPhone = ownerEmail;
         this.status = status;
         this.viewCount = viewCount;
         this.createdAt = createdAt;
@@ -149,13 +151,20 @@ public class AdvertisementResponse {
         this.ratingCount = ratingCount;
     }
 
-    // --- Getter ها و Setter های مربوط به اطلاعات کامل فروشنده ---
-    public String getOwnerFullName() {
-        return ownerFullName;
+    public String getOwnerFirstname() {
+        return ownerFirstname;
     }
 
-    public void setOwnerFullName(String ownerFullName) {
-        this.ownerFullName = ownerFullName;
+    public void setOwnerFirstname(String ownerFirstname) {
+        this.ownerFirstname = ownerFirstname;
+    }
+
+    public String getOwnerLastname() {
+        return ownerLastname;
+    }
+
+    public void setOwnerLastname(String ownerLastname) {
+        this.ownerLastname = ownerLastname;
     }
 
     public String getOwnerEmail() {
@@ -166,11 +175,11 @@ public class AdvertisementResponse {
         this.ownerEmail = ownerEmail;
     }
 
-    public String getOwnerPhoneNumber() {
-        return ownerPhoneNumber;
+    public String getOwnerPhone() {
+        return ownerPhone;
     }
 
-    public void setOwnerPhoneNumber(String ownerPhoneNumber) {
-        this.ownerPhoneNumber = ownerPhoneNumber;
+    public void setOwnerPhone(String ownerPhone) {
+        this.ownerPhone = ownerPhone;
     }
 }

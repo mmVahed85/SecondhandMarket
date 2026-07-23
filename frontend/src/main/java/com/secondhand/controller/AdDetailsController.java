@@ -95,8 +95,8 @@ public class AdDetailsController {
         descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
 
         // مقداردهی اطلاعات کامل فروشنده
-        sellerFullNameLabel.setText("فروشنده: " + (ad.getOwnerFullName() != null ? ad.getOwnerFullName() : "نامشخص"));
-        sellerPhoneLabel.setText("شماره تماس: " + (ad.getOwnerPhoneNumber() != null ? ad.getOwnerPhoneNumber() : "نامشخص"));
+        sellerFullNameLabel.setText("فروشنده: " + ((ad.getOwnerFirstname() + " " + ad.getOwnerLastname()) != null ? (ad.getOwnerFirstname() + " " + ad.getOwnerLastname()) : "نامشخص"));
+        sellerPhoneLabel.setText("شماره تماس: " + (ad.getOwnerPhone() != null ? ad.getOwnerPhone() : "نامشخص"));
         sellerEmailLabel.setText("ایمیل: " + (ad.getOwnerEmail() != null ? ad.getOwnerEmail() : "نامشخص"));
 
         sellerRatingLabel.setText("میانگین امتیازدهی: " + ad.getAverageRating());
