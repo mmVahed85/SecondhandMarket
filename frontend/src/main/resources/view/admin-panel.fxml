@@ -50,30 +50,6 @@
                         <Font name="B Yekan" size="16.0" />
                     </font>
                 </Button>
-
-                <Button fx:id="btnBlock"
-                        visible="false"
-                        managed="false"
-                        text="مسدود کردن"
-                        onAction="#handleBlock">
-
-                    <font>
-                        <Font name="B Yekan" size="16.0"/>
-                    </font>
-
-                </Button>
-
-                <Button fx:id="btnUnblock"
-                        visible="false"
-                        managed="false"
-                        text="رفع مسدودی"
-                        onAction="#handleUnblock">
-
-                    <font>
-                        <Font name="B Yekan" size="16.0"/>
-                    </font>
-
-                </Button>
             </children>
         </VBox>
     </left>
@@ -120,6 +96,22 @@
 
                         <Button fx:id="btnReject" mnemonicParsing="false" onAction="#handleReject" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #f39c12; -fx-text-fill: white;" text="✖ رد آگهی">
                             <font><Font name="B Yekan" size="14.0" /></font>
+                        </Button>
+
+                        <Button fx:id="btnUnblock" text="رفع مسدودی" onAction="#handleUnblock" mnemonicParsing="false" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #27ae60; -fx-text-fill: white;">
+
+                            <font>
+                                <Font name="B Yekan" size="14.0"/>
+                            </font>
+
+                        </Button>
+
+                        <Button fx:id="btnBlock" mnemonicParsing="false" text="مسدود کردن" onAction="#handleBlock" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #f39c12; -fx-text-fill: white;">
+
+                            <font>
+                                <Font name="B Yekan" size="14.0"/>
+                            </font>
+
                         </Button>
 
                         <Button fx:id="btnDelete" mnemonicParsing="false" onAction="#handleDelete" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #e74c3c; -fx-text-fill: white;" text="🗑 حذف">

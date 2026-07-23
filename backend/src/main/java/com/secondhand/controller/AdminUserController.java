@@ -37,7 +37,7 @@ public class AdminUserController {
     public ApiResponse<String> deleteUser(
             @PathVariable Long userId) {
 
-        return userService.unblockUser(userId);
+        return userService.deleteUser(userId);
     }
 
     @GetMapping

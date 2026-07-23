@@ -3,6 +3,7 @@ package com.secondhand.controller;
 import com.secondhand.dto.*;
 import com.secondhand.model.*;
 import com.secondhand.service.AdApi;
+import com.secondhand.util.ApiConfig;
 import com.secondhand.util.ApiResponse;
 import com.secondhand.util.SessionManager;
 import javafx.event.ActionEvent;
@@ -157,6 +158,10 @@ public class DashboardController {
             try {
 
                 String imageUrl = ad.getImages().get(0).getUrl();
+
+                if (!imageUrl.startsWith("http")) {
+                    imageUrl = ApiConfig.BASE_URL + imageUrl;
+                }
 
                 imageView.setImage(new Image(imageUrl, true));
 

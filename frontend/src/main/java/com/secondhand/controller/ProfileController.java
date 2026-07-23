@@ -152,6 +152,7 @@ public class ProfileController {
                 if(response.isSuccess()) {
                     statusLabel.setStyle("-fx-text-fill: #7f8c8d;"); // رنگ خاکستری
                     ((Button) e.getSource()).setDisable(true);
+                    loadMyAds();
                 }
                 else {
                     System.err.println(response.getMessage());

@@ -63,6 +63,10 @@ public class AdminPanelController {
         btnApprove.setManaged(true);
         btnReject.setVisible(true);
         btnReject.setManaged(true);
+        btnBlock.setVisible(false);
+        btnBlock.setManaged(false);
+        btnUnblock.setVisible(false);
+        btnUnblock.setManaged(false);
         btnDelete.setText("🗑 حذف آگهی");
 
         dataTable.getColumns().clear();
@@ -77,7 +81,7 @@ public class AdminPanelController {
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
         TableColumn<AdvertisementResponse, String> sellerCol = new TableColumn<>("فروشنده");
-        sellerCol.setCellValueFactory(new PropertyValueFactory<>("sellerName"));
+        sellerCol.setCellValueFactory(new PropertyValueFactory<>("ownerUsername"));
 
         dataTable.getColumns().addAll(idCol, titleCol, priceCol, sellerCol);
         
@@ -108,6 +112,10 @@ public class AdminPanelController {
         btnApprove.setManaged(false);
         btnReject.setVisible(false);
         btnReject.setManaged(false);
+        btnBlock.setVisible(true);
+        btnBlock.setManaged(true);
+        btnUnblock.setVisible(true);
+        btnUnblock.setManaged(true);
         btnDelete.setText("🗑 حذف کاربر");
 
         dataTable.getColumns().clear();
@@ -122,7 +130,7 @@ public class AdminPanelController {
         roleCol.setCellValueFactory(new PropertyValueFactory<>("role"));
 
         TableColumn<UserResponse, String> statusCol = new TableColumn<>("وضعیت");
-        statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+        statusCol.setCellValueFactory(new PropertyValueFactory<>("enabled"));
 
         dataTable.getColumns().addAll(idCol, usernameCol, roleCol, statusCol);
         
@@ -196,6 +204,7 @@ public class AdminPanelController {
 
     @FXML
     public void handleDelete(ActionEvent event) {
+
         Object selectedItem = dataTable.getSelectionModel().getSelectedItem();
 
         if (selectedItem == null) {
