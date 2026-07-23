@@ -16,6 +16,20 @@ import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
+import javafx.scene.layout.FlowPane;
+import java.io.File;
+import java.util.List;
+
+import javafx.geometry.Pos;
+import javafx.scene.control.Button;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
+import javafx.scene.layout.StackPane;
+import javafx.stage.FileChooser;
+import javafx.stage.Stage;
+
+import com.secondhand.dto.ImageResponse;
+
 
 public class EditAdController {
 
@@ -27,6 +41,8 @@ public class EditAdController {
     @FXML private ComboBox<Category> categoryComboBox;
     @FXML private TextArea descriptionArea;
     @FXML private Label messageLabel;
+    @FXML
+    private FlowPane imagesPane;
 
     private UpdateAdvertisementRequest request = new UpdateAdvertisementRequest();
     private AdvertisementResponse currentAd;
@@ -45,6 +61,120 @@ public class EditAdController {
         cityField.setText(ad.getCity() != null ? ad.getCity() : "");
         categoryComboBox.setValue(ad.getCategory());
         descriptionArea.setText(ad.getDescription() != null ? ad.getDescription() : "");
+        loadImages();
+    }
+
+    private void loadImages() {
+
+        imagesPane.getChildren().clear();
+
+        if (currentAd.getImages() != null) {
+
+            for (ImageResponse image : currentAd.getImages()) {
+
+                ImageView preview = new ImageView();
+
+                preview.setImage(new Image(image.getUrl(), true));
+                preview.setFitWidth(120);
+                preview.setFitHeight(120);
+                preview.setPreserveRatio(true);
+
+                Button deleteButton = new Button("✕");
+
+                deleteButton.setStyle(
+                        "-fx-background-color:#e53935;" +
+                        "-fx-text-fill:white;" +
+                        "-fx-background-radius:50%;"
+                );
+
+                deleteButton.setOnAction(e -> deleteImage(image));
+
+                StackPane stack = new StackPane(preview, deleteButton);
+
+                StackPane.setAlignment(deleteButton, Pos.TOP_RIGHT);
+
+                imagesPane.getChildren().add(stack);
+            }
+        }
+
+        Button addButton = new Button("+");
+
+        addButton.setPrefSize(120,120);
+
+        addButton.setStyle(
+                "-fx-font-size:30;" +
+                "-fx-background-color:#2196F3;" +
+                "-fx-text-fill:white;"
+        );
+
+        addButton.setOnAction(this::chooseImages);
+
+        imagesPane.getChildren().add(addButton);
+    }
+
+    private void deleteImage(ImageResponse image){
+
+        ApiResponse<String> response =
+                adApi.deleteImage(image.getId());
+
+        if(response.isSuccess()){
+
+            currentAd.getImages().remove(image);
+
+            loadImages();
+
+        }else{
+
+            messageLabel.setText(response.getMessage());
+
+        }
+    }
+
+    @FXML
+    private void chooseImages(ActionEvent event) {
+
+        FileChooser chooser = new FileChooser();
+
+        chooser.setTitle("انتخاب تصویر");
+
+        chooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(
+                        "Images",
+                        "*.png",
+                        "*.jpg",
+                        "*.jpeg"
+                )
+        );
+
+        Stage stage =
+                (Stage)((Node)event.getSource())
+                        .getScene()
+                        .getWindow();
+
+        List<File> files =
+                chooser.showOpenMultipleDialog(stage);
+
+        if(files == null || files.isEmpty())
+            return;
+
+        for(File file : files){
+
+            ApiResponse<ImageResponse> response =
+                    adApi.uploadImage(currentAd.getId(), file);
+
+            if(!response.isSuccess()){
+
+                messageLabel.setText(response.getMessage());
+
+            }
+        }
+
+        AdvertisementResponse updated =
+                adApi.getAdvertisement(currentAd.getId()).getData();
+
+        currentAd = updated;
+
+        loadImages();
     }
 
     @FXML

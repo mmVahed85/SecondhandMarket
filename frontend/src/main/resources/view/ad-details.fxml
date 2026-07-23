@@ -243,6 +243,15 @@
 
                                     </Label>
 
+                                    <Label fx:id="ratingCount"
+                                           text="0">
+
+                                        <font>
+                                            <Font name="B Yekan" size="17"/>
+                                        </font>
+
+                                    </Label>
+
 
 
                                 </children>

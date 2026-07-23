@@ -9,6 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 <?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.layout.FlowPane?>
 
 <AnchorPane prefHeight="792.0" prefWidth="1328.0" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: #f5f6fa;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.EditAdController">
     <children>
@@ -40,6 +41,37 @@
                 <TextArea fx:id="descriptionArea" prefHeight="120.0" promptText="توضیحات آگهی..." wrapText="true">
                     <font><Font name="B Yekan" size="14.0" /></font>
                 </TextArea>
+
+                <Label text="تصاویر آگهی">
+                    <font>
+                        <Font name="B Yekan" size="16"/>
+                    </font>
+                </Label>
+
+                <FlowPane fx:id="imagesPane"
+                        prefWidth="500"
+                        prefHeight="170"
+                        hgap="10"
+                        vgap="10"
+                        prefWrapLength="500"
+                        style="
+                                -fx-background-color:#fafafa;
+                                -fx-border-color:#dcdcdc;
+                                -fx-border-radius:8;
+                                -fx-background-radius:8;
+                                -fx-padding:10;"/>
+
+                <Button text="افزودن عکس"
+                        onAction="#chooseImages"
+                        prefWidth="160"
+                        prefHeight="40"
+                        style="
+                            -fx-background-color:#2196F3;
+                            -fx-text-fill:white;">
+                    <font>
+                        <Font name="B Yekan" size="14"/>
+                    </font>
+                </Button>
 
                 <Label fx:id="messageLabel" textFill="#27ae60">
                     <font><Font name="B Yekan" size="14.0" /></font>
