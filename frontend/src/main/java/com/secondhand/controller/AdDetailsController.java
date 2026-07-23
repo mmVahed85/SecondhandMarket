@@ -60,6 +60,11 @@ public class AdDetailsController {
     private final AdApi adApi = new AdApi();
     private final RatingApi ratingApi = new RatingApi();
     private final CommentApi commentApi = new CommentApi();
+    // این متغیر را در کنار سایر متغیرهای بالای کلاس (مثل currentAd) اضافه کنید
+    private String previousPage = "/view/dashboard.fxml"; // مسیر پیش‌فرض
+
+    // این متد را اضافه کنید تا صفحات دیگر بتوانند مسیر بازگشت را تغییر دهند
+
 
     @FXML
     public void initialize() {
@@ -153,7 +158,8 @@ public class AdDetailsController {
     @FXML
     public void goBack(ActionEvent event) {
         try {
-            Parent root = FXMLLoader.load(getClass().getResource("/view/dashboard.fxml"));
+            // به جای مسیر ثابت، از متغیر previousPage استفاده می‌کنیم
+            Parent root = FXMLLoader.load(getClass().getResource(previousPage));
             Scene currentScene = ((Node) event.getSource()).getScene();
             currentScene.setRoot(root);
         } catch (Exception e) {
@@ -323,5 +329,8 @@ public class AdDetailsController {
 
         }
 
+    }
+    public void setPreviousPage(String previousPage) {
+        this.previousPage = previousPage;
     }
 }
