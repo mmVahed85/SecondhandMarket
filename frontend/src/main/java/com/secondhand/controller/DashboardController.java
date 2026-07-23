@@ -149,8 +149,8 @@ public class DashboardController {
         card.setPrefSize(250, 300);
 
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
+        imageView.setFitWidth(180);
+        imageView.setFitHeight(130);
         imageView.setPreserveRatio(true);
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
@@ -159,13 +159,13 @@ public class DashboardController {
 
                 String imageUrl = ad.getImages().get(0).getUrl();
 
-                if (!imageUrl.startsWith("http")) {
-                    imageUrl = ApiConfig.BASE_URL + imageUrl;
-                }
-
                 imageView.setImage(new Image(imageUrl, true));
 
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+
+                System.err.println("خطا در بارگذاری تصویر");
+                e.printStackTrace();
+
             }
 
         }

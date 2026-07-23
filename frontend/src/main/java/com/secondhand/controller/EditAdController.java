@@ -28,11 +28,12 @@ public class EditAdController {
     @FXML private TextArea descriptionArea;
     @FXML private Label messageLabel;
 
-    private UpdateAdvertisementRequest request;
+    private UpdateAdvertisementRequest request = new UpdateAdvertisementRequest();
     private AdvertisementResponse currentAd;
 
     @FXML
     public void initialize() {
+        
         categoryComboBox.getItems().setAll(Category.values());
         categoryComboBox.getSelectionModel().clearSelection();
     }

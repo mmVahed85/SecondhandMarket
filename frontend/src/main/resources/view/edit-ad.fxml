@@ -32,21 +32,10 @@
                 </TextField>
 
                 <!-- فیلد متنی آزاد برای دسته‌بندی -->
-                <ComboBox fx:id="categoryComboBox"
-                        prefHeight="40.0"
-                        promptText="دسته‌بندی">
-                    <font>
-                        <Font name="B Yekan" size="14.0"/>
-                    </font>
-                </ComboBox>
-
-                <ComboBox fx:id="statusComboBox"
-                        prefHeight="40.0"
-                        promptText="وضعیت">
-                    <font>
-                        <Font name="B Yekan" size="14.0"/>
-                    </font>
-                </ComboBox>
+                <ComboBox
+                    fx:id="categoryComboBox"
+                    prefWidth="250"
+                    prefHeight="40"/>
 
                 <TextArea fx:id="descriptionArea" prefHeight="120.0" promptText="توضیحات آگهی..." wrapText="true">
                     <font><Font name="B Yekan" size="14.0" /></font>
