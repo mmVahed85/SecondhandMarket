@@ -68,10 +68,6 @@ public class ChatController {
 
             boolean mine =
                     msg.getSender().equals(SessionManager.getLoggedInUsername());
-            
-            System.err.println(mine);
-            System.err.println(msg.getSender());
-            System.err.println(SessionManager.getLoggedInUsername());
 
             addMessageBubble(msg, mine);
         }

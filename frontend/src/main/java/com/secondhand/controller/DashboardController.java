@@ -23,6 +23,9 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
+
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -192,6 +195,32 @@ public class DashboardController {
         cityLabel.setFont(new Font("B Yekan", 12));
         cityLabel.setStyle("-fx-text-fill: #757575;");
 
+        Label dateLabel = new Label();
+
+        if (ad.getCreatedAt() != null && !ad.getCreatedAt().isBlank()) {
+
+            try {
+
+                LocalDateTime dateTime =
+                        LocalDateTime.parse(ad.getCreatedAt());
+
+                DateTimeFormatter formatter =
+                        DateTimeFormatter.ofPattern("yyyy/MM/dd  HH:mm");
+
+                dateLabel.setText("📅 " + dateTime.format(formatter));
+
+            }
+            catch (Exception e){
+
+                dateLabel.setText("📅 " + ad.getCreatedAt());
+
+            }
+
+        }
+
+        dateLabel.setFont(new Font("B Yekan", 12));
+        dateLabel.setStyle("-fx-text-fill:#888888;");
+
         Button detailsButton = new Button("مشاهده جزئیات");
         detailsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
         detailsButton.setOnAction(e -> {
@@ -207,7 +236,14 @@ public class DashboardController {
             }
         });
 
-        card.getChildren().addAll(imageView, titleLabel, priceLabel, cityLabel, detailsButton);
+        card.getChildren().addAll(
+            imageView,
+            titleLabel,
+            priceLabel,
+            cityLabel,
+            dateLabel,
+            detailsButton
+        );
         return card;
     }
 

@@ -70,7 +70,7 @@ public class ChatListController {
         // نمایش نام کاربری به عنوان متن اصلی
         Label nameLabel = new Label(username);
         nameLabel.setFont(new Font("B Yekan", 18));
-        nameLabel.setStyle("-fx-font-weight: bold;");
+        nameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #19171cff;");
 
         // تگ نام کاربری
         Label usernameTag = new Label(username);

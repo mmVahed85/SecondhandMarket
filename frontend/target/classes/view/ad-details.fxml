@@ -126,6 +126,13 @@
 
                                     </Label>
 
+                                    <Label fx:id="createdAtLabel"
+                                            style="-fx-text-fill:#666666;">
+                                        <font>
+                                            <Font name="B Yekan" size="14.0"/>
+                                        </font>
+                                    </Label>
+
 
 
                                     <Separator/>
