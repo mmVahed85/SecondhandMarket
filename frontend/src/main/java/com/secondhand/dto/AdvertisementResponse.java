@@ -23,6 +23,12 @@ public class AdvertisementResponse {
     private Double averageRating;
     private Integer ratingCount;
 
+    // --- فیلدهای اضافه شده برای اطلاعات کامل فروشنده ---
+    private String ownerFullName;
+    private String ownerEmail;
+    private String ownerPhoneNumber;
+    // --------------------------------------------------
+
     public AdvertisementResponse() {
     }
 
@@ -141,5 +147,30 @@ public class AdvertisementResponse {
 
     public void setRatingCount(Integer ratingCount) {
         this.ratingCount = ratingCount;
+    }
+
+    // --- Getter ها و Setter های مربوط به اطلاعات کامل فروشنده ---
+    public String getOwnerFullName() {
+        return ownerFullName;
+    }
+
+    public void setOwnerFullName(String ownerFullName) {
+        this.ownerFullName = ownerFullName;
+    }
+
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
+
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
+    }
+
+    public String getOwnerPhoneNumber() {
+        return ownerPhoneNumber;
+    }
+
+    public void setOwnerPhoneNumber(String ownerPhoneNumber) {
+        this.ownerPhoneNumber = ownerPhoneNumber;
     }
 }

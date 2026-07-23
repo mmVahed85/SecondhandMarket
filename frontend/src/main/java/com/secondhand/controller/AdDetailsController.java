@@ -44,14 +44,18 @@ public class AdDetailsController {
     @FXML private Label categoryLabel;
     @FXML private Label descriptionLabel;
     @FXML private ImageView adImageView;
-    @FXML private Label sellerNameLabel;
+
+    // المان‌های جدید برای اطلاعات کامل فروشنده
+    @FXML private Label sellerFullNameLabel;
+    @FXML private Label sellerPhoneLabel;
+    @FXML private Label sellerEmailLabel;
+
     @FXML private Label sellerRatingLabel;
     @FXML private Label ratingCount;
     @FXML private Label messageLabel;
     @FXML private VBox commentsBox;
     @FXML private Label createdAtLabel;
 
-    // المان‌های جدید امتیاز و نظر
     @FXML private ComboBox<Integer> ratingComboBox;
     @FXML private TextField reviewCommentField;
 
@@ -60,15 +64,11 @@ public class AdDetailsController {
     private final AdApi adApi = new AdApi();
     private final RatingApi ratingApi = new RatingApi();
     private final CommentApi commentApi = new CommentApi();
-    // این متغیر را در کنار سایر متغیرهای بالای کلاس (مثل currentAd) اضافه کنید
-    private String previousPage = "/view/dashboard.fxml"; // مسیر پیش‌فرض
 
-    // این متد را اضافه کنید تا صفحات دیگر بتوانند مسیر بازگشت را تغییر دهند
-
+    private String previousPage = "/view/dashboard.fxml";
 
     @FXML
     public void initialize() {
-        // پر کردن منوی کشویی با اعداد ۱ تا ۵
         ratingComboBox.getItems().addAll(1, 2, 3, 4, 5);
     }
 
@@ -79,66 +79,48 @@ public class AdDetailsController {
         priceLabel.setText("قیمت: " + ad.getPrice() + " تومان");
         cityLabel.setText("شهر: " + ad.getCity());
         categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory().name() : "نامشخص"));
+
         if (ad.getCreatedAt() != null && !ad.getCreatedAt().isBlank()) {
-
             try {
-
-                LocalDateTime dateTime =
-                        LocalDateTime.parse(ad.getCreatedAt());
-
-                DateTimeFormatter formatter =
-                        DateTimeFormatter.ofPattern("yyyy/MM/dd  HH:mm");
-
+                LocalDateTime dateTime = LocalDateTime.parse(ad.getCreatedAt());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd  HH:mm");
                 createdAtLabel.setText("📅 زمان ثبت: " + dateTime.format(formatter));
-
             } catch (Exception e) {
-
                 createdAtLabel.setText("📅 زمان ثبت: " + ad.getCreatedAt());
-
             }
-
         } else {
-
             createdAtLabel.setText("📅 زمان ثبت: نامشخص");
-
         }
+
         descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
-        sellerNameLabel.setText("فروشنده: " + (ad.getOwnerUsername() != null ? ad.getOwnerUsername() : "کاربر سامانه"));
+
+        // مقداردهی اطلاعات کامل فروشنده
+        sellerFullNameLabel.setText("فروشنده: " + (ad.getOwnerFullName() != null ? ad.getOwnerFullName() : "نامشخص"));
+        sellerPhoneLabel.setText("شماره تماس: " + (ad.getOwnerPhoneNumber() != null ? ad.getOwnerPhoneNumber() : "نامشخص"));
+        sellerEmailLabel.setText("ایمیل: " + (ad.getOwnerEmail() != null ? ad.getOwnerEmail() : "نامشخص"));
+
         sellerRatingLabel.setText("میانگین امتیازدهی: " + ad.getAverageRating());
-        ratingCount.setText("تعداد نفرات امتیاز داده:" + ad.getRatingCount());
+        ratingCount.setText("تعداد نفرات امتیاز داده: " + ad.getRatingCount());
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
-
             try {
-
                 String imageUrl = ad.getImages().get(0).getUrl();
-                System.out.println(ad.getImages().size());
-            System.out.println(ad.getImages().get(0).getUrl());
-
                 adImageView.setImage(new Image(imageUrl, true));
-
             } catch (Exception e) {
-
                 System.err.println("خطا در بارگذاری تصویر");
                 e.printStackTrace();
-
             }
-
         }
 
         final int[] currentImage = {0};
 
         if (ad.getImages() != null && ad.getImages().size() > 1) {
-
             Timeline timeline = new Timeline(
                     new KeyFrame(Duration.seconds(3), event -> {
-
                         currentImage[0]++;
-
                         if (currentImage[0] >= ad.getImages().size()) {
                             currentImage[0] = 0;
                         }
-
                         adImageView.setImage(
                                 new Image(
                                         ad.getImages().get(currentImage[0]).getUrl(),
@@ -147,7 +129,6 @@ public class AdDetailsController {
                         );
                     })
             );
-
             timeline.setCycleCount(Animation.INDEFINITE);
             timeline.play();
         }
@@ -158,7 +139,6 @@ public class AdDetailsController {
     @FXML
     public void goBack(ActionEvent event) {
         try {
-            // به جای مسیر ثابت، از متغیر previousPage استفاده می‌کنیم
             Parent root = FXMLLoader.load(getClass().getResource(previousPage));
             Scene currentScene = ((Node) event.getSource()).getScene();
             currentScene.setRoot(root);
@@ -170,7 +150,6 @@ public class AdDetailsController {
     @FXML
     public void addToFavorites(ActionEvent event) {
         ApiResponse<String> response = adApi.addFavorite(currentAd.getId());
-        System.err.println(response.getMessage());
         if (response.isSuccess()) {
             if (currentAd != null) {
                 messageLabel.setStyle("-fx-text-fill: green;");
@@ -185,151 +164,90 @@ public class AdDetailsController {
 
     @FXML
     public void submitRating(ActionEvent event) {
-
         Integer selectedRating = ratingComboBox.getValue();
-
         if(selectedRating == null){
             messageLabel.setText("لطفا امتیاز انتخاب کنید");
             return;
         }
 
-
         RatingRequest request = new RatingRequest();
         request.setScore(selectedRating);
 
-
-        ApiResponse<RatingResponse> response =
-                ratingApi.submitRating(
-                        currentAd.getId(),
-                        request
-                );
-
+        ApiResponse<RatingResponse> response = ratingApi.submitRating(currentAd.getId(), request);
 
         if(response.isSuccess()){
             messageLabel.setStyle("-fx-text-fill:green");
             messageLabel.setText(response.getMessage());
             sellerRatingLabel.setText("میانگین امتیازدهی: " + response.getData().getAverageScore());
-            ratingCount.setText("تعداد نفرات امتیاز داده:" + response.getData().getRatingCount());
+            ratingCount.setText("تعداد نفرات امتیاز داده: " + response.getData().getRatingCount());
         }
         else{
             messageLabel.setStyle("-fx-text-fill:red");
             messageLabel.setText(response.getMessage());
         }
-
     }
 
     @FXML
     public void submitComment(ActionEvent event){
-
         String text = reviewCommentField.getText().trim();
-
-
         if(text.isEmpty()){
             messageLabel.setText("متن نظر خالی است");
             return;
         }
 
-
-        CreateCommentRequest request =
-                new CreateCommentRequest();
-
+        CreateCommentRequest request = new CreateCommentRequest();
         request.setText(text);
 
-
-
-        ApiResponse<CommentResponse> response =
-                commentApi.createComment(
-                        currentAd.getId(),
-                        request
-                );
-
+        ApiResponse<CommentResponse> response = commentApi.createComment(currentAd.getId(), request);
 
         if(response.isSuccess()){
-
             messageLabel.setStyle("-fx-text-fill:green");
             messageLabel.setText(response.getMessage());
-
             reviewCommentField.clear();
-
             loadComments();
-
         }
         else{
-
             messageLabel.setStyle("-fx-text-fill:red");
             messageLabel.setText(response.getMessage());
-
         }
-
     }
 
     private void loadComments(){
-
         commentsBox.getChildren().clear();
-
         ApiResponse<List<CommentResponse>> response = commentApi.getComments(currentAd.getId());
 
         if(response.isSuccess()){
-
             for(CommentResponse c : response.getData()){
-
-                Label label =
-                        new Label(
-                            c.getAuthor()
-                            +" : "
-                            +c.getText()
-                        );
-
-
+                Label label = new Label(c.getAuthor() + " : " + c.getText());
                 label.setWrapText(true);
-
                 commentsBox.getChildren().add(label);
-
             }
-
         }
-
     }
 
     @FXML
     public void startChat(ActionEvent event) {
-
         try {
-
-            ApiResponse<ChatRoomResponse> response =
-                    chatApi.createOrGetRoom(currentAd.getId());
-
+            ApiResponse<ChatRoomResponse> response = chatApi.createOrGetRoom(currentAd.getId());
             if (!response.isSuccess()) {
-
                 messageLabel.setStyle("-fx-text-fill:red;");
                 messageLabel.setText(response.getMessage());
-
                 return;
             }
 
-            FXMLLoader loader =
-                    new FXMLLoader(getClass().getResource("/view/chat.fxml"));
-
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/chat.fxml"));
             Parent root = loader.load();
-
             ChatController controller = loader.getController();
-
             controller.initData(response.getData());
 
-            Scene scene =
-                    ((Node) event.getSource()).getScene();
-
+            Scene scene = ((Node) event.getSource()).getScene();
             scene.setRoot(root);
-
         }
-
         catch (Exception e) {
-
             e.printStackTrace();
-
         }
-
     }
+
     public void setPreviousPage(String previousPage) {
         this.previousPage = previousPage;
     }
