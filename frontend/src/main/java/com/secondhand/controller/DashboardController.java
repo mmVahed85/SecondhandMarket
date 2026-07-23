@@ -3,7 +3,6 @@ package com.secondhand.controller;
 import com.secondhand.dto.*;
 import com.secondhand.model.*;
 import com.secondhand.service.AdApi;
-import com.secondhand.util.ApiConfig;
 import com.secondhand.util.ApiResponse;
 import com.secondhand.util.SessionManager;
 import javafx.event.ActionEvent;
@@ -26,16 +25,12 @@ import javafx.scene.text.Font;
 
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter;
-import java.util.ArrayList;
 import java.util.List;
 
 public class DashboardController {
 
     @FXML private TilePane adsContainer;
-
     @FXML private Button adminBT;
-    
-    // المان‌های فیلتر
     @FXML private TextField searchField;
     @FXML private TextField cityFilterField;
     @FXML private TextField minPriceField;
@@ -44,8 +39,6 @@ public class DashboardController {
     @FXML private ComboBox<SortType> sortTypeComboBox;
 
     private final AdApi adApi = new AdApi();
-
-    // یک لیست برای نگهداری تمام آگهی‌های دریافتی از سرور (برای سرعت در فیلتر کردن)
 
     @FXML
     public void initialize() {
@@ -57,8 +50,7 @@ public class DashboardController {
         if(SessionManager.getRole().equals("ADMIN")) {
             adminBT.setVisible(true);
             adminBT.setManaged(true);
-        }
-        else {
+        } else {
             adminBT.setVisible(false);
             adminBT.setManaged(false);
         }
@@ -66,59 +58,41 @@ public class DashboardController {
 
     private void loadAdsFromServer() {
         ApiResponse<List<AdvertisementResponse>> adResponses = adApi.getActiveAds();
-
         if (adResponses == null || adResponses.getData().size() == 0) {
-            System.out.println("دریافت از سرور خالی بود. بارگذاری داده‌های تستی...");
+            System.out.println("Received empty from server. Loading test data...");
         }
-
-        // نمایش همه آگهی‌ها در ابتدا
         displayAds(adResponses.getData());
     }
 
-    // متد جدید برای نمایش یک لیست مشخص از آگهی‌ها
     private void displayAds(List<AdvertisementResponse> adResponses) {
-
         adsContainer.getChildren().clear();
 
         if (adResponses == null || adResponses.isEmpty()) {
-
-            Label noAdLabel = new Label("هیچ آگهی‌ای یافت نشد.");
-            noAdLabel.setFont(new Font("B Yekan",18));
-
+            Label noAdLabel = new Label("No advertisements found.");
+            noAdLabel.setFont(new Font("Arial", 18));
             adsContainer.getChildren().add(noAdLabel);
-
             return;
         }
 
         for (AdvertisementResponse ad : adResponses) {
-
             adsContainer.getChildren().add(createAdCard(ad));
-
         }
     }
 
-    // متد اعمال فیلترها (هنگام کلیک روی دکمه جستجو)
     @FXML
     public void handleFilter(ActionEvent event) {
-
         AdvertisementFilterRequest request = new AdvertisementFilterRequest();
-
         request.setCity(cityFilterField.getText().trim());
         request.setKeyword(searchField.getText().trim());
         if (categoryComboBox.getValue() != null) {
-
             request.setCategory(categoryComboBox.getValue());
-
         }
         if (sortTypeComboBox.getValue() != null) {
-
             request.setSortType(sortTypeComboBox.getValue());
-
         }
         if (!minPriceField.getText().isBlank()) {
             request.setMinPrice(Long.parseLong(minPriceField.getText()));
         }
-
         if (!maxPriceField.getText().isBlank()) {
             request.setMaxPrice(Long.parseLong(maxPriceField.getText()));
         }
@@ -126,33 +100,25 @@ public class DashboardController {
         ApiResponse<List<AdvertisementResponse>> response = adApi.filterAdvertisements(request);
 
         if (response.isSuccess()) {
-
             displayAds(response.getData());
-
         } else {
-
             Label noAdLabel = new Label(response.getMessage());
-            noAdLabel.setFont(new Font("B Yekan", 18));
+            noAdLabel.setFont(new Font("Arial", 18));
             System.out.println(response.getMessage());
-
         }
     }
 
-    // متد پاک کردن فیلترها
     @FXML
     public void clearFilters(ActionEvent event) {
         searchField.clear();
         cityFilterField.clear();
         minPriceField.clear();
         maxPriceField.clear();
-
         categoryComboBox.getSelectionModel().clearSelection();
         sortTypeComboBox.getSelectionModel().clearSelection();
-
         loadAdsFromServer();
     }
 
-    // متد ساخت ظاهر کارت آگهی (بدون تغییر نسبت به قبل)
     private VBox createAdCard(AdvertisementResponse ad) {
         VBox card = new VBox();
         card.setSpacing(10);
@@ -167,61 +133,41 @@ public class DashboardController {
         imageView.setPreserveRatio(true);
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
-
             try {
-
                 String imageUrl = ad.getImages().get(0).getUrl();
-
                 imageView.setImage(new Image(imageUrl, true));
-
             } catch (Exception e) {
-
-                System.err.println("خطا در بارگذاری تصویر");
+                System.err.println("Error loading image");
                 e.printStackTrace();
-
             }
-
         }
 
         Label titleLabel = new Label(ad.getTitle());
-        titleLabel.setFont(new Font("B Yekan", 16));
+        titleLabel.setFont(new Font("Arial", 16));
         titleLabel.setStyle("-fx-font-weight: bold;");
 
-        Label priceLabel = new Label("قیمت: " + ad.getPrice() + " تومان");
-        priceLabel.setFont(new Font("B Yekan", 14));
+        Label priceLabel = new Label("Price: " + ad.getPrice() + " Tomans");
+        priceLabel.setFont(new Font("Arial", 14));
         priceLabel.setStyle("-fx-text-fill: #4CAF50;");
 
-        Label cityLabel = new Label("شهر: " + ad.getCity());
-        cityLabel.setFont(new Font("B Yekan", 12));
+        Label cityLabel = new Label("City: " + ad.getCity());
+        cityLabel.setFont(new Font("Arial", 12));
         cityLabel.setStyle("-fx-text-fill: #757575;");
 
         Label dateLabel = new Label();
-
         if (ad.getCreatedAt() != null && !ad.getCreatedAt().isBlank()) {
-
             try {
-
-                LocalDateTime dateTime =
-                        LocalDateTime.parse(ad.getCreatedAt());
-
-                DateTimeFormatter formatter =
-                        DateTimeFormatter.ofPattern("yyyy/MM/dd  HH:mm");
-
+                LocalDateTime dateTime = LocalDateTime.parse(ad.getCreatedAt());
+                DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd  HH:mm");
                 dateLabel.setText("📅 " + dateTime.format(formatter));
-
-            }
-            catch (Exception e){
-
+            } catch (Exception e){
                 dateLabel.setText("📅 " + ad.getCreatedAt());
-
             }
-
         }
-
-        dateLabel.setFont(new Font("B Yekan", 12));
+        dateLabel.setFont(new Font("Arial", 12));
         dateLabel.setStyle("-fx-text-fill:#888888;");
 
-        Button detailsButton = new Button("مشاهده جزئیات");
+        Button detailsButton = new Button("View Details");
         detailsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
         detailsButton.setOnAction(e -> {
             try {
@@ -236,18 +182,10 @@ public class DashboardController {
             }
         });
 
-        card.getChildren().addAll(
-            imageView,
-            titleLabel,
-            priceLabel,
-            cityLabel,
-            dateLabel,
-            detailsButton
-        );
+        card.getChildren().addAll(imageView, titleLabel, priceLabel, cityLabel, dateLabel, detailsButton);
         return card;
     }
 
-    // متدهای مسیریابی (بدون تغییر)
     @FXML
     public void goToCreateAd(ActionEvent event) {
         try {
@@ -282,7 +220,7 @@ public class DashboardController {
             javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
             currentScene.setRoot(root);
         } catch (Exception e) {
-            System.err.println("خطا در بارگذاری صفحه پیام‌های من:");
+            System.err.println("Error loading My Messages page:");
             e.printStackTrace();
         }
     }
@@ -294,7 +232,7 @@ public class DashboardController {
             javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
             currentScene.setRoot(root);
         } catch (Exception ex) {
-            System.err.println("خطا در بارگذاری پنل مدیریت:");
+            System.err.println("Error loading Admin Panel:");
             ex.printStackTrace();
         }
     }

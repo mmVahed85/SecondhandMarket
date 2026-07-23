@@ -8,73 +8,68 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="792.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.RegisterController">
+<AnchorPane prefHeight="792.0" prefWidth="1328.0" nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.RegisterController">
    <children>
-      <!-- یک VBox که به چهار طرف صفحه چسبیده است -->
       <VBox alignment="CENTER" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
 
-            <Label text="ثبت‌نام در سامانه">
+            <Label text="Register Account">
                <font>
-                  <Font name="B Yekan" size="32.0" />
+                  <Font name="Arial" size="32.0" />
                </font>
             </Label>
 
-            <!-- لیبل نمایش خطاها یا پیام موفقیت -->
             <Label fx:id="errorLabel" alignment="CENTER" prefWidth="400.0" textFill="RED">
                <font>
-                  <Font name="B Yekan" size="14.0" />
+                  <Font name="Arial" size="14.0" />
                </font>
             </Label>
 
-            <!-- فیلدهای ورودی -->
-            <TextField fx:id="firstNameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="نام">
+            <TextField fx:id="firstNameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="First Name">
                <font>
-                  <Font size="14.0" />
+                  <Font name="Arial" size="14.0" />
                </font>
             </TextField>
 
-            <TextField fx:id="lastNameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="نام خانوادگی">
+            <TextField fx:id="lastNameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="Last Name">
                <font>
-                  <Font size="14.0" />
+                  <Font name="Arial" size="14.0" />
                </font>
             </TextField>
 
-            <TextField fx:id="usernameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="نام کاربری">
+            <TextField fx:id="usernameField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="Username">
                <font>
-                  <Font size="14.0" />
+                  <Font name="Arial" size="14.0" />
                </font>
             </TextField>
 
-            <PasswordField fx:id="passwordField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="رمز عبور">
+            <PasswordField fx:id="passwordField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="Password">
                <font>
-                  <Font size="14.0" />
+                  <Font name="Arial" size="14.0" />
                </font>
             </PasswordField>
 
-            <TextField fx:id="phoneField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="شماره تماس">
+            <TextField fx:id="phoneField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="Phone Number">
                <font>
-                  <Font size="14.0" />
+                  <Font name="Arial" size="14.0" />
                </font>
             </TextField>
 
-            <TextField fx:id="emailField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="ایمیل">
+            <TextField fx:id="emailField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="Email">
                <font>
-                  <Font size="14.0" />
+                  <Font name="Arial" size="14.0" />
                </font>
             </TextField>
 
-            <!-- دکمه ثبت‌نام -->
-            <Button mnemonicParsing="false" onAction="#handleRegister" prefHeight="50.0" prefWidth="350.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="ثبت‌نام">
+            <Button mnemonicParsing="false" onAction="#handleRegister" prefHeight="50.0" prefWidth="350.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white;" text="Register">
                <font>
-                  <Font name="B Yekan" size="18.0" />
+                  <Font name="Arial" size="18.0" />
                </font>
             </Button>
 
-            <!-- دکمه بازگشت به لاگین -->
-            <Button mnemonicParsing="false" onAction="#goToLogin" prefHeight="40.0" prefWidth="350.0" style="-fx-background-color: transparent; -fx-text-fill: #4CAF50; -fx-border-color: #4CAF50; -fx-border-radius: 5;" text="قبلاً ثبت‌نام کرده‌اید؟ وارد شوید">
+            <Button mnemonicParsing="false" onAction="#goToLogin" prefHeight="40.0" prefWidth="350.0" style="-fx-background-color: transparent; -fx-text-fill: #4CAF50; -fx-border-color: #4CAF50; -fx-border-radius: 5;" text="Already registered? Login">
                <font>
-                  <Font name="B Yekan" size="14.0" />
+                  <Font name="Arial" size="14.0" />
                </font>
             </Button>
 

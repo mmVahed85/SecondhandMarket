@@ -1,7 +1,6 @@
 package com.secondhand.controller;
 
 import java.util.List;
-
 import com.secondhand.dto.AdvertisementResponse;
 import com.secondhand.dto.ChatRoomResponse;
 import com.secondhand.dto.CommentResponse;
@@ -45,7 +44,6 @@ public class AdDetailsController {
     @FXML private Label descriptionLabel;
     @FXML private ImageView adImageView;
 
-    // المان‌های جدید برای اطلاعات کامل فروشنده
     @FXML private Label sellerFullNameLabel;
     @FXML private Label sellerPhoneLabel;
     @FXML private Label sellerEmailLabel;
@@ -76,38 +74,37 @@ public class AdDetailsController {
         this.currentAd = ad;
 
         titleLabel.setText(ad.getTitle());
-        priceLabel.setText("قیمت: " + ad.getPrice() + " تومان");
-        cityLabel.setText("شهر: " + ad.getCity());
-        categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory().name() : "نامشخص"));
+        priceLabel.setText("Price: " + ad.getPrice() + " Tomans");
+        cityLabel.setText("City: " + ad.getCity());
+        categoryLabel.setText("Category: " + (ad.getCategory() != null ? ad.getCategory().name() : "Unknown"));
 
         if (ad.getCreatedAt() != null && !ad.getCreatedAt().isBlank()) {
             try {
                 LocalDateTime dateTime = LocalDateTime.parse(ad.getCreatedAt());
                 DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy/MM/dd  HH:mm");
-                createdAtLabel.setText("📅 زمان ثبت: " + dateTime.format(formatter));
+                createdAtLabel.setText("📅 Posted at: " + dateTime.format(formatter));
             } catch (Exception e) {
-                createdAtLabel.setText("📅 زمان ثبت: " + ad.getCreatedAt());
+                createdAtLabel.setText("📅 Posted at: " + ad.getCreatedAt());
             }
         } else {
-            createdAtLabel.setText("📅 زمان ثبت: نامشخص");
+            createdAtLabel.setText("📅 Posted at: Unknown");
         }
 
-        descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
+        descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "No description provided.");
 
-        // مقداردهی اطلاعات کامل فروشنده
-        sellerFullNameLabel.setText("فروشنده: " + ((ad.getOwnerFirstname() + " " + ad.getOwnerLastname()) != null ? (ad.getOwnerFirstname() + " " + ad.getOwnerLastname()) : "نامشخص"));
-        sellerPhoneLabel.setText("شماره تماس: " + (ad.getOwnerPhone() != null ? ad.getOwnerPhone() : "نامشخص"));
-        sellerEmailLabel.setText("ایمیل: " + (ad.getOwnerEmail() != null ? ad.getOwnerEmail() : "نامشخص"));
+        sellerFullNameLabel.setText("Seller: " + ((ad.getOwnerFirstname() != null && ad.getOwnerLastname() != null) ? (ad.getOwnerFirstname() + " " + ad.getOwnerLastname()) : "Unknown"));
+        sellerPhoneLabel.setText("Phone: " + (ad.getOwnerPhone() != null ? ad.getOwnerPhone() : "Unknown"));
+        sellerEmailLabel.setText("Email: " + (ad.getOwnerEmail() != null ? ad.getOwnerEmail() : "Unknown"));
 
-        sellerRatingLabel.setText("میانگین امتیازدهی: " + ad.getAverageRating());
-        ratingCount.setText("تعداد نفرات امتیاز داده: " + ad.getRatingCount());
+        sellerRatingLabel.setText("Average Rating: " + ad.getAverageRating());
+        ratingCount.setText("Total Ratings: " + ad.getRatingCount());
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
             try {
                 String imageUrl = ad.getImages().get(0).getUrl();
                 adImageView.setImage(new Image(imageUrl, true));
             } catch (Exception e) {
-                System.err.println("خطا در بارگذاری تصویر");
+                System.err.println("Error loading image");
                 e.printStackTrace();
             }
         }
@@ -121,18 +118,12 @@ public class AdDetailsController {
                         if (currentImage[0] >= ad.getImages().size()) {
                             currentImage[0] = 0;
                         }
-                        adImageView.setImage(
-                                new Image(
-                                        ad.getImages().get(currentImage[0]).getUrl(),
-                                        true
-                                )
-                        );
+                        adImageView.setImage(new Image(ad.getImages().get(currentImage[0]).getUrl(), true));
                     })
             );
             timeline.setCycleCount(Animation.INDEFINITE);
             timeline.play();
         }
-
         loadComments();
     }
 
@@ -155,8 +146,7 @@ public class AdDetailsController {
                 messageLabel.setStyle("-fx-text-fill: green;");
                 messageLabel.setText(response.getMessage());
             }
-        }
-        else {
+        } else {
             messageLabel.setStyle("-fx-text-fill: red;");
             messageLabel.setText(response.getMessage());
         }
@@ -166,7 +156,7 @@ public class AdDetailsController {
     public void submitRating(ActionEvent event) {
         Integer selectedRating = ratingComboBox.getValue();
         if(selectedRating == null){
-            messageLabel.setText("لطفا امتیاز انتخاب کنید");
+            messageLabel.setText("Please select a rating.");
             return;
         }
 
@@ -178,10 +168,9 @@ public class AdDetailsController {
         if(response.isSuccess()){
             messageLabel.setStyle("-fx-text-fill:green");
             messageLabel.setText(response.getMessage());
-            sellerRatingLabel.setText("میانگین امتیازدهی: " + response.getData().getAverageScore());
-            ratingCount.setText("تعداد نفرات امتیاز داده: " + response.getData().getRatingCount());
-        }
-        else{
+            sellerRatingLabel.setText("Average Rating: " + response.getData().getAverageScore());
+            ratingCount.setText("Total Ratings: " + response.getData().getRatingCount());
+        } else {
             messageLabel.setStyle("-fx-text-fill:red");
             messageLabel.setText(response.getMessage());
         }
@@ -191,7 +180,7 @@ public class AdDetailsController {
     public void submitComment(ActionEvent event){
         String text = reviewCommentField.getText().trim();
         if(text.isEmpty()){
-            messageLabel.setText("متن نظر خالی است");
+            messageLabel.setText("Review text is empty.");
             return;
         }
 
@@ -205,8 +194,7 @@ public class AdDetailsController {
             messageLabel.setText(response.getMessage());
             reviewCommentField.clear();
             loadComments();
-        }
-        else{
+        } else {
             messageLabel.setStyle("-fx-text-fill:red");
             messageLabel.setText(response.getMessage());
         }
@@ -242,8 +230,7 @@ public class AdDetailsController {
 
             Scene scene = ((Node) event.getSource()).getScene();
             scene.setRoot(root);
-        }
-        catch (Exception e) {
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }

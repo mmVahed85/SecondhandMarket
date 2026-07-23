@@ -31,11 +31,9 @@ public class AdminPanelController {
     @FXML private Label sectionTitleLabel;
     @FXML private Label messageLabel;
 
-    // المان‌های فیلتر و جزئیات
     @FXML private ComboBox<String> statusFilterComboBox;
     @FXML private Button btnViewDetails;
 
-    // دکمه‌های عملیاتی
     @FXML private Button btnApprove;
     @FXML private Button btnReject;
     @FXML private Button btnDelete;
@@ -46,18 +44,15 @@ public class AdminPanelController {
     @FXML private TableView dataTable;
 
     private String currentSection = "ADS";
-
-    // لیست کمکی برای فیلتر کردن بدون نیاز به ریکوئست مجدد به سرور
     private List<AdvertisementResponse> allAdsCache;
 
     @FXML
     public void initialize() {
-        // پر کردن فیلتر وضعیت به صورت داینامیک از روی Enum بک‌اند
-        statusFilterComboBox.getItems().add("همه");
+        statusFilterComboBox.getItems().add("All");
         for (AdvertisementStatus status : AdvertisementStatus.values()) {
             statusFilterComboBox.getItems().add(status.name());
         }
-        statusFilterComboBox.setValue("همه");
+        statusFilterComboBox.setValue("All");
 
         showAdsManager(null);
     }
@@ -66,10 +61,9 @@ public class AdminPanelController {
     @FXML
     public void showAdsManager(ActionEvent event) {
         currentSection = "ADS";
-        sectionTitleLabel.setText("مدیریت آگهی‌ها");
+        sectionTitleLabel.setText("Manage Ads");
         messageLabel.setText("");
 
-        // مدیریت نمایش دکمه‌ها
         statusFilterComboBox.setVisible(true);
         statusFilterComboBox.setManaged(true);
         btnViewDetails.setVisible(true);
@@ -83,36 +77,33 @@ public class AdminPanelController {
         btnBlock.setManaged(false);
         btnUnblock.setVisible(false);
         btnUnblock.setManaged(false);
-        btnDelete.setText("🗑 حذف آگهی");
+        btnDelete.setText("🗑 Delete Ad");
 
         dataTable.getColumns().clear();
 
-        TableColumn<AdvertisementResponse, Long> idCol = new TableColumn<>("شناسه");
+        TableColumn<AdvertisementResponse, Long> idCol = new TableColumn<>("ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TableColumn<AdvertisementResponse, String> titleCol = new TableColumn<>("عنوان آگهی");
+        TableColumn<AdvertisementResponse, String> titleCol = new TableColumn<>("Ad Title");
         titleCol.setCellValueFactory(new PropertyValueFactory<>("title"));
 
-        TableColumn<AdvertisementResponse, Long> priceCol = new TableColumn<>("قیمت (تومان)");
+        TableColumn<AdvertisementResponse, Long> priceCol = new TableColumn<>("Price");
         priceCol.setCellValueFactory(new PropertyValueFactory<>("price"));
 
-        TableColumn<AdvertisementResponse, String> sellerCol = new TableColumn<>("فروشنده");
+        TableColumn<AdvertisementResponse, String> sellerCol = new TableColumn<>("Seller");
         sellerCol.setCellValueFactory(new PropertyValueFactory<>("ownerUsername"));
 
-        // ستون وضعیت با نوع داده Enum
-        TableColumn<AdvertisementResponse, AdvertisementStatus> statusCol = new TableColumn<>("وضعیت");
+        TableColumn<AdvertisementResponse, AdvertisementStatus> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
 
         dataTable.getColumns().addAll(idCol, titleCol, priceCol, sellerCol, statusCol);
 
-        // درخواست از سرور
-        // توجه: اگر متد getAllAdvertisements را در بک‌اند ساختید، آن را جایگزین getPendingAdvertisements کنید
         ApiResponse<List<AdvertisementResponse>> response = adminApi.getAllAdvertisements();
 
         if (response.isSuccess()) {
             allAdsCache = response.getData();
             dataTable.setItems(FXCollections.observableArrayList(allAdsCache));
-            handleFilterAds(null); // اعمال فیلتر اولیه (در صورتی که روی چیزی تنظیم شده باشد)
+            handleFilterAds(null);
         } else {
             showError(response.getMessage());
         }
@@ -122,7 +113,7 @@ public class AdminPanelController {
     @FXML
     public void showUsersManager(ActionEvent event) {
         currentSection = "USERS";
-        sectionTitleLabel.setText("مدیریت کاربران");
+        sectionTitleLabel.setText("Manage Users");
         messageLabel.setText("");
 
         statusFilterComboBox.setVisible(false);
@@ -138,20 +129,20 @@ public class AdminPanelController {
         btnBlock.setManaged(true);
         btnUnblock.setVisible(true);
         btnUnblock.setManaged(true);
-        btnDelete.setText("🗑 حذف کاربر");
+        btnDelete.setText("🗑 Delete User");
 
         dataTable.getColumns().clear();
 
-        TableColumn<UserResponse, Integer> idCol = new TableColumn<>("شناسه کاربر");
+        TableColumn<UserResponse, Integer> idCol = new TableColumn<>("User ID");
         idCol.setCellValueFactory(new PropertyValueFactory<>("id"));
 
-        TableColumn<UserResponse, String> usernameCol = new TableColumn<>("نام کاربری");
+        TableColumn<UserResponse, String> usernameCol = new TableColumn<>("Username");
         usernameCol.setCellValueFactory(new PropertyValueFactory<>("username"));
 
-        TableColumn<UserResponse, String> roleCol = new TableColumn<>("نقش کاربری");
+        TableColumn<UserResponse, String> roleCol = new TableColumn<>("Role");
         roleCol.setCellValueFactory(new PropertyValueFactory<>("role"));
 
-        TableColumn<UserResponse, String> statusCol = new TableColumn<>("وضعیت");
+        TableColumn<UserResponse, String> statusCol = new TableColumn<>("Status");
         statusCol.setCellValueFactory(new PropertyValueFactory<>("enabled"));
 
         dataTable.getColumns().addAll(idCol, usernameCol, roleCol, statusCol);
@@ -172,10 +163,9 @@ public class AdminPanelController {
 
         String selectedStatus = statusFilterComboBox.getValue();
 
-        if (selectedStatus == null || selectedStatus.equals("همه")) {
+        if (selectedStatus == null || selectedStatus.equals("All")) {
             dataTable.setItems(FXCollections.observableArrayList(allAdsCache));
         } else {
-            // مقایسه نام Enum ذخیره شده در آگهی با وضعیت انتخاب شده در منوی کشویی
             List<AdvertisementResponse> filtered = allAdsCache.stream()
                     .filter(ad -> ad.getStatus() != null && selectedStatus.equals(ad.getStatus().name()))
                     .collect(Collectors.toList());
@@ -188,7 +178,7 @@ public class AdminPanelController {
         AdvertisementResponse selectedAd = (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
 
         if (selectedAd == null) {
-            showError("لطفاً ابتدا یک آگهی را انتخاب کنید.");
+            showError("Please select an ad first.");
             return;
         }
 
@@ -198,14 +188,13 @@ public class AdminPanelController {
 
             AdDetailsController controller = loader.getController();
             controller.setAd(selectedAd);
-
             controller.setPreviousPage("/view/admin-panel.fxml");
 
             Scene currentScene = ((Node) event.getSource()).getScene();
             currentScene.setRoot(root);
         } catch (Exception e) {
             e.printStackTrace();
-            showError("خطا در باز کردن صفحه جزئیات آگهی.");
+            showError("Error opening ad details page.");
         }
     }
 
@@ -213,7 +202,7 @@ public class AdminPanelController {
     public void handleApprove(ActionEvent event) {
         AdvertisementResponse selectedAd = (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
         if (selectedAd == null) {
-            showError("لطفاً ابتدا یک آگهی را انتخاب کنید.");
+            showError("Please select an ad first.");
             return;
         }
         ApiResponse<AdvertisementResponse> response = adminApi.approve(selectedAd.getId());
@@ -229,12 +218,12 @@ public class AdminPanelController {
     public void handleReject(ActionEvent event) {
         AdvertisementResponse selectedAd = (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
         if (selectedAd == null) {
-            showError("لطفاً ابتدا یک آگهی را انتخاب کنید.");
+            showError("Please select an ad first.");
             return;
         }
         ApiResponse<AdvertisementResponse> response = adminApi.reject(selectedAd.getId());
         if (response.isSuccess()) {
-            showSuccess("آگهی رد شد.");
+            showSuccess("Ad rejected.");
             showAdsManager(null);
         } else {
             showError(response.getMessage());
@@ -245,7 +234,7 @@ public class AdminPanelController {
     public void handleDelete(ActionEvent event) {
         Object selectedItem = dataTable.getSelectionModel().getSelectedItem();
         if (selectedItem == null) {
-            showError("لطفاً ابتدا یک ردیف را از جدول انتخاب کنید.");
+            showError("Please select a row from the table first.");
             return;
         }
 
@@ -272,7 +261,7 @@ public class AdminPanelController {
     public void handleBlock(ActionEvent event) {
         UserResponse user = (UserResponse) dataTable.getSelectionModel().getSelectedItem();
         if (user == null) {
-            showError("یک کاربر انتخاب کنید.");
+            showError("Please select a user.");
             return;
         }
         ApiResponse<String> response = adminApi.blockUser(user.getId());
@@ -288,7 +277,7 @@ public class AdminPanelController {
     public void handleUnblock(ActionEvent event) {
         UserResponse user = (UserResponse) dataTable.getSelectionModel().getSelectedItem();
         if (user == null) {
-            showError("یک کاربر انتخاب کنید.");
+            showError("Please select a user.");
             return;
         }
         ApiResponse<String> response = adminApi.unblockUser(user.getId());
@@ -307,7 +296,7 @@ public class AdminPanelController {
 
     private void showError(String message) {
         messageLabel.setStyle("-fx-text-fill: #e74c3c;");
-        messageLabel.setText("خطا: " + message);
+        messageLabel.setText("Error: " + message);
     }
 
     @FXML

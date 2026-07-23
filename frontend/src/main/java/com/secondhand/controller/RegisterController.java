@@ -14,7 +14,7 @@ import javafx.scene.control.TextField;
 public class RegisterController {
 
     @FXML private TextField firstNameField;
-    @FXML private TextField lastNameField; // متغیر جدید
+    @FXML private TextField lastNameField;
     @FXML private TextField usernameField;
     @FXML private TextField emailField;
     @FXML private TextField phoneField;
@@ -26,13 +26,12 @@ public class RegisterController {
     @FXML
     public void handleRegister(ActionEvent event) {
         String firstName = firstNameField.getText();
-        String lastName = lastNameField.getText(); // گرفتن مقدار
+        String lastName = lastNameField.getText();
         String username = usernameField.getText();
         String email = emailField.getText();
         String phone = phoneField.getText();
         String password = passwordField.getText();
 
-        // اعتبارسنجی فرانت‌اند: چک کردن خالی نبودن فیلدها (نام خانوادگی هم اضافه شد)
         if (firstName == null || firstName.trim().isEmpty() ||
                 lastName == null || lastName.trim().isEmpty() ||
                 username == null || username.trim().isEmpty() ||
@@ -41,14 +40,13 @@ public class RegisterController {
                 password == null || password.trim().isEmpty()) {
 
             errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setText("لطفاً تمامی فیلدها را پر کنید.");
+            errorLabel.setText("Please fill in all fields.");
             return;
         }
 
-        // ساخت آبجکت درخواست
         RegisterRequest request = new RegisterRequest();
         request.setFirstName(firstName);
-        request.setLastName(lastName); // ست کردن نام خانوادگی
+        request.setLastName(lastName);
         request.setUsername(username);
         request.setEmail(email);
         request.setPhone(phone);
@@ -56,17 +54,13 @@ public class RegisterController {
 
         ApiResponse<RegisterResponse> response = authApi.register(request);
         try {
-            // ارسال درخواست به بک‌اند
-            
-
             if(response.isSuccess()) {
                 errorLabel.setStyle("-fx-text-fill: green;");
                 errorLabel.setText(response.getMessage());
                 System.out.println("Server Response: " + response);
-            }
-            else {
+            } else {
                 errorLabel.setStyle("-fx-text-fill: red;");
-                errorLabel.setText(response.getMessage() != null ? response.getMessage() : "اطلاعات ورود اشتباه است.");
+                errorLabel.setText(response.getMessage() != null ? response.getMessage() : "Invalid registration information.");
             }
 
         } catch (Exception e) {
@@ -79,17 +73,11 @@ public class RegisterController {
     @FXML
     public void goToLogin(ActionEvent event) {
         try {
-            // بارگذاری فایل گرافیکی صفحه ورود
             javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/login.fxml"));
-
-            // پیدا کردن صحنه (Scene) فعلی از روی لینکی که کلیک شده
             javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
-
-            // تغییر محتوای صحنه (برای جلوگیری از به هم ریختن فول اسکرین)
             currentScene.setRoot(root);
-
         } catch (Exception e) {
-            System.err.println("خطا در بارگذاری صفحه ورود:");
+            System.err.println("Error loading login page:");
             e.printStackTrace();
         }
     }

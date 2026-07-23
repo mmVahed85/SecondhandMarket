@@ -5,24 +5,23 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<VBox alignment="CENTER" prefHeight="792.0" prefWidth="1328.0" spacing="25" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.MainController">
+<VBox alignment="CENTER" prefHeight="792.0" prefWidth="1328.0" spacing="25" nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/26" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.MainController">
 
-    <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="به سامانه خرید و فروش دست دوم خوش آمدید">
+    <Label style="-fx-font-size: 24px; -fx-font-weight: bold;" text="Welcome to Secondhand Market">
         <font>
-            <Font name="B Yekan" size="19.0" />
-        </font></Label>
+            <Font name="Arial" size="19.0" />
+        </font>
+    </Label>
 
-    <!-- دکمه ورود -->
-    <Button onAction="#goToLogin" prefHeight="45.0" prefWidth="200.0" text="ورود به حساب کاربری">
+    <Button onAction="#goToLogin" prefHeight="45.0" prefWidth="200.0" text="Login to Account">
         <font>
-            <Font name="B Yekan" size="16.0" />
+            <Font name="Arial" size="16.0" />
         </font>
     </Button>
 
-    <!-- دکمه ثبت‌نام -->
-    <Button onAction="#goToRegister" prefHeight="45.0" prefWidth="200.0" text="ثبت‌نام کاربر جدید">
+    <Button onAction="#goToRegister" prefHeight="45.0" prefWidth="200.0" text="Register New User">
         <font>
-            <Font name="B Yekan" size="16.0" />
+            <Font name="Arial" size="16.0" />
         </font>
     </Button>
 

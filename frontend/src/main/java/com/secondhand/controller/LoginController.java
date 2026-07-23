@@ -26,7 +26,7 @@ public class LoginController {
 
         if (username == null || username.isEmpty() || password == null || password.isEmpty()) {
             errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setText("لطفاً نام کاربری و رمز عبور را وارد کنید.");
+            errorLabel.setText("Please enter both username and password.");
             return;
         }
 
@@ -37,30 +37,29 @@ public class LoginController {
             ApiResponse<LoginResponse> response = authApi.login(request);
 
             if (response.isSuccess() && response.getData().getToken() != null) {
-                // ۱. ذخیره توکن در نشست (Session)
                 com.secondhand.util.SessionManager.setToken(response.getData().getToken());
-                com.secondhand.util.SessionManager.login(username); // ذخیره نام کاربری
+                com.secondhand.util.SessionManager.login(username);
                 com.secondhand.util.SessionManager.setRole(response.getData().getRole());
 
                 errorLabel.setStyle("-fx-text-fill: green;");
-                errorLabel.setText("ورود موفق! در حال انتقال...");
+                errorLabel.setText("Login successful! Redirecting...");
 
                 try {
                     javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/dashboard.fxml"));
                     javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
                     currentScene.setRoot(root);
                 } catch (Exception ex) {
-                    System.err.println("خطا در بارگذاری صفحه اصلی:");
+                    System.err.println("Error loading dashboard:");
                     ex.printStackTrace();
                 }
-                
+
             } else {
                 errorLabel.setStyle("-fx-text-fill: red;");
-                errorLabel.setText(response.getMessage() != null ? response.getMessage() : "اطلاعات ورود اشتباه است.");
+                errorLabel.setText(response.getMessage() != null ? response.getMessage() : "Invalid login credentials.");
             }
         } catch (Exception e) {
             errorLabel.setStyle("-fx-text-fill: red;");
-            errorLabel.setText("خطا در ارتباط با سرور!");
+            errorLabel.setText("Error connecting to the server!");
             e.printStackTrace();
         }
     }
@@ -72,7 +71,7 @@ public class LoginController {
             javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
             currentScene.setRoot(root);
         } catch (Exception e) {
-            System.err.println("خطا در بارگذاری صفحه ثبت‌نام:");
+            System.err.println("Error loading registration page:");
             e.printStackTrace();
         }
     }

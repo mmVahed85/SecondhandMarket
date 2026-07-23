@@ -21,67 +21,65 @@
          </padding>
          <children>
 
-            <!-- بخش منوی بالای داشبورد -->
-            <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="15.0">
+            <!-- Dashboard Top Menu -->
+            <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="15.0">
                <children>
-                  <Label text="داشبورد آگهی‌ها">
+                  <Label text="Ads Dashboard">
                      <font>
-                        <Font name="B Yekan" size="28.0" />
+                        <Font name="Arial" size="28.0" />
                      </font>
                   </Label>
                   <Region HBox.hgrow="ALWAYS" />
 
-                  <!-- دکمه داشبورد مدیر (که قبلاً داشتید و ارور مربوط به این بود) -->
-                  <Button fx:id="adminBT" mnemonicParsing="false" onAction="#goToAdminPanel" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #21f3d7ff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="داشبورد مدیر">
-                     <font><Font name="B Yekan" size="14.0" /></font>
+                  <Button fx:id="adminBT" mnemonicParsing="false" onAction="#goToAdminPanel" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #21f3d7ff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="Admin Dashboard">
+                     <font><Font name="Arial" size="14.0" /></font>
                   </Button>
 
-                  <!-- دکمه جدید پیام‌های من -->
-                  <Button mnemonicParsing="false" onAction="#goToChatList" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="💬 پیام‌های من">
-                     <font><Font name="B Yekan" size="14.0" /></font>
+                  <Button mnemonicParsing="false" onAction="#goToChatList" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="💬 My Messages">
+                     <font><Font name="Arial" size="14.0" /></font>
                   </Button>
 
-                  <Button mnemonicParsing="false" onAction="#goToProfile" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="👤 پروفایل من">
-                     <font><Font name="B Yekan" size="14.0" /></font>
+                  <Button mnemonicParsing="false" onAction="#goToProfile" prefHeight="40.0" prefWidth="110.0" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="👤 My Profile">
+                     <font><Font name="Arial" size="14.0" /></font>
                   </Button>
 
-                  <Button mnemonicParsing="false" onAction="#goToFavorites" prefHeight="40.0" prefWidth="150.0" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="⭐ علاقه‌مندی‌ها">
-                     <font><Font name="B Yekan" size="14.0" /></font>
+                  <Button mnemonicParsing="false" onAction="#goToFavorites" prefHeight="40.0" prefWidth="130.0" style="-fx-background-color: #FF9800; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="⭐ Favorites">
+                     <font><Font name="Arial" size="14.0" /></font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#goToCreateAd" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="+ ثبت آگهی جدید">
-                     <font><Font name="B Yekan" size="14.0" /></font>
+                  <Button mnemonicParsing="false" onAction="#goToCreateAd" prefHeight="40.0" prefWidth="140.0" style="-fx-background-color: #4CAF50; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="+ Create New Ad">
+                     <font><Font name="Arial" size="14.0" /></font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#handleLogout" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 5;" text="خروج">
-                     <font><Font name="B Yekan" size="14.0" /></font>
+                  <Button mnemonicParsing="false" onAction="#handleLogout" prefHeight="40.0" prefWidth="80.0" style="-fx-background-color: #f44336; -fx-text-fill: white; -fx-background-radius: 5;" text="Logout">
+                     <font><Font name="Arial" size="14.0" /></font>
                   </Button>
                </children>
             </HBox>
 
-            <!-- نوار جدید جستجو و فیلتر -->
-            <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="15.0" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8;">
+            <!-- Search and Filter Bar -->
+            <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="15.0" style="-fx-background-color: white; -fx-padding: 15; -fx-border-color: #e0e0e0; -fx-border-radius: 8; -fx-background-radius: 8;">
                <children>
-                  <TextField fx:id="searchField" prefHeight="40.0" prefWidth="250.0" promptText="جستجو در اطلاعات آگهی..." />
-                  <TextField fx:id="cityFilterField" prefHeight="40.0" prefWidth="150.0" promptText="شهر (مثلا تهران)" />
-                  <ComboBox fx:id="categoryComboBox" prefHeight="40.0" prefWidth="150.0" promptText="دسته‌بندی" />
-                  <ComboBox fx:id="sortTypeComboBox" prefHeight="40.0" prefWidth="150.0" promptText="ترتیب" />
-                  <TextField fx:id="minPriceField" prefHeight="40.0" prefWidth="250.0" promptText= "حداقل قیمت" />
-                  <TextField fx:id="maxPriceField" prefHeight="40.0" prefWidth="250.0" promptText= "حداکثر قیمت" />
+                  <TextField fx:id="searchField" prefHeight="40.0" prefWidth="250.0" promptText="Search in ad info..." />
+                  <TextField fx:id="cityFilterField" prefHeight="40.0" prefWidth="150.0" promptText="City (e.g. New York)" />
+                  <ComboBox fx:id="categoryComboBox" prefHeight="40.0" prefWidth="150.0" promptText="Category" />
+                  <ComboBox fx:id="sortTypeComboBox" prefHeight="40.0" prefWidth="150.0" promptText="Sort By" />
+                  <TextField fx:id="minPriceField" prefHeight="40.0" prefWidth="150.0" promptText="Min Price" />
+                  <TextField fx:id="maxPriceField" prefHeight="40.0" prefWidth="150.0" promptText="Max Price" />
 
                   <Region HBox.hgrow="ALWAYS" />
 
-                  <Button mnemonicParsing="false" onAction="#handleFilter" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="جستجو 🔍">
-                     <font><Font name="B Yekan" size="14.0" /></font>
+                  <Button mnemonicParsing="false" onAction="#handleFilter" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: #2196F3; -fx-text-fill: white;" text="Search 🔍">
+                     <font><Font name="Arial" size="14.0" /></font>
                   </Button>
-                  <Button mnemonicParsing="false" onAction="#clearFilters" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: #9e9e9e; -fx-text-fill: white;" text="حذف فیلترها">
-                     <font><Font name="B Yekan" size="14.0" /></font>
+                  <Button mnemonicParsing="false" onAction="#clearFilters" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: #9e9e9e; -fx-text-fill: white;" text="Clear Filters">
+                     <font><Font name="Arial" size="14.0" /></font>
                   </Button>
                </children>
             </HBox>
 
-            <!-- بخش اسکرول و نمایش کارت‌های آگهی -->
+            <!-- Ads Scroll Pane -->
             <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
                <content>
-                  <TilePane fx:id="adsContainer" alignment="TOP_RIGHT" hgap="20.0" nodeOrientation="RIGHT_TO_LEFT" vgap="20.0">
+                  <TilePane fx:id="adsContainer" alignment="TOP_LEFT" hgap="20.0" nodeOrientation="LEFT_TO_RIGHT" vgap="20.0">
                      <padding>
                         <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                      </padding>
