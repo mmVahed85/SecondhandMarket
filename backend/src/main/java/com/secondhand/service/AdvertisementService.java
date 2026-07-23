@@ -439,4 +439,26 @@ public class AdvertisementService {
         );
 
     }
+
+    public ApiResponse<List<AdvertisementResponse>> getAllAdvertisements() {
+
+        List<Advertisement> advertisements =
+                advertisementRepository.findAll();
+
+        List<AdvertisementResponse> response =
+                new ArrayList<>();
+
+        for (Advertisement ad : advertisements) {
+
+            response.add(toResponse(ad));
+
+        }
+
+        return new ApiResponse<>(
+                true,
+                "All advertisements loaded successfully",
+                response
+        );
+
+    }
 }
