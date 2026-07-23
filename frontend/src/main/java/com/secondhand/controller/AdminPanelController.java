@@ -196,9 +196,10 @@ public class AdminPanelController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ad-details.fxml"));
             Parent root = loader.load();
 
-            // این دو خط، اطلاعات آگهی را به صفحه جزئیات ارسال می‌کنند
             AdDetailsController controller = loader.getController();
             controller.setAd(selectedAd);
+
+            controller.setPreviousPage("/view/admin-panel.fxml");
 
             Scene currentScene = ((Node) event.getSource()).getScene();
             currentScene.setRoot(root);

@@ -8,6 +8,7 @@ com\secondhand\service\CommentApi$1.class
 com\secondhand\service\AdminApi$5.class
 com\secondhand\service\AdApi$9.class
 com\secondhand\service\AdminApi.class
+com\secondhand\service\AdminApi$9.class
 com\secondhand\model\ChatRoom.class
 com\secondhand\Main.class
 com\secondhand\model\Comment.class
@@ -22,6 +23,7 @@ com\secondhand\service\ChatApi.class
 com\secondhand\service\AdApi.class
 com\secondhand\service\AdApi$6.class
 com\secondhand\service\AdminApi$6.class
+com\secondhand\service\AdApi$11.class
 com\secondhand\service\RatingApi$1.class
 com\secondhand\dto\AdvertisementResponse.class
 com\secondhand\util\ApiConfig.class
@@ -36,6 +38,7 @@ com\secondhand\model\Advertisement.class
 com\secondhand\model\SortType.class
 com\secondhand\model\Category.class
 com\secondhand\service\AuthApi$1.class
+com\secondhand\service\AdApi$12.class
 com\secondhand\service\CommentApi.class
 com\secondhand\controller\AdminPanelController.class
 com\secondhand\dto\UserResponse.class
