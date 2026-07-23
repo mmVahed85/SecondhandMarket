@@ -82,7 +82,7 @@ public class ChatService {
         MessageResponse response =
                 new MessageResponse(
                         message.getId(),
-                        sender.getUsername(),
+                        sender.getUsername(), sender.getFirstName(), sender.getLastName(),
                         message.getText(),
                         message.isSeen(),
                         message.getCreatedAt()
@@ -145,7 +145,7 @@ public class ChatService {
 
                             message.getId(),
 
-                            message.getSender().getUsername(),
+                            message.getSender().getUsername(), message.getSender().getFirstName(), message.getSender().getLastName(),
 
                             message.getText(),
 
@@ -184,12 +184,12 @@ public class ChatService {
 
         for (ChatRoom room : rooms) {
 
-            String otherUser;
+            User otherUser = new User();
 
             if (room.getBuyer().getId().equals(user.getId())) {
-                otherUser = room.getSeller().getUsername();
+                otherUser = room.getSeller();
             } else {
-                otherUser = room.getBuyer().getUsername();
+                otherUser = room.getBuyer();
             }
 
             List<Message> messages =
@@ -228,7 +228,7 @@ public class ChatService {
                             room.getId(),
                             room.getAdvertisement().getId(),
                             room.getAdvertisement().getTitle(),
-                            otherUser,
+                            otherUser.getUsername(), otherUser.getFirstName(),  otherUser.getLastName(),
                             lastMessage,
                             lastMessageTime
                     );
@@ -324,6 +324,7 @@ public class ChatService {
                         advertisement.getId(),
                         advertisement.getTitle(),
                         seller.getUsername(),
+                        seller.getFirstName(), seller.getLastName(),
                         "",
                         null
                 );

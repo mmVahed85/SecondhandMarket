@@ -8,6 +8,10 @@ public class MessageResponse {
 
     private String sender;
 
+    private String senderFirstname;
+
+    private String senderLastname;
+
     private String text;
 
     private boolean seen;
@@ -20,6 +24,8 @@ public class MessageResponse {
     public MessageResponse(
             Long id,
             String sender,
+            String senderFirstname,
+            String senderLastname,
             String text,
             boolean seen,
             LocalDateTime createdAt) {
@@ -29,6 +35,8 @@ public class MessageResponse {
         this.text = text;
         this.seen = seen;
         this.createdAt = createdAt;
+        this.senderFirstname = senderFirstname;
+        this.senderLastname = senderLastname;
     }
 
     public Long getId() {
@@ -37,6 +45,14 @@ public class MessageResponse {
 
     public String getSender() {
         return sender;
+    }
+
+    public String getSenderFirstname() {
+        return senderFirstname;
+    }
+
+    public String getSenderLastname() {
+        return senderLastname;
     }
 
     public String getText() {

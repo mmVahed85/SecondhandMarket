@@ -11,6 +11,8 @@ public class ChatRoomResponse {
     private String advertisementTitle;
 
     private String otherUser;
+    private String otherUserFirstname;
+    private String otherUserLastname;
 
     private String lastMessage;
 
@@ -26,6 +28,7 @@ public class ChatRoomResponse {
         Long advertisementId,
         String advertisementTitle,
         String otherUser,
+        String otherUserFirstname, String otherUserLastname,
         String lastMessage,
         LocalDateTime lastMessageTime) {
 
@@ -35,6 +38,8 @@ public class ChatRoomResponse {
     this.otherUser = otherUser;
     this.lastMessage = lastMessage;
     this.lastMessageTime = lastMessageTime;
+    this.otherUserFirstname = otherUserFirstname;
+    this.otherUserLastname = otherUserLastname;
 }
 
     public Long getId() {
@@ -75,5 +80,21 @@ public class ChatRoomResponse {
 
     public void setHasUnreadMessages(boolean hasUnreadMessages) {
         this.hasUnreadMessages = hasUnreadMessages;
+    }
+
+    public String getOtherUserFirstname() {
+        return otherUserFirstname;
+    }
+
+    public void setOtherUserFirstname(String otherUserFirstname) {
+        this.otherUserFirstname = otherUserFirstname;
+    }
+
+    public String getOtherUserLastname() {
+        return otherUserLastname;
+    }
+
+    public void setOtherUserLastname(String otherUserLastname) {
+        this.otherUserLastname = otherUserLastname;
     }
 }

@@ -50,6 +50,10 @@ public class RatingService {
                     "User not found",
                     null);
 
+        if (user.equals(advertisement.getOwner())) {
+                return new ApiResponse<>(false, "You can not rate your own ad", null);
+        }
+
         Rating rating =
                 ratingRepository
                         .findByAdvertisementAndUser(
