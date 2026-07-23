@@ -15,6 +15,10 @@ public class AdvertisementResponse {
     private Long price;
     private String city;
     private String ownerUsername;
+    private String ownerFirstname;
+    private String ownerLastname;
+    private String ownerEmail;
+    private String ownerPhone;
     private AdvertisementStatus status;
     private Long viewCount;
     private String createdAt;
@@ -26,13 +30,17 @@ public class AdvertisementResponse {
     public AdvertisementResponse() {
     }
 
-    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, AdvertisementStatus status, Long viewCount, String createdAt, Category category) {
+    public AdvertisementResponse(Long id, String title, String description, Long price, String city, String ownerUsername, String ownerFirstname, String ownerLastname, String ownerEmail, String ownerPhone, AdvertisementStatus status, Long viewCount, String createdAt, Category category) {
         this.id = id;
         this.title = title;
         this.description = description;
         this.price = price;
         this.city = city;
         this.ownerUsername = ownerUsername;
+        this.ownerFirstname = ownerFirstname;
+        this.ownerLastname = ownerLastname;
+        this.ownerEmail = ownerEmail;
+        this.ownerPhone = ownerEmail;
         this.status = status;
         this.viewCount = viewCount;
         this.createdAt = createdAt;
@@ -141,5 +149,37 @@ public class AdvertisementResponse {
 
     public void setRatingCount(Integer ratingCount) {
         this.ratingCount = ratingCount;
+    }
+
+    public String getOwnerFirstname() {
+        return ownerFirstname;
+    }
+
+    public void setOwnerFirstname(String ownerFirstname) {
+        this.ownerFirstname = ownerFirstname;
+    }
+
+    public String getOwnerLastname() {
+        return ownerLastname;
+    }
+
+    public void setOwnerLastname(String ownerLastname) {
+        this.ownerLastname = ownerLastname;
+    }
+
+    public String getOwnerEmail() {
+        return ownerEmail;
+    }
+
+    public void setOwnerEmail(String ownerEmail) {
+        this.ownerEmail = ownerEmail;
+    }
+
+    public String getOwnerPhone() {
+        return ownerPhone;
+    }
+
+    public void setOwnerPhone(String ownerPhone) {
+        this.ownerPhone = ownerPhone;
     }
 }
