@@ -27,8 +27,7 @@ public class FavoritesController {
 
     private final AdApi adApi = new AdApi();
 
-    @FXML
-    private TilePane favoritesContainer;
+    @FXML private TilePane favoritesContainer;
 
     @FXML
     public void initialize() {
@@ -36,30 +35,24 @@ public class FavoritesController {
     }
 
     private void loadFavorites() {
-
         favoritesContainer.getChildren().clear();
-
-        // دریافت لیست از حافظه برنامه
         ApiResponse<List<AdvertisementResponse>> response = adApi.getMyFavorites();
 
         if(response.isSuccess()) {
-            // اگر لیست خالی بود، یک پیام مناسب نمایش بده
             if (response.getData().isEmpty()) {
-                Label noAdLabel = new Label("شما هنوز هیچ آگهی‌ای را به علاقه‌مندی‌ها اضافه نکرده‌اید.");
-                noAdLabel.setFont(new Font("B Yekan", 18));
+                Label noAdLabel = new Label("You haven't added any ads to your favorites yet.");
+                noAdLabel.setFont(new Font("Arial", 18));
                 favoritesContainer.getChildren().add(noAdLabel);
                 return;
             }
 
-            // ساخت کارت برای هر آگهی
             for (AdvertisementResponse ad : response.getData()) {
                 VBox adCard = createAdCard(ad);
                 favoritesContainer.getChildren().add(adCard);
             }
-        }
-        else {
+        } else {
             Label noAdLabel = new Label(response.getMessage());
-            noAdLabel.setFont(new Font("B Yekan", 18));
+            noAdLabel.setFont(new Font("Arial", 18));
             favoritesContainer.getChildren().add(noAdLabel);
         }
     }
@@ -78,28 +71,21 @@ public class FavoritesController {
         imageView.setPreserveRatio(true);
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
-
             try {
-
                 String imageUrl = ad.getImages().get(0).getUrl();
-
                 imageView.setImage(new Image(imageUrl, true));
-
-            } catch (Exception ignored) {
-            }
-
+            } catch (Exception ignored) {}
         }
 
         Label titleLabel = new Label(ad.getTitle());
-        titleLabel.setFont(new Font("B Yekan", 16));
+        titleLabel.setFont(new Font("Arial", 16));
         titleLabel.setStyle("-fx-font-weight: bold;");
 
-        Label priceLabel = new Label("قیمت: " + ad.getPrice() + " تومان");
-        priceLabel.setFont(new Font("B Yekan", 14));
+        Label priceLabel = new Label("Price: " + ad.getPrice() + " Tomans");
+        priceLabel.setFont(new Font("Arial", 14));
         priceLabel.setStyle("-fx-text-fill: #4CAF50;");
 
-        // دکمه مشاهده جزئیات (مثل داشبورد)
-        Button detailsButton = new Button("مشاهده جزئیات");
+        Button detailsButton = new Button("View Details");
         detailsButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
         detailsButton.setMaxWidth(Double.MAX_VALUE);
         detailsButton.setOnAction(e -> {
@@ -115,19 +101,16 @@ public class FavoritesController {
             }
         });
 
-        // دکمه جدید: حذف از علاقه‌مندی‌ها
-        Button removeButton = new Button("حذف از علاقه‌مندی");
+        Button removeButton = new Button("Remove from Favorites");
         removeButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
         removeButton.setMaxWidth(Double.MAX_VALUE);
         removeButton.setOnAction(e -> {
             ApiResponse<AdvertisementResponse> response = adApi.deleteFavorite(ad.getId());
             if(response.isSuccess()) {
                 loadFavorites();
-            }
-            else {
+            } else {
                 System.out.println(response.getMessage());
             }
-             // صفحه را رفرش می‌کنیم تا کارت فوراً غیب شود!
         });
 
         card.getChildren().addAll(imageView, titleLabel, priceLabel, detailsButton, removeButton);

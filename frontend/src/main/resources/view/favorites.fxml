@@ -10,33 +10,31 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="792.0" prefWidth="1328.0" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.FavoritesController">
+<AnchorPane prefHeight="792.0" prefWidth="1328.0" nodeOrientation="LEFT_TO_RIGHT" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.FavoritesController">
     <children>
         <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <padding>
                 <Insets bottom="30.0" left="50.0" right="50.0" top="30.0" />
             </padding>
             <children>
-                <!-- بخش هدر (دکمه بازگشت و عنوان) -->
-                <HBox alignment="CENTER_LEFT" nodeOrientation="RIGHT_TO_LEFT" spacing="20.0">
+                <HBox alignment="CENTER_LEFT" nodeOrientation="LEFT_TO_RIGHT" spacing="20.0">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#goBack" prefHeight="40.0" prefWidth="100.0" text="بازگشت">
+                        <Button mnemonicParsing="false" onAction="#goBack" prefHeight="40.0" prefWidth="100.0" text="Back">
                             <font>
-                                <Font name="B Yekan" size="14.0" />
+                                <Font name="Arial" size="14.0" />
                             </font>
                         </Button>
-                        <Label text="آگهی‌های نشان‌شده (علاقه‌مندی‌ها)">
+                        <Label text="Saved Ads (Favorites)">
                             <font>
-                                <Font name="B Yekan" size="24.0" />
+                                <Font name="Arial" size="24.0" />
                             </font>
                         </Label>
                     </children>
                 </HBox>
 
-                <!-- بخش نمایش کارت‌ها -->
                 <ScrollPane fitToWidth="true" style="-fx-background-color: transparent;" VBox.vgrow="ALWAYS">
                     <content>
-                        <TilePane fx:id="favoritesContainer" alignment="TOP_RIGHT" hgap="20.0" nodeOrientation="RIGHT_TO_LEFT" vgap="20.0">
+                        <TilePane fx:id="favoritesContainer" alignment="TOP_LEFT" hgap="20.0" nodeOrientation="LEFT_TO_RIGHT" vgap="20.0">
                             <padding>
                                 <Insets bottom="20.0" left="20.0" right="20.0" top="20.0" />
                             </padding>

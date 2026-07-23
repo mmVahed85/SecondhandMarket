@@ -12,9 +12,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
 <AnchorPane prefHeight="900.0"
             prefWidth="1400.0"
+            nodeOrientation="LEFT_TO_RIGHT"
             xmlns="http://javafx.com/javafx/21"
             xmlns:fx="http://javafx.com/fxml/1"
             fx:controller="com.secondhand.controller.AdDetailsController">
@@ -32,130 +32,100 @@
                       spacing="25"
                       style="-fx-padding:40;">
 
-                    <!-- عنوان -->
-                    <Label text="جزئیات آگهی">
+                    <Label text="Ad Details">
                         <font>
-                            <Font name="B Yekan" size="32"/>
+                            <Font name="Arial" size="32"/>
                         </font>
                     </Label>
 
-                    <!-- کارت اطلاعات اصلی -->
                     <HBox alignment="CENTER"
                           spacing="40"
                           style="-fx-background-color:white; -fx-padding:25; -fx-background-radius:15; -fx-effect:dropshadow(three-pass-box,#cccccc,10,0,0,3);">
                         <children>
 
-                            <!-- متن آگهی -->
-                            <VBox alignment="CENTER_RIGHT"
-                                  nodeOrientation="RIGHT_TO_LEFT"
+                            <!-- Ad Text Data -->
+                            <VBox alignment="CENTER_LEFT"
+                                  nodeOrientation="LEFT_TO_RIGHT"
                                   spacing="15"
                                   prefWidth="550">
                                 <children>
 
-                                    <Label fx:id="titleLabel"
-                                           text="عنوان آگهی"
-                                           wrapText="true">
-                                        <font>
-                                            <Font name="B Yekan" size="26"/>
-                                        </font>
+                                    <Label fx:id="titleLabel" text="Ad Title" wrapText="true">
+                                        <font><Font name="Arial" size="26"/></font>
                                     </Label>
 
-                                    <Label fx:id="priceLabel"
-                                           text="قیمت">
-                                        <font>
-                                            <Font name="B Yekan" size="20"/>
-                                        </font>
+                                    <Label fx:id="priceLabel" text="Price">
+                                        <font><Font name="Arial" size="20"/></font>
                                     </Label>
 
-                                    <Label fx:id="cityLabel"
-                                           text="شهر">
-                                        <font>
-                                            <Font name="B Yekan" size="18"/>
-                                        </font>
+                                    <Label fx:id="cityLabel" text="City">
+                                        <font><Font name="Arial" size="18"/></font>
                                     </Label>
 
-                                    <Label fx:id="categoryLabel"
-                                           text="دسته بندی">
-                                        <font>
-                                            <Font name="B Yekan" size="18"/>
-                                        </font>
+                                    <Label fx:id="categoryLabel" text="Category">
+                                        <font><Font name="Arial" size="18"/></font>
                                     </Label>
 
-                                    <Label fx:id="createdAtLabel"
-                                           style="-fx-text-fill:#666666;">
-                                        <font>
-                                            <Font name="B Yekan" size="14.0"/>
-                                        </font>
+                                    <Label fx:id="createdAtLabel" style="-fx-text-fill:#666666;">
+                                        <font><Font name="Arial" size="14.0"/></font>
                                     </Label>
 
                                     <Separator/>
 
-                                    <Label text="توضیحات">
-                                        <font>
-                                            <Font name="B Yekan" size="18"/>
-                                        </font>
+                                    <Label text="Description">
+                                        <font><Font name="Arial" size="18"/></font>
                                     </Label>
 
-                                    <Label fx:id="descriptionLabel"
-                                           text="..."
-                                           wrapText="true"
-                                           prefWidth="500">
-                                        <font>
-                                            <Font name="B Yekan" size="15"/>
-                                        </font>
+                                    <Label fx:id="descriptionLabel" text="..." wrapText="true" prefWidth="500">
+                                        <font><Font name="Arial" size="15"/></font>
                                     </Label>
 
                                 </children>
                             </VBox>
 
-                            <!-- عکس -->
+                            <!-- Image -->
                             <ImageView fx:id="adImageView"
                                        fitHeight="350"
                                        fitWidth="450"
                                        preserveRatio="true"
                                        style="-fx-border-color:#dddddd; -fx-border-width:2; -fx-border-radius:15;"/>
-
                         </children>
                     </HBox>
 
-                    <!-- فروشنده -->
+                    <!-- Seller Info -->
                     <VBox alignment="CENTER"
                           spacing="15"
                           style="-fx-background-color:white; -fx-padding:20; -fx-background-radius:15; -fx-effect:dropshadow(three-pass-box,#cccccc,8,0,0,2);">
                         <children>
 
-                            <Label text="اطلاعات فروشنده">
-                                <font>
-                                    <Font name="B Yekan" size="22"/>
-                                </font>
+                            <Label text="Seller Information">
+                                <font><Font name="Arial" size="22"/></font>
                             </Label>
 
-                            <!-- ردیف اول: اطلاعات تماس -->
-                            <HBox spacing="30" alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT">
+                            <HBox spacing="30" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT">
                                 <children>
-                                    <Label fx:id="sellerFullNameLabel" text="فروشنده: ">
-                                        <font><Font name="B Yekan" size="17"/></font>
+                                    <Label fx:id="sellerFullNameLabel" text="Seller: ">
+                                        <font><Font name="Arial" size="17"/></font>
                                     </Label>
 
-                                    <Label fx:id="sellerPhoneLabel" text="تلفن: ">
-                                        <font><Font name="B Yekan" size="17"/></font>
+                                    <Label fx:id="sellerPhoneLabel" text="Phone: ">
+                                        <font><Font name="Arial" size="17"/></font>
                                     </Label>
 
-                                    <Label fx:id="sellerEmailLabel" text="ایمیل: ">
-                                        <font><Font name="B Yekan" size="17"/></font>
+                                    <Label fx:id="sellerEmailLabel" text="Email: ">
+                                        <font><Font name="Arial" size="17"/></font>
                                     </Label>
                                 </children>
                             </HBox>
 
-                            <!-- ردیف دوم: امتیازات -->
-                            <HBox spacing="40" alignment="CENTER" nodeOrientation="RIGHT_TO_LEFT">
+                            <HBox spacing="40" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT">
                                 <children>
-                                    <Label fx:id="sellerRatingLabel" text="امتیاز">
-                                        <font><Font name="B Yekan" size="17"/></font>
+                                    <Label fx:id="sellerRatingLabel" text="Rating: ">
+                                        <font><Font name="Arial" size="17"/></font>
                                     </Label>
 
                                     <Label fx:id="ratingCount" text="0">
-                                        <font><Font name="B Yekan" size="17"/></font>
+                                        <font><Font name="Arial" size="17"/></font>
                                     </Label>
                                 </children>
                             </HBox>
@@ -163,81 +133,67 @@
                         </children>
                     </VBox>
 
-                    <!-- امتیاز -->
+                    <!-- Rating Section -->
                     <VBox alignment="CENTER"
                           spacing="15"
                           style="-fx-background-color:#fff8e1; -fx-padding:20; -fx-background-radius:15;">
                         <children>
 
-                            <Label text="ثبت امتیاز">
-                                <font>
-                                    <Font name="B Yekan" size="22"/>
-                                </font>
+                            <Label text="Submit Rating">
+                                <font><Font name="Arial" size="22"/></font>
                             </Label>
 
-                            <HBox spacing="15"
-                                  nodeOrientation="RIGHT_TO_LEFT">
+                            <HBox spacing="15" nodeOrientation="LEFT_TO_RIGHT" alignment="CENTER">
                                 <children>
+                                    <ComboBox fx:id="ratingComboBox" prefWidth="100" promptText="Rating"/>
 
-                                    <ComboBox fx:id="ratingComboBox"
-                                              prefWidth="100"
-                                              promptText="امتیاز"/>
-
-                                    <Button text="ثبت امتیاز"
+                                    <Button text="Submit Rating"
                                             onAction="#submitRating"
                                             style="-fx-background-color:#ff9800; -fx-text-fill:white; -fx-background-radius:10;"
                                             prefWidth="130"/>
-
                                 </children>
                             </HBox>
 
                         </children>
                     </VBox>
 
-                    <!-- ثبت کامنت -->
+                    <!-- Comment Section -->
                     <VBox alignment="CENTER"
                           spacing="15"
                           style="-fx-background-color:white; -fx-padding:20; -fx-background-radius:15; -fx-effect:dropshadow(three-pass-box,#cccccc,8,0,0,2);">
                         <children>
 
-                            <Label text="ثبت نظر">
-                                <font>
-                                    <Font name="B Yekan" size="22"/>
-                                </font>
+                            <Label text="Submit Review">
+                                <font><Font name="Arial" size="22"/></font>
                             </Label>
 
-                            <HBox spacing="15"
-                                  nodeOrientation="RIGHT_TO_LEFT">
+                            <HBox spacing="15" nodeOrientation="LEFT_TO_RIGHT" alignment="CENTER">
                                 <children>
-
                                     <TextField fx:id="reviewCommentField"
                                                prefWidth="400"
                                                prefHeight="40"
-                                               promptText="نظر خود را بنویسید..."
+                                               promptText="Write your review..."
                                                style="-fx-background-radius:10;"/>
 
-                                    <Button text="ثبت نظر"
+                                    <Button text="Submit Review"
                                             onAction="#submitComment"
                                             prefWidth="130"
                                             style="-fx-background-color:#4CAF50; -fx-text-fill:white; -fx-background-radius:10;"/>
-
                                 </children>
                             </HBox>
 
                         </children>
                     </VBox>
 
-                    <!-- نمایش کامنت ها -->
-                    <VBox alignment="CENTER_RIGHT"
+                    <!-- User Comments List -->
+                    <VBox alignment="CENTER_LEFT"
                           spacing="15"
                           prefWidth="800"
                           style="-fx-background-color:white; -fx-padding:25; -fx-background-radius:15; -fx-effect:dropshadow(three-pass-box,#cccccc,8,0,0,2);">
                         <children>
 
-                            <Label text="نظرات کاربران">
-                                <font>
-                                    <Font name="B Yekan" size="24"/>
-                                </font>
+                            <Label text="User Reviews">
+                                <font><Font name="Arial" size="24"/></font>
                             </Label>
 
                             <ScrollPane prefHeight="250"
@@ -246,46 +202,24 @@
                                         hbarPolicy="NEVER"
                                         style="-fx-background-color:transparent;">
                                 <content>
-                                    <VBox fx:id="commentsBox"
-                                          spacing="12"
-                                          prefWidth="700"/>
+                                    <VBox fx:id="commentsBox" spacing="12" prefWidth="700" nodeOrientation="LEFT_TO_RIGHT"/>
                                 </content>
                             </ScrollPane>
 
                         </children>
                     </VBox>
 
-                    <!-- پیام سیستم -->
-                    <Label fx:id="messageLabel"
-                           textFill="RED">
-                        <font>
-                            <Font name="B Yekan" size="15"/>
-                        </font>
+                    <!-- System Message -->
+                    <Label fx:id="messageLabel" textFill="RED">
+                        <font><Font name="Arial" size="15"/></font>
                     </Label>
 
-                    <!-- دکمه ها -->
-                    <HBox spacing="25"
-                          alignment="CENTER">
+                    <!-- Action Buttons -->
+                    <HBox spacing="25" alignment="CENTER" nodeOrientation="LEFT_TO_RIGHT">
                         <children>
-
-                            <Button text="بازگشت"
-                                    onAction="#goBack"
-                                    prefWidth="140"
-                                    prefHeight="45"
-                                    style="-fx-background-radius:10;"/>
-
-                            <Button text="افزودن به علاقه‌مندی"
-                                    onAction="#addToFavorites"
-                                    prefWidth="200"
-                                    prefHeight="45"
-                                    style="-fx-background-color:#ff9800; -fx-text-fill:white; -fx-background-radius:10;"/>
-
-                            <Button text="شروع گفت‌وگو"
-                                    onAction="#startChat"
-                                    prefWidth="180"
-                                    prefHeight="45"
-                                    style="-fx-background-color:#2196F3; -fx-text-fill:white; -fx-background-radius:10;"/>
-
+                            <Button text="Back" onAction="#goBack" prefWidth="140" prefHeight="45" style="-fx-background-radius:10;"/>
+                            <Button text="Add to Favorites" onAction="#addToFavorites" prefWidth="200" prefHeight="45" style="-fx-background-color:#ff9800; -fx-text-fill:white; -fx-background-radius:10;"/>
+                            <Button text="Start Chat" onAction="#startChat" prefWidth="180" prefHeight="45" style="-fx-background-color:#2196F3; -fx-text-fill:white; -fx-background-radius:10;"/>
                         </children>
                     </HBox>
 

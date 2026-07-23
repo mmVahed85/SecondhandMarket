@@ -19,7 +19,7 @@ public class MainController {
             currentScene.setRoot(root);
 
         } catch (Exception e) {
-            System.err.println("خطا در بارگذاری صفحه ورود");
+            System.err.println("Error loading login page");
             e.printStackTrace();
         }
     }
@@ -34,7 +34,7 @@ public class MainController {
             currentScene.setRoot(root);
 
         } catch (Exception e) {
-            System.err.println("خطا در بارگذاری صفحه ثبت‌نام");
+            System.err.println("Error loading registration page");
             e.printStackTrace();
         }
     }

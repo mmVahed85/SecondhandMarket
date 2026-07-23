@@ -41,23 +41,21 @@ public class ProfileController {
         if (currentUser != null) {
             usernameLabel.setText(currentUser);
         } else {
-            usernameLabel.setText("کاربر مهمان");
-            currentUser = "نامشخص";
+            usernameLabel.setText("Guest User");
+            currentUser = "Unknown";
         }
 
         loadMyAds();
     }
 
     private void loadMyAds() {
-
         myAdsContainer.getChildren().clear();
-        
         ApiResponse<List<AdvertisementResponse>> response = adApi.getMyAds();
 
         if(response.isSuccess()) {
             if (response.getData().isEmpty()) {
-                Label noAdLabel = new Label("شما هنوز هیچ آگهی‌ای ثبت نکرده‌اید.");
-                noAdLabel.setFont(new Font("B Yekan", 16));
+                Label noAdLabel = new Label("You haven't posted any ads yet.");
+                noAdLabel.setFont(new Font("Arial", 16));
                 myAdsContainer.getChildren().add(noAdLabel);
                 return;
             }
@@ -66,14 +64,12 @@ public class ProfileController {
                 VBox adCard = createMyAdCard(ad);
                 myAdsContainer.getChildren().add(adCard);
             }
-        }
-        else {
+        } else {
             Label noAdLabel = new Label(response.getMessage());
-            noAdLabel.setFont(new Font("B Yekan", 16));
+            noAdLabel.setFont(new Font("Arial", 16));
             myAdsContainer.getChildren().add(noAdLabel);
             return;
         }
-        
     }
 
     private VBox createMyAdCard(AdvertisementResponse ad) {
@@ -82,7 +78,7 @@ public class ProfileController {
         card.setAlignment(Pos.CENTER);
         card.setPadding(new Insets(15));
         card.setStyle("-fx-background-color: white; -fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-background-radius: 10; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 10, 0, 0, 5);");
-        card.setPrefSize(250, 360); // ارتفاع را کمی بیشتر کردیم تا دکمه‌ها جا بشوند
+        card.setPrefSize(250, 360);
 
         ImageView imageView = new ImageView();
         imageView.setFitWidth(180);
@@ -90,46 +86,35 @@ public class ProfileController {
         imageView.setPreserveRatio(true);
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
-
             try {
-
                 String imageUrl = ad.getImages().get(0).getUrl();
-
                 imageView.setImage(new Image(imageUrl, true));
-
             } catch (Exception e) {
-
-                System.err.println("خطا در بارگذاری تصویر");
+                System.err.println("Error loading image");
                 e.printStackTrace();
-
             }
-
         }
 
         Label titleLabel = new Label(ad.getTitle());
-        titleLabel.setFont(new Font("B Yekan", 16));
+        titleLabel.setFont(new Font("Arial", 16));
         titleLabel.setStyle("-fx-font-weight: bold;");
 
-        Label priceLabel = new Label("قیمت: " + ad.getPrice() + " تومان");
-        priceLabel.setFont(new Font("B Yekan", 14));
+        Label priceLabel = new Label("Price: " + ad.getPrice() + " Tomans");
+        priceLabel.setFont(new Font("Arial", 14));
         priceLabel.setStyle("-fx-text-fill: #2c3e50;");
 
-        // وضعیت فعلی آگهی
-        Label statusLabel = new Label("وضعیت: " + ad.getStatus());
-        statusLabel.setFont(new Font("B Yekan", 12));
-        statusLabel.setStyle("-fx-text-fill: #4CAF50;"); // رنگ سبز برای فعال
+        Label statusLabel = new Label("Status: " + ad.getStatus());
+        statusLabel.setFont(new Font("Arial", 12));
+        statusLabel.setStyle("-fx-text-fill: #4CAF50;");
 
-        // --- دکمه‌های جدید ---
-
-        Button editButton = new Button("✏ ویرایش آگهی");
+        Button editButton = new Button("✏ Edit Ad");
         editButton.setStyle("-fx-background-color: #2196F3; -fx-text-fill: white;");
         editButton.setMaxWidth(Double.MAX_VALUE);
         editButton.setOnAction(e -> {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/edit-ad.fxml"));
                 Parent root = loader.load();
-                
-                // ارسال اطلاعات آگهی انتخاب شده به صفحه ویرایش
+
                 EditAdController editController = loader.getController();
                 editController.initData(ad);
 
@@ -137,16 +122,10 @@ public class ProfileController {
                 currentScene.setRoot(root);
             } catch (Exception ex) {
                 ex.printStackTrace();
-
-                Throwable cause = ex;
-                while (cause.getCause() != null) {
-                    cause = cause.getCause();
-                    System.out.println("CAUSE = " + cause);
-                }
             }
         });
 
-        Button soldButton = new Button("✔ تغییر به فروخته شده");
+        Button soldButton = new Button("✔ Mark as Sold");
         soldButton.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white;");
         soldButton.setMaxWidth(Double.MAX_VALUE);
         if(ad.getStatus().equals(AdvertisementStatus.ACTIVE)) {
@@ -155,28 +134,25 @@ public class ProfileController {
                 request.setStatus(AdvertisementStatus.SOLD);
                 ApiResponse<AdvertisementResponse> response = adApi.updateAd(ad.getId(), request);
                 if(response.isSuccess()) {
-                    statusLabel.setStyle("-fx-text-fill: #7f8c8d;"); // رنگ خاکستری
+                    statusLabel.setStyle("-fx-text-fill: #7f8c8d;");
                     ((Button) e.getSource()).setDisable(true);
                     loadMyAds();
-                }
-                else {
+                } else {
                     System.err.println(response.getMessage());
                 }
             });
-        }
-        else {
+        } else {
             soldButton.setDisable(true);
         }
 
-        Button deleteButton = new Button("🗑 حذف آگهی");
+        Button deleteButton = new Button("🗑 Delete Ad");
         deleteButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
         deleteButton.setMaxWidth(Double.MAX_VALUE);
         deleteButton.setOnAction(e -> {
             ApiResponse<AdvertisementResponse> response = adApi.delete(ad.getId());
             if(response.isSuccess()) {
                 loadMyAds();
-            }
-            else {
+            } else {
                 System.out.println(response.getMessage());
             }
         });

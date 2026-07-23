@@ -9,7 +9,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<AnchorPane prefHeight="792.0" prefWidth="1328.0" nodeOrientation="RIGHT_TO_LEFT" style="-fx-background-color: #f5f6fa;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.ChatListController">
+<AnchorPane prefHeight="792.0" prefWidth="1328.0" nodeOrientation="LEFT_TO_RIGHT" style="-fx-background-color: #f5f6fa;" xmlns="http://javafx.com/javafx/21" xmlns:fx="http://javafx.com/fxml/1" fx:controller="com.secondhand.controller.ChatListController">
     <children>
         <VBox spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
             <padding>
@@ -17,19 +17,19 @@
             </padding>
             <children>
 
-                <!-- هدر صفحه -->
+                <!-- Page Header -->
                 <HBox alignment="CENTER_LEFT" spacing="20.0">
                     <children>
-                        <Button mnemonicParsing="false" onAction="#goBack" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: white; -fx-border-color: #2196F3; -fx-text-fill: #2196F3; -fx-border-radius: 5;" text="بازگشت">
-                            <font><Font name="B Yekan" size="14.0" /></font>
+                        <Button mnemonicParsing="false" onAction="#goBack" prefHeight="40.0" prefWidth="100.0" style="-fx-background-color: white; -fx-border-color: #2196F3; -fx-text-fill: #2196F3; -fx-border-radius: 5;" text="Back">
+                            <font><Font name="Arial" size="14.0" /></font>
                         </Button>
-                        <Label text="پیام‌های من">
-                            <font><Font name="B Yekan" size="24.0" /></font>
+                        <Label text="My Messages">
+                            <font><Font name="Arial" size="24.0" /></font>
                         </Label>
                     </children>
                 </HBox>
 
-                <!-- بخش لیست چت‌ها -->
+                <!-- Chat List Section -->
                 <ScrollPane fitToWidth="true" style="-fx-background-color: transparent; -fx-background: transparent;" VBox.vgrow="ALWAYS">
                     <content>
                         <VBox fx:id="chatListContainer" spacing="10.0">

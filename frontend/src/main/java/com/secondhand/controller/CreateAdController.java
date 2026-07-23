@@ -22,7 +22,6 @@ import javafx.stage.Stage;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.List;
-import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.StackPane;
 import javafx.scene.control.Button;
 
@@ -36,9 +35,7 @@ public class CreateAdController {
     @FXML private Label messageLabel;
     @FXML private FlowPane imagesPane;
 
-    // المان‌های مربوط به عکس
     private List<File> selectedImageFiles = new ArrayList<>();
-
     private final AdApi adApi = new AdApi();
 
     @FXML
@@ -46,79 +43,41 @@ public class CreateAdController {
         categoryComboBox.getItems().setAll(Category.values());
         categoryComboBox.getSelectionModel().clearSelection();
     }
-    // متد باز کردن پنجره انتخاب عکس
+
     @FXML
     public void handleChooseImage(ActionEvent event) {
-
         FileChooser fileChooser = new FileChooser();
-
-        fileChooser.setTitle("انتخاب تصاویر آگهی");
-
+        fileChooser.setTitle("Select Ad Images");
         fileChooser.getExtensionFilters().add(
-                new FileChooser.ExtensionFilter(
-                        "Image Files",
-                        "*.png",
-                        "*.jpg",
-                        "*.jpeg"
-                )
+                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
         );
 
-
-        Stage stage =
-                (Stage) ((Node) event.getSource())
-                        .getScene()
-                        .getWindow();
-
-
-        List<File> files =
-                fileChooser.showOpenMultipleDialog(stage);
-
+        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
+        List<File> files = fileChooser.showOpenMultipleDialog(stage);
 
         if (files != null && !files.isEmpty()) {
-
             selectedImageFiles.clear();
-
             selectedImageFiles.addAll(files);
-
             try {
-
-                // فقط اولین عکس را پیش نمایش می‌دهد
                 refreshImages();
-
                 messageLabel.setStyle("-fx-text-fill:green;");
-                messageLabel.setText(
-                        files.size() + " عکس انتخاب شد."
-                );
-
-            }
-
-            catch (Exception e) {
-
+                messageLabel.setText(files.size() + " image(s) selected.");
+            } catch (Exception e) {
                 messageLabel.setStyle("-fx-text-fill:red;");
-                messageLabel.setText("خطا در بارگذاری عکس");
-
+                messageLabel.setText("Error loading images.");
             }
-
         }
-
     }
 
     private void refreshImages() {
-
         imagesPane.getChildren().clear();
-
         for (File file : selectedImageFiles) {
-
-            ImageView preview = new ImageView(
-                    new Image(file.toURI().toString())
-            );
-
+            ImageView preview = new ImageView(new Image(file.toURI().toString()));
             preview.setFitWidth(100);
             preview.setFitHeight(100);
             preview.setPreserveRatio(true);
 
             Button remove = new Button("✖");
-
             remove.setStyle("""
                     -fx-background-color:red;
                     -fx-text-fill:white;
@@ -126,21 +85,14 @@ public class CreateAdController {
                     """);
 
             remove.setOnAction(e -> {
-
                 selectedImageFiles.remove(file);
-
                 refreshImages();
-
             });
 
             StackPane stack = new StackPane(preview, remove);
-
             StackPane.setAlignment(remove, javafx.geometry.Pos.TOP_RIGHT);
-
             imagesPane.getChildren().add(stack);
-
         }
-
     }
 
     @FXML
@@ -153,7 +105,7 @@ public class CreateAdController {
 
         if (title.isEmpty() || priceStr.isEmpty() || city.isEmpty() || description.isEmpty()) {
             messageLabel.setStyle("-fx-text-fill: red;");
-            messageLabel.setText("لطفاً تمامی فیلدها را پر کنید.");
+            messageLabel.setText("Please fill in all fields.");
             return;
         }
 
@@ -162,11 +114,10 @@ public class CreateAdController {
             price = Long.parseLong(priceStr);
         } catch (NumberFormatException e) {
             messageLabel.setStyle("-fx-text-fill: red;");
-            messageLabel.setText("لطفاً قیمت را به صورت عددی وارد کنید.");
+            messageLabel.setText("Please enter a valid numeric price.");
             return;
         }
 
-        // ارسال selectedImageBase64 به همراه سایر اطلاعات
         CreateAdvertisementRequest request = new CreateAdvertisementRequest(title, description, price, city, category);
 
         try {
@@ -175,45 +126,38 @@ public class CreateAdController {
                 messageLabel.setStyle("-fx-text-fill: green;");
                 messageLabel.setText(response.getMessage());
                 Long advertisementId = response.getData().getId();
-                System.out.println(response.getMessage());
 
                 if (!selectedImageFiles.isEmpty()) {
-
                     boolean uploadFailed = false;
-
                     for (File imageFile : selectedImageFiles) {
-
-                        ApiResponse<ImageResponse> imageResponse =
-                                adApi.uploadImage(advertisementId, imageFile);
-
+                        ApiResponse<ImageResponse> imageResponse = adApi.uploadImage(advertisementId, imageFile);
                         if (!imageResponse.isSuccess()) {
                             uploadFailed = true;
                         }
                     }
                     if (uploadFailed) {
                         messageLabel.setStyle("-fx-text-fill: orange;");
-                        messageLabel.setText("آگهی ثبت شد ولی برخی از عکس‌ها آپلود نشدند.");
+                        messageLabel.setText("Ad created, but some images failed to upload.");
                     } else {
                         messageLabel.setStyle("-fx-text-fill: green;");
-                        messageLabel.setText("آگهی و همه تصاویر با موفقیت ثبت شدند.");
+                        messageLabel.setText("Ad and images successfully created.");
                     }
                 }
-            }
-            else {
+            } else {
                 messageLabel.setStyle("-fx-text-fill: red;");
                 messageLabel.setText(response.getMessage());
             }
 
             if(response.isSuccess()) {
-                // خالی کردن فرم برای ثبت آگهی بعدی
-                titleField.clear(); priceField.clear(); cityField.clear(); categoryComboBox.getSelectionModel().clearSelection(); descriptionField.clear();
+                titleField.clear(); priceField.clear(); cityField.clear();
+                categoryComboBox.getSelectionModel().clearSelection(); descriptionField.clear();
                 selectedImageFiles.clear();
                 imagesPane.getChildren().clear();
             }
 
         } catch (Exception e) {
             messageLabel.setStyle("-fx-text-fill: red;");
-            messageLabel.setText("خطا در ارتباط با سرور. لاگ‌ها را بررسی کنید.");
+            messageLabel.setText("Server connection error. Check logs.");
             e.printStackTrace();
         }
     }

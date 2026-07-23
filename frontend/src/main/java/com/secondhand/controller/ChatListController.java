@@ -23,8 +23,6 @@ import java.util.List;
 public class ChatListController {
 
     @FXML private VBox chatListContainer;
-
-    // استفاده از API برای دریافت چت‌ها
     private final ChatApi chatApi = new ChatApi();
 
     @FXML
@@ -34,8 +32,6 @@ public class ChatListController {
 
     private void loadChatRooms() {
         chatListContainer.getChildren().clear();
-
-        // دریافت لیست چت‌ها از سرور
         ApiResponse<List<ChatRoomResponse>> response = chatApi.getChats();
 
         if (response.isSuccess() && response.getData() != null && !response.getData().isEmpty()) {
@@ -44,8 +40,8 @@ public class ChatListController {
                 chatListContainer.getChildren().add(chatCard);
             }
         } else {
-            Label emptyLabel = new Label("شما هنوز هیچ گفت‌وگویی ندارید.");
-            emptyLabel.setFont(new Font("B Yekan", 16));
+            Label emptyLabel = new Label("You have no conversations yet.");
+            emptyLabel.setFont(new Font("Arial", 16));
             emptyLabel.setStyle("-fx-text-fill: #7f8c8d;");
             chatListContainer.getChildren().add(emptyLabel);
         }
@@ -64,31 +60,26 @@ public class ChatListController {
         VBox infoBox = new VBox();
         infoBox.setSpacing(8);
 
-        // دریافت نام و نام خانوادگی طرف مقابل
         String firstName = chatRoom.getOtherUserFirstname();
         String lastName = chatRoom.getOtherUserLastname();
-
-        // ترکیب نام و نام خانوادگی (اگر خالی بود همان نام کاربری را نشان بده تا برنامه خطا ندهد)
         String fullName = (firstName != null && lastName != null && !firstName.isEmpty() && !lastName.isEmpty())
                 ? firstName + " " + lastName
                 : chatRoom.getOtherUser();
 
-        // نمایش نام کامل به عنوان متن اصلی
         Label nameLabel = new Label(fullName);
-        nameLabel.setFont(new Font("B Yekan", 18));
+        nameLabel.setFont(new Font("Arial", 18));
         nameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #19171cff;");
 
-        // قرار دادن نام کامل در یک ردیف (تگ دوم حذف شد)
         HBox nameBox = new HBox(10);
         nameBox.setAlignment(Pos.CENTER_LEFT);
         nameBox.getChildren().add(nameLabel);
 
-        Label adTitleLabel = new Label("آگهی: " + chatRoom.getAdvertisementTitle());
-        adTitleLabel.setFont(new Font("B Yekan", 14));
+        Label adTitleLabel = new Label("Ad: " + chatRoom.getAdvertisementTitle());
+        adTitleLabel.setFont(new Font("Arial", 14));
         adTitleLabel.setStyle("-fx-text-fill: #3498db;");
 
-        Label lastMessageLabel = new Label(chatRoom.getLastMessage() != null ? chatRoom.getLastMessage() : "پیامی ارسال نشده");
-        lastMessageLabel.setFont(new Font("B Yekan", 14));
+        Label lastMessageLabel = new Label(chatRoom.getLastMessage() != null ? chatRoom.getLastMessage() : "No messages sent");
+        lastMessageLabel.setFont(new Font("Arial", 14));
         lastMessageLabel.setStyle("-fx-text-fill: #7f8c8d;");
 
         infoBox.getChildren().addAll(nameBox, adTitleLabel, lastMessageLabel);
@@ -106,9 +97,7 @@ public class ChatListController {
         timeLabel.setStyle("-fx-text-fill: #95a5a6;");
 
         timeBox.getChildren().add(timeLabel);
-
         card.getChildren().addAll(infoBox, timeBox);
-
         card.setOnMouseClicked(event -> openChatRoom(chatRoom, card));
 
         return card;
@@ -119,7 +108,6 @@ public class ChatListController {
             FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/chat.fxml"));
             Parent root = loader.load();
 
-            // ارسال اطلاعات به کنترلر چت اصلی
             ChatController chatController = loader.getController();
             chatController.initData(chatRoom);
 
@@ -127,7 +115,7 @@ public class ChatListController {
             currentScene.setRoot(root);
         } catch (Exception e) {
             e.printStackTrace();
-            System.err.println("خطا در باز کردن صفحه گفت‌وگو");
+            System.err.println("Error opening chat page");
         }
     }
 
