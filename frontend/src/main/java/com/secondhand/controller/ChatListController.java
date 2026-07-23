@@ -64,23 +64,24 @@ public class ChatListController {
         VBox infoBox = new VBox();
         infoBox.setSpacing(8);
 
-        // دریافت نام کاربری مستقیم از بک‌اند
-        String username = chatRoom.getOtherUser();
+        // دریافت نام و نام خانوادگی طرف مقابل
+        String firstName = chatRoom.getOtherUserFirstname();
+        String lastName = chatRoom.getOtherUserLastname();
 
-        // نمایش نام کاربری به عنوان متن اصلی
-        Label nameLabel = new Label(username);
+        // ترکیب نام و نام خانوادگی (اگر خالی بود همان نام کاربری را نشان بده تا برنامه خطا ندهد)
+        String fullName = (firstName != null && lastName != null && !firstName.isEmpty() && !lastName.isEmpty())
+                ? firstName + " " + lastName
+                : chatRoom.getOtherUser();
+
+        // نمایش نام کامل به عنوان متن اصلی
+        Label nameLabel = new Label(fullName);
         nameLabel.setFont(new Font("B Yekan", 18));
         nameLabel.setStyle("-fx-font-weight: bold; -fx-text-fill: #19171cff;");
 
-        // تگ نام کاربری
-        Label usernameTag = new Label(username);
-        usernameTag.setFont(new Font("Arial", 12));
-        usernameTag.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #7f8c8d; -fx-padding: 3 8 3 8; -fx-background-radius: 12;");
-
-        // قرار دادن نام کاربری و تگ در یک ردیف
-        HBox nameAndTagBox = new HBox(10);
-        nameAndTagBox.setAlignment(Pos.CENTER_LEFT);
-        nameAndTagBox.getChildren().addAll(nameLabel, usernameTag);
+        // قرار دادن نام کامل در یک ردیف (تگ دوم حذف شد)
+        HBox nameBox = new HBox(10);
+        nameBox.setAlignment(Pos.CENTER_LEFT);
+        nameBox.getChildren().add(nameLabel);
 
         Label adTitleLabel = new Label("آگهی: " + chatRoom.getAdvertisementTitle());
         adTitleLabel.setFont(new Font("B Yekan", 14));
@@ -90,7 +91,7 @@ public class ChatListController {
         lastMessageLabel.setFont(new Font("B Yekan", 14));
         lastMessageLabel.setStyle("-fx-text-fill: #7f8c8d;");
 
-        infoBox.getChildren().addAll(nameAndTagBox, adTitleLabel, lastMessageLabel);
+        infoBox.getChildren().addAll(nameBox, adTitleLabel, lastMessageLabel);
         HBox.setHgrow(infoBox, Priority.ALWAYS);
 
         VBox timeBox = new VBox();

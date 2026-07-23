@@ -47,7 +47,14 @@ public class ChatController {
 
         currentChat = chat;
 
-        chatPartnerNameLabel.setText("گفتگو با: " + chat.getOtherUser());
+        // ترکیب نام و نام خانوادگی برای هدر صفحه چت
+        String partnerFirstName = chat.getOtherUserFirstname();
+        String partnerLastName = chat.getOtherUserLastname();
+        String partnerFullName = (partnerFirstName != null && partnerLastName != null && !partnerFirstName.isEmpty() && !partnerLastName.isEmpty())
+                ? partnerFirstName + " " + partnerLastName
+                : chat.getOtherUser();
+
+        chatPartnerNameLabel.setText("گفتگو با: " + partnerFullName);
 
         adTitleLabel.setText(chat.getAdvertisementTitle());
 
@@ -113,8 +120,14 @@ public class ChatController {
             bubble.setStyle("-fx-background-color: #ffffff; -fx-background-radius: 15; -fx-effect: dropshadow(three-pass-box, rgba(0,0,0,0.1), 5, 0, 0, 2);");
         }
 
-        // --- بخش جدید: نام فرستنده پیام ---
-        String senderName = isMine ? "شما" : message.getSender();
+        // --- بخش جدید: نام و نام خانوادگی فرستنده پیام ---
+        String senderFirstName = message.getSenderFirstname();
+        String senderLastName = message.getSenderLastname();
+        String senderFullName = (senderFirstName != null && senderLastName != null && !senderFirstName.isEmpty() && !senderLastName.isEmpty())
+                ? senderFirstName + " " + senderLastName
+                : message.getSender();
+
+        String senderName = isMine ? "شما" : senderFullName;
         Label senderLabel = new Label(senderName);
         senderLabel.setFont(new Font("B Yekan", 12));
         // اگر پیام خودمان بود سبز پررنگ، اگر طرف مقابل بود آبی پررنگ شود
