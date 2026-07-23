@@ -45,4 +45,12 @@ public class AdminAdvertisementController {
 
     }
 
+    @GetMapping()
+    public ApiResponse<List<AdvertisementResponse>>
+    getAllAdvertisements() {
+
+        return advertisementService.getAllAdvertisements();
+
+    }
+
 }
