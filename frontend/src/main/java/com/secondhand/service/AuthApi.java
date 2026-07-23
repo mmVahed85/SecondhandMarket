@@ -1,27 +1,33 @@
 package com.secondhand.service;
 
-import com.secondhand.model.LoginRequest;
-import com.secondhand.model.LoginResponse;
-import com.secondhand.model.RegisterRequest; // مطمئن شوید کلاس RegisterRequest در مسیر درست import شود
+import com.secondhand.dto.RegisterResponse;
+import com.secondhand.dto.LoginRequest;
+import com.secondhand.dto.LoginResponse;
+import com.secondhand.dto.RegisterRequest; // مطمئن شوید کلاس RegisterRequest در مسیر درست import شود
+import com.secondhand.util.ApiResponse;
+import com.fasterxml.jackson.core.type.TypeReference;
 
 public class AuthApi {
 
     private final ApiClient apiClient = new ApiClient();
 
-    public LoginResponse login(LoginRequest request){
+    public ApiResponse<LoginResponse> login(LoginRequest request){
+
         return apiClient.post(
                 "/api/auth/login",
                 request,
-                LoginResponse.class
+                new TypeReference<ApiResponse<LoginResponse>>() {}
         );
+
     }
 
-    // این متد جدید برای ثبت‌نام است
-    public String register(RegisterRequest request){
+    public ApiResponse<RegisterResponse> register(RegisterRequest request){
+
         return apiClient.post(
                 "/api/auth/register",
                 request,
-                String.class
+                new TypeReference<ApiResponse<RegisterResponse>>() {}
         );
+
     }
 }

@@ -1,6 +1,10 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.Ad;
+import com.secondhand.dto.AdvertisementResponse;
+import com.secondhand.dto.UpdateAdvertisementRequest;
+import com.secondhand.model.*;
+import com.secondhand.service.AdApi;
+import com.secondhand.util.ApiResponse;
 import com.secondhand.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -25,10 +29,10 @@ import java.util.List;
 
 public class ProfileController {
 
+    private final AdApi adApi = new AdApi();
+
     @FXML private Label usernameLabel;
     @FXML private TilePane myAdsContainer;
-
-    private List<Ad> myAds = new ArrayList<>();
     private String currentUser;
 
     @FXML
@@ -45,31 +49,34 @@ public class ProfileController {
     }
 
     private void loadMyAds() {
+
         myAdsContainer.getChildren().clear();
+        
+        ApiResponse<List<AdvertisementResponse>> response = adApi.getMyAds();
 
-        if (myAds.isEmpty()) {
-            myAds.add(new Ad(10L, "مبل راحتی ۷ نفره", 12000000L, "تهران", null));
-            myAds.add(new Ad(11L, "میز تحریر چوبی", 1500000L, "تهران", null));
+        if(response.isSuccess()) {
+            if (response.getData().isEmpty()) {
+                Label noAdLabel = new Label("شما هنوز هیچ آگهی‌ای ثبت نکرده‌اید.");
+                noAdLabel.setFont(new Font("B Yekan", 16));
+                myAdsContainer.getChildren().add(noAdLabel);
+                return;
+            }
 
-            for (Ad ad : myAds) {
-                ad.setSellerName(currentUser);
+            for (AdvertisementResponse ad : response.getData()) {
+                VBox adCard = createMyAdCard(ad);
+                myAdsContainer.getChildren().add(adCard);
             }
         }
-
-        if (myAds.isEmpty()) {
-            Label noAdLabel = new Label("شما هنوز هیچ آگهی‌ای ثبت نکرده‌اید.");
+        else {
+            Label noAdLabel = new Label(response.getMessage());
             noAdLabel.setFont(new Font("B Yekan", 16));
             myAdsContainer.getChildren().add(noAdLabel);
             return;
         }
-
-        for (Ad ad : myAds) {
-            VBox adCard = createMyAdCard(ad);
-            myAdsContainer.getChildren().add(adCard);
-        }
+        
     }
 
-    private VBox createMyAdCard(Ad ad) {
+    private VBox createMyAdCard(AdvertisementResponse ad) {
         VBox card = new VBox();
         card.setSpacing(8);
         card.setAlignment(Pos.CENTER);
@@ -82,11 +89,21 @@ public class ProfileController {
         imageView.setFitHeight(130);
         imageView.setPreserveRatio(true);
 
-        if (ad.getImageBase64() != null && !ad.getImageBase64().isEmpty()) {
+        if (ad.getImages() != null && !ad.getImages().isEmpty()) {
+
             try {
-                byte[] imageBytes = Base64.getDecoder().decode(ad.getImageBase64());
-                imageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-            } catch (Exception e) {}
+
+                String imageUrl = ad.getImages().get(0).getUrl();
+
+                imageView.setImage(new Image(imageUrl, true));
+
+            } catch (Exception e) {
+
+                System.err.println("خطا در بارگذاری تصویر");
+                e.printStackTrace();
+
+            }
+
         }
 
         Label titleLabel = new Label(ad.getTitle());
@@ -98,7 +115,7 @@ public class ProfileController {
         priceLabel.setStyle("-fx-text-fill: #2c3e50;");
 
         // وضعیت فعلی آگهی
-        Label statusLabel = new Label("وضعیت: فعال");
+        Label statusLabel = new Label("وضعیت: " + ad.getStatus());
         statusLabel.setFont(new Font("B Yekan", 12));
         statusLabel.setStyle("-fx-text-fill: #4CAF50;"); // رنگ سبز برای فعال
 
@@ -127,21 +144,35 @@ public class ProfileController {
         Button soldButton = new Button("✔ تغییر به فروخته شده");
         soldButton.setStyle("-fx-background-color: #FF9800; -fx-text-fill: white;");
         soldButton.setMaxWidth(Double.MAX_VALUE);
-        soldButton.setOnAction(e -> {
-            statusLabel.setText("وضعیت: فروخته شده");
-            statusLabel.setStyle("-fx-text-fill: #7f8c8d;"); // رنگ خاکستری
-            // غیرفعال کردن دکمه پس از فروش
-            ((Button) e.getSource()).setDisable(true);
-            System.out.println("وضعیت آگهی به فروخته شده تغییر کرد.");
-        });
+        if(ad.getStatus().equals(AdvertisementStatus.ACTIVE)) {
+            soldButton.setOnAction(e -> {
+                UpdateAdvertisementRequest request = new UpdateAdvertisementRequest();
+                request.setStatus(AdvertisementStatus.SOLD);
+                ApiResponse<AdvertisementResponse> response = adApi.updateAd(ad.getId(), request);
+                if(response.isSuccess()) {
+                    statusLabel.setStyle("-fx-text-fill: #7f8c8d;"); // رنگ خاکستری
+                    ((Button) e.getSource()).setDisable(true);
+                }
+                else {
+                    System.err.println(response.getMessage());
+                }
+            });
+        }
+        else {
+            soldButton.setDisable(true);
+        }
 
         Button deleteButton = new Button("🗑 حذف آگهی");
         deleteButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
         deleteButton.setMaxWidth(Double.MAX_VALUE);
         deleteButton.setOnAction(e -> {
-            myAds.remove(ad);
-            loadMyAds();
-            System.out.println("آگهی با موفقیت حذف شد.");
+            ApiResponse<AdvertisementResponse> response = adApi.delete(ad.getId());
+            if(response.isSuccess()) {
+                loadMyAds();
+            }
+            else {
+                System.out.println(response.getMessage());
+            }
         });
 
         card.getChildren().addAll(imageView, titleLabel, priceLabel, statusLabel, editButton, soldButton, deleteButton);

@@ -138,21 +138,4 @@ public class AdvertisementController {
         );
 
     }
-
-    @PostMapping("/{advertisementId}/chat")
-    public ApiResponse<MessageResponse> sendMessage(
-
-            @PathVariable Long advertisementId,
-
-            @Valid @RequestBody SendMessageRequest request,
-
-            Authentication authentication) {
-
-        return chatService.sendMessage(
-                advertisementId,
-                request,
-                authentication.getName()
-        );
-
-    }
 }

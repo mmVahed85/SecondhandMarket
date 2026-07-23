@@ -1,6 +1,15 @@
 package com.secondhand.controller;
 
+import java.time.format.DateTimeFormatter;
+import java.util.List;
+
+import com.secondhand.dto.ChatRoomResponse;
+import com.secondhand.dto.MessageResponse;
+import com.secondhand.dto.SendMessageRequest;
 import com.secondhand.model.Message;
+import com.secondhand.service.ApiClient;
+import com.secondhand.service.ChatApi;
+import com.secondhand.util.ApiResponse;
 import com.secondhand.util.SessionManager;
 import javafx.application.Platform;
 import javafx.event.ActionEvent;
@@ -20,50 +29,73 @@ import javafx.scene.text.Font;
 
 public class ChatController {
 
+    private final ChatApi chatApi = new ChatApi();
+
     @FXML private Label chatPartnerNameLabel;
     @FXML private Label adTitleLabel;
     @FXML private VBox messagesContainer;
     @FXML private ScrollPane chatScrollPane;
     @FXML private TextField messageInputField;
 
+    private ChatRoomResponse currentChat;
+    private Long chatRoomId;
     private String sellerName;
     private String currentUser;
 
     // این متد از صفحه جزئیات صدا زده می‌شود تا اطلاعات فروشنده را به این صفحه پاس دهد
-    public void initData(String partnerName, String adTitle) {
-        this.sellerName = partnerName;
-        this.chatPartnerNameLabel.setText("گفتگو با: " + partnerName);
-        this.adTitleLabel.setText("درباره آگهی: " + adTitle);
+    public void initData(ChatRoomResponse chat) {
 
-        // پیدا کردن نام کسی که لاگین کرده
-        this.currentUser = SessionManager.getLoggedInUsername();
-        if (this.currentUser == null) {
-            this.currentUser = "شما";
+        currentChat = chat;
+
+        chatPartnerNameLabel.setText("گفتگو با: " + chat.getOtherUser());
+
+        adTitleLabel.setText(chat.getAdvertisementTitle());
+
+        loadMessages();
+    }
+
+    private void loadMessages() {
+
+        ApiResponse<List<MessageResponse>> response =
+                chatApi.getMessages(currentChat.getId());
+
+        if (!response.isSuccess())
+            return;
+
+        messagesContainer.getChildren().clear();
+
+        for (MessageResponse msg : response.getData()) {
+
+            boolean mine =
+                    msg.getSender().equals(SessionManager.getLoggedInUsername());
+
+            addMessageBubble(msg, mine);
         }
-
-        // یک پیام تستی از طرف فروشنده برای شروع مکالمه
-        Message welcomeMsg = new Message(sellerName, currentUser, "سلام! آگهی من رو دیدید؟ سوالی دارید؟");
-        addMessageBubble(welcomeMsg, false); // false یعنی پیام مال ما نیست (سمت چپ)
     }
 
     @FXML
     public void handleSendMessage(ActionEvent event) {
+
         String text = messageInputField.getText().trim();
-        if (text.isEmpty()) {
+
+        if (text.isEmpty())
             return;
+
+        SendMessageRequest request = new SendMessageRequest();
+        request.setText(text);
+
+        ApiResponse<MessageResponse> response =
+                chatApi.sendMessage(currentChat.getId(), request);
+
+        if (response.isSuccess()) {
+
+            addMessageBubble(response.getData(), true);
+
+            messageInputField.clear();
         }
-
-        // ساخت پیام جدید توسط خودمان
-        Message myMsg = new Message(currentUser, sellerName, text);
-
-        // اضافه کردن حباب پیام به صفحه (true یعنی پیام مال ماست و باید سمت راست باشد)
-        addMessageBubble(myMsg, true);
-
-        // پاک کردن کادر تایپ
-        messageInputField.clear();
     }
 
-    private void addMessageBubble(Message message, boolean isMine) {
+    private void addMessageBubble(MessageResponse message, boolean isMine) {
         HBox messageBox = new HBox();
         messageBox.setPadding(new Insets(5));
 
@@ -82,6 +114,7 @@ public class ChatController {
         }
 
         // متن پیام
+        
         Label textLabel = new Label(message.getText());
         textLabel.setFont(new Font("B Yekan", 16));
         textLabel.setStyle("-fx-text-fill: black;");
@@ -89,7 +122,9 @@ public class ChatController {
         textLabel.setMaxWidth(400);
 
         // زمان پیام
-        Label timeLabel = new Label(message.getFormattedTime());
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm");
+
+        Label timeLabel = new Label(message.getCreatedAt().format(formatter));
         timeLabel.setFont(new Font("Arial", 10));
         timeLabel.setStyle("-fx-text-fill: #888888;");
         timeLabel.setAlignment(Pos.BOTTOM_RIGHT);

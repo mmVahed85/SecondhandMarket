@@ -29,73 +29,52 @@ public class ChatService {
         this.userService = userService;
     }
 
-    public ApiResponse<MessageResponse> sendMessage(Long advertisementId, SendMessageRequest request, String username) {
+    public ApiResponse<MessageResponse> sendMessage(
+        Long chatId,
+        SendMessageRequest request,
+        String username) {
 
-        Advertisement advertisement =
-                advertisementRepository.findById(advertisementId)
+        ChatRoom chatRoom =
+                chatRoomRepository.findById(chatId)
                         .orElse(null);
 
-        if (advertisement == null) {
-            return new ApiResponse<>(false,
-                    "Advertisement not found",
-                    null);
-        }
+        if (chatRoom == null) {
 
-        if (advertisement.getStatus() != AdvertisementStatus.ACTIVE) {
-
-            return new ApiResponse<>(
-                    false,
-                    "Advertisement is not active",
-                    null
-            );
+                return new ApiResponse<>(
+                        false,
+                        "Chat room not found",
+                        null
+                );
 
         }
 
         User sender = userService.findByUsername(username);
 
         if (sender == null) {
-            return new ApiResponse<>(false,
-                    "User not found",
-                    null);
+
+                return new ApiResponse<>(
+                        false,
+                        "User not found",
+                        null
+                );
+
         }
 
-        User seller = advertisement.getOwner();
+        if (!chatRoom.getBuyer().getId().equals(sender.getId())
+                && !chatRoom.getSeller().getId().equals(sender.getId())) {
 
-        if (seller.getId().equals(sender.getId())) {
-            return new ApiResponse<>(false,
-                    "You cannot chat with yourself",
-                    null);
-        }
-
-        ChatRoom chatRoom =
-                chatRoomRepository
-                        .findByAdvertisementAndBuyerAndSeller(
-                                advertisement,
-                                sender,
-                                seller
-                        )
-                        .orElse(null);
-
-        if (chatRoom == null) {
-
-            chatRoom = new ChatRoom();
-
-            chatRoom.setAdvertisement(advertisement);
-
-            chatRoom.setBuyer(sender);
-
-            chatRoom.setSeller(seller);
-
-            chatRoomRepository.save(chatRoom);
+                return new ApiResponse<>(
+                        false,
+                        "Access denied",
+                        null
+                );
 
         }
 
         Message message = new Message();
 
         message.setChatRoom(chatRoom);
-
         message.setSender(sender);
-
         message.setText(request.getText());
 
         messageRepository.save(message);
@@ -109,13 +88,12 @@ public class ChatService {
                         message.getCreatedAt()
                 );
 
-        return new ApiResponse<>(
-                true,
-                "Message sent successfully",
-                response
-        );
-
-    }
+                return new ApiResponse<>(
+                        true,
+                        "Message sent successfully",
+                        response
+                );
+        }
 
     public ApiResponse<List<MessageResponse>> getMessages(Long chatRoomId, String username) {
 
@@ -268,4 +246,95 @@ public class ChatService {
         );
 
     }
+
+    public ApiResponse<ChatRoomResponse> createOrGetRoom(Long advertisementId, String username) {
+
+        Advertisement advertisement =
+                advertisementRepository.findById(advertisementId)
+                        .orElse(null);
+
+        if (advertisement == null) {
+
+                return new ApiResponse<>(
+                        false,
+                        "Advertisement not found",
+                        null
+                );
+
+        }
+
+        if (advertisement.getStatus() != AdvertisementStatus.ACTIVE) {
+
+                return new ApiResponse<>(
+                        false,
+                        "Advertisement is not active",
+                        null
+                );
+
+        }
+
+        User buyer = userService.findByUsername(username);
+
+        if (buyer == null) {
+
+                return new ApiResponse<>(
+                        false,
+                        "User not found",
+                        null
+                );
+
+        }
+
+        User seller = advertisement.getOwner();
+
+        if (seller.getId().equals(buyer.getId())) {
+
+                return new ApiResponse<>(
+                        false,
+                        "You cannot chat with yourself",
+                        null
+                );
+
+        }
+
+        ChatRoom room =
+                chatRoomRepository
+                        .findByAdvertisementAndBuyerAndSeller(
+                                advertisement,
+                                buyer,
+                                seller
+                        )
+                        .orElse(null);
+
+        if (room == null) {
+
+                room = new ChatRoom();
+
+                room.setAdvertisement(advertisement);
+                room.setBuyer(buyer);
+                room.setSeller(seller);
+
+                chatRoomRepository.save(room);
+
+        }
+
+        ChatRoomResponse response =
+                new ChatRoomResponse(
+                        room.getId(),
+                        advertisement.getId(),
+                        advertisement.getTitle(),
+                        seller.getUsername(),
+                        "",
+                        null
+                );
+
+        response.setHasUnreadMessages(false);
+
+        return new ApiResponse<>(
+                true,
+                "Chat room ready",
+                response
+        );
+
+        }
 }

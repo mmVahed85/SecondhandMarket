@@ -1,7 +1,9 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.Ad;
+import com.secondhand.dto.*;
+import com.secondhand.model.*;
 import com.secondhand.service.AdApi;
+import com.secondhand.util.ApiResponse;
 import com.secondhand.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -12,6 +14,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
@@ -19,13 +22,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-
-import java.io.ByteArrayInputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Base64;
 import java.util.List;
-import java.util.stream.Collectors;
 
 public class DashboardController {
 
@@ -34,68 +32,96 @@ public class DashboardController {
     // المان‌های فیلتر
     @FXML private TextField searchField;
     @FXML private TextField cityFilterField;
-    @FXML private TextField categoryFilterField;
+    @FXML private TextField minPriceField;
+    @FXML private TextField maxPriceField;
+    @FXML private ComboBox<Category> categoryComboBox;
+    @FXML private ComboBox<SortType> sortTypeComboBox;
 
     private final AdApi adApi = new AdApi();
 
     // یک لیست برای نگهداری تمام آگهی‌های دریافتی از سرور (برای سرعت در فیلتر کردن)
-    private List<Ad> allAds = new ArrayList<>();
 
     @FXML
     public void initialize() {
         loadAdsFromServer();
+        categoryComboBox.getItems().setAll(Category.values());
+        sortTypeComboBox.getItems().setAll(SortType.values());
+        categoryComboBox.getSelectionModel().clearSelection();
+        sortTypeComboBox.getSelectionModel().clearSelection();
     }
 
     private void loadAdsFromServer() {
-        Ad[] adsArray = adApi.getActiveAds();
+        ApiResponse<List<AdvertisementResponse>> adResponses = adApi.getActiveAds();
 
-        if (adsArray == null || adsArray.length == 0) {
+        if (adResponses == null || adResponses.getData().size() == 0) {
             System.out.println("دریافت از سرور خالی بود. بارگذاری داده‌های تستی...");
-            adsArray = getMockAds();
         }
 
-        // تبدیل آرایه به لیست و ذخیره در متغیر allAds
-        allAds = Arrays.asList(adsArray);
-
         // نمایش همه آگهی‌ها در ابتدا
-        displayAds(allAds);
+        displayAds(adResponses.getData());
     }
 
     // متد جدید برای نمایش یک لیست مشخص از آگهی‌ها
-    private void displayAds(List<Ad> adsToDisplay) {
+    private void displayAds(List<AdvertisementResponse> adResponses) {
+
         adsContainer.getChildren().clear();
 
-        if (adsToDisplay == null || adsToDisplay.isEmpty()) {
-            Label noAdLabel = new Label("هیچ آگهی‌ای با این مشخصات یافت نشد.");
-            noAdLabel.setFont(new Font("B Yekan", 18));
+        if (adResponses == null || adResponses.isEmpty()) {
+
+            Label noAdLabel = new Label("هیچ آگهی‌ای یافت نشد.");
+            noAdLabel.setFont(new Font("B Yekan",18));
+
             adsContainer.getChildren().add(noAdLabel);
+
             return;
         }
 
-        for (Ad ad : adsToDisplay) {
-            VBox adCard = createAdCard(ad);
-            adsContainer.getChildren().add(adCard);
+        for (AdvertisementResponse ad : adResponses) {
+
+            adsContainer.getChildren().add(createAdCard(ad));
+
         }
     }
 
     // متد اعمال فیلترها (هنگام کلیک روی دکمه جستجو)
     @FXML
     public void handleFilter(ActionEvent event) {
-        String searchText = searchField.getText().trim().toLowerCase();
-        String cityText = cityFilterField.getText().trim().toLowerCase();
-        String categoryText = categoryFilterField.getText().trim().toLowerCase();
 
-        // فیلتر کردن لیست اصلی با استفاده از Stream های جاوا
-        List<Ad> filteredAds = allAds.stream().filter(ad -> {
-            boolean matchesSearch = searchText.isEmpty() || ad.getTitle().toLowerCase().contains(searchText);
-            boolean matchesCity = cityText.isEmpty() || (ad.getCity() != null && ad.getCity().toLowerCase().contains(cityText));
-            boolean matchesCategory = categoryText.isEmpty() || (ad.getCategory() != null && ad.getCategory().toLowerCase().contains(categoryText));
+        AdvertisementFilterRequest request = new AdvertisementFilterRequest();
 
-            return matchesSearch && matchesCity && matchesCategory;
-        }).collect(Collectors.toList());
+        request.setCity(cityFilterField.getText().trim());
+        request.setKeyword(searchField.getText().trim());
+        if (categoryComboBox.getValue() != null) {
 
-        // نمایش لیست فیلتر شده
-        displayAds(filteredAds);
+            request.setCategory(categoryComboBox.getValue());
+
+        }
+        if (sortTypeComboBox.getValue() != null) {
+
+            request.setSortType(sortTypeComboBox.getValue());
+
+        }
+        if (!minPriceField.getText().isBlank()) {
+            request.setMinPrice(Long.parseLong(minPriceField.getText()));
+        }
+
+        if (!maxPriceField.getText().isBlank()) {
+            request.setMaxPrice(Long.parseLong(maxPriceField.getText()));
+        }
+
+        ApiResponse<List<AdvertisementResponse>> response = adApi.filterAdvertisements(request);
+
+        if (response.isSuccess()) {
+
+            displayAds(response.getData());
+
+        } else {
+
+            Label noAdLabel = new Label(response.getMessage());
+            noAdLabel.setFont(new Font("B Yekan", 18));
+            System.out.println(response.getMessage());
+
+        }
     }
 
     // متد پاک کردن فیلترها
@@ -103,14 +129,17 @@ public class DashboardController {
     public void clearFilters(ActionEvent event) {
         searchField.clear();
         cityFilterField.clear();
-        categoryFilterField.clear();
+        minPriceField.clear();
+        maxPriceField.clear();
 
-        // نمایش دوباره تمام آگهی‌ها
-        displayAds(allAds);
+        categoryComboBox.getSelectionModel().clearSelection();
+        sortTypeComboBox.getSelectionModel().clearSelection();
+
+        loadAdsFromServer();
     }
 
     // متد ساخت ظاهر کارت آگهی (بدون تغییر نسبت به قبل)
-    private VBox createAdCard(Ad ad) {
+    private VBox createAdCard(AdvertisementResponse ad) {
         VBox card = new VBox();
         card.setSpacing(10);
         card.setAlignment(Pos.CENTER);
@@ -123,11 +152,17 @@ public class DashboardController {
         imageView.setFitHeight(150);
         imageView.setPreserveRatio(true);
 
-        if (ad.getImageBase64() != null && !ad.getImageBase64().isEmpty()) {
+        if (ad.getImages() != null && !ad.getImages().isEmpty()) {
+
             try {
-                byte[] imageBytes = Base64.getDecoder().decode(ad.getImageBase64());
-                imageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-            } catch (Exception e) {}
+
+                String imageUrl = ad.getImages().get(0).getUrl();
+
+                imageView.setImage(new Image(imageUrl, true));
+
+            } catch (Exception ignored) {
+            }
+
         }
 
         Label titleLabel = new Label(ad.getTitle());
@@ -197,24 +232,5 @@ public class DashboardController {
             Scene currentScene = ((Node) event.getSource()).getScene();
             currentScene.setRoot(root);
         } catch (Exception e) { e.printStackTrace(); }
-    }
-
-    private Ad[] getMockAds() {
-        Ad mock1 = new Ad(1L, "لپ‌تاپ ایسوس گیمینگ", 45000000L, "تهران", "");
-        mock1.setDescription("لپ‌تاپ بسیار تمیز، مناسب برای بازی و کارهای گرافیکی. بدون خط و خش.");
-        mock1.setCategory("الکترونیک");
-        mock1.setSellerName("علی احمدی");
-
-        Ad mock2 = new Ad(2L, "دوچرخه کوهستان", 8500000L, "اصفهان", "");
-        mock2.setDescription("دوچرخه دنده‌ای شیمانو، ترمز دیسکی، سایز ۲۶. فقط یک ماه کار کرده است.");
-        mock2.setCategory("ورزشی");
-        mock2.setSellerName("سارا رضایی");
-
-        Ad mock3 = new Ad(3L, "گوشی سامسونگ S23", 40000000L, "تهران", "");
-        mock3.setDescription("در حد نو، دارای گارانتی");
-        mock3.setCategory("الکترونیک");
-        mock3.setSellerName("رضا محمدی");
-
-        return new Ad[]{mock1, mock2, mock3};
     }
 }

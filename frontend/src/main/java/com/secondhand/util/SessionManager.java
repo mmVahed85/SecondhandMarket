@@ -1,6 +1,7 @@
 package com.secondhand.util;
 
-import com.secondhand.model.Ad;
+import com.secondhand.dto.AdvertisementResponse;
+import com.secondhand.model.*;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -9,7 +10,7 @@ public class SessionManager {
     private static String token = null; // نگهداری توکن کاربر
 
     // لیستی برای نگهداری موقت آگهی‌های مورد علاقه
-    private static final List<Ad> favoriteAds = new ArrayList<>();
+    private static final List<AdvertisementResponse> favoriteAds = new ArrayList<>();
 
     // --- متدهای مربوط به ورود و توکن ---
     public static void login(String username) {
@@ -39,7 +40,7 @@ public class SessionManager {
     }
 
     // --- متدهای مربوط به علاقه‌مندی‌ها ---
-    public static void addToFavorites(Ad ad) {
+    public static void addToFavorites(AdvertisementResponse ad) {
         // چک می‌کنیم که آگهی تکراری اضافه نشود
         boolean exists = favoriteAds.stream().anyMatch(a -> a.getId().equals(ad.getId()));
         if (!exists) {
@@ -47,7 +48,7 @@ public class SessionManager {
         }
     }
 
-    public static List<Ad> getFavoriteAds() {
+    public static List<AdvertisementResponse> getFavoriteAds() {
         return favoriteAds;
     }
 }

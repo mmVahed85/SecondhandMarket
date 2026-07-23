@@ -1,6 +1,9 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.Ad;
+import com.secondhand.dto.AdvertisementResponse;
+import com.secondhand.model.*;
+import com.secondhand.service.AdApi;
+import com.secondhand.util.ApiResponse;
 import com.secondhand.util.SessionManager;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -17,12 +20,12 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.TilePane;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
-
-import java.io.ByteArrayInputStream;
-import java.util.Base64;
+import java.util.ArrayList;
 import java.util.List;
 
 public class FavoritesController {
+
+    private final AdApi adApi = new AdApi();
 
     @FXML
     private TilePane favoritesContainer;
@@ -33,27 +36,35 @@ public class FavoritesController {
     }
 
     private void loadFavorites() {
+
         favoritesContainer.getChildren().clear();
 
         // دریافت لیست از حافظه برنامه
-        List<Ad> favoriteAds = SessionManager.getFavoriteAds();
+        ApiResponse<List<AdvertisementResponse>> response = adApi.getMyFavorites();
 
-        // اگر لیست خالی بود، یک پیام مناسب نمایش بده
-        if (favoriteAds == null || favoriteAds.isEmpty()) {
-            Label noAdLabel = new Label("شما هنوز هیچ آگهی‌ای را به علاقه‌مندی‌ها اضافه نکرده‌اید.");
+        if(response.isSuccess()) {
+            // اگر لیست خالی بود، یک پیام مناسب نمایش بده
+            if (response.getData().isEmpty()) {
+                Label noAdLabel = new Label("شما هنوز هیچ آگهی‌ای را به علاقه‌مندی‌ها اضافه نکرده‌اید.");
+                noAdLabel.setFont(new Font("B Yekan", 18));
+                favoritesContainer.getChildren().add(noAdLabel);
+                return;
+            }
+
+            // ساخت کارت برای هر آگهی
+            for (AdvertisementResponse ad : response.getData()) {
+                VBox adCard = createAdCard(ad);
+                favoritesContainer.getChildren().add(adCard);
+            }
+        }
+        else {
+            Label noAdLabel = new Label(response.getMessage());
             noAdLabel.setFont(new Font("B Yekan", 18));
             favoritesContainer.getChildren().add(noAdLabel);
-            return;
-        }
-
-        // ساخت کارت برای هر آگهی
-        for (Ad ad : favoriteAds) {
-            VBox adCard = createAdCard(ad);
-            favoritesContainer.getChildren().add(adCard);
         }
     }
 
-    private VBox createAdCard(Ad ad) {
+    private VBox createAdCard(AdvertisementResponse ad) {
         VBox card = new VBox();
         card.setSpacing(10);
         card.setAlignment(Pos.CENTER);
@@ -66,11 +77,17 @@ public class FavoritesController {
         imageView.setFitHeight(150);
         imageView.setPreserveRatio(true);
 
-        if (ad.getImageBase64() != null && !ad.getImageBase64().isEmpty()) {
+        if (ad.getImages() != null && !ad.getImages().isEmpty()) {
+
             try {
-                byte[] imageBytes = Base64.getDecoder().decode(ad.getImageBase64());
-                imageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
-            } catch (Exception e) {}
+
+                String imageUrl = ad.getImages().get(0).getUrl();
+
+                imageView.setImage(new Image(imageUrl, true));
+
+            } catch (Exception ignored) {
+            }
+
         }
 
         Label titleLabel = new Label(ad.getTitle());
@@ -103,8 +120,14 @@ public class FavoritesController {
         removeButton.setStyle("-fx-background-color: #f44336; -fx-text-fill: white;");
         removeButton.setMaxWidth(Double.MAX_VALUE);
         removeButton.setOnAction(e -> {
-            SessionManager.getFavoriteAds().remove(ad);
-            loadFavorites(); // صفحه را رفرش می‌کنیم تا کارت فوراً غیب شود!
+            ApiResponse<AdvertisementResponse> response = adApi.deleteFavorite(ad.getId());
+            if(response.isSuccess()) {
+                loadFavorites();
+            }
+            else {
+                System.out.println(response.getMessage());
+            }
+             // صفحه را رفرش می‌کنیم تا کارت فوراً غیب شود!
         });
 
         card.getChildren().addAll(imageView, titleLabel, priceLabel, detailsButton, removeButton);

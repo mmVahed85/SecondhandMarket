@@ -19,16 +19,22 @@ public class AdminAdvertisementController {
         this.advertisementService = advertisementService;
     }
 
-    @PatchMapping("/{id}/approve")
+    @PutMapping("/{id}/approve")
     public ApiResponse<AdvertisementResponse> approve(@PathVariable Long id) {
 
         return advertisementService.approve(id);
     }
 
-    @PatchMapping("/{id}/reject")
+    @PutMapping("/{id}/reject")
     public ApiResponse<AdvertisementResponse> reject(@PathVariable Long id) {
 
         return advertisementService.reject(id);
+    }
+
+    @DeleteMapping("/{id}")
+    public ApiResponse<AdvertisementResponse> delete(@PathVariable Long id) {
+
+        return advertisementService.adminDelete(id);
     }
 
     @GetMapping("/pending")

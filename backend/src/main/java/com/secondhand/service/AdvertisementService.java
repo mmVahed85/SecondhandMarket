@@ -40,7 +40,7 @@ public class AdvertisementService {
 
     private AdvertisementResponse toResponse(Advertisement ad) {
 
-        AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), ad.getOwner().getUsername(), ad.getStatus().name(), ad.getViewCount(), ad.getCreatedAt(), ad.getCategory());
+        AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), ad.getOwner().getUsername(), ad.getStatus(), ad.getViewCount(), ad.getCreatedAt().toString(), ad.getCategory());
         List<ImageResponse> images = new ArrayList<>();
         for (AdvertisementImage image : ad.getImages()) {
             images.add(new ImageResponse(image.getId(), appProperties.getBaseUrl() + "/uploads/" + image.getImageUrl()));
@@ -82,7 +82,7 @@ public class AdvertisementService {
 
         ad = advertisementRepository.save(ad);
 
-        AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), owner.getUsername(), ad.getStatus().name(), ad.getViewCount(), ad.getCreatedAt(), ad.getCategory());
+        AdvertisementResponse response = new AdvertisementResponse(ad.getId(), ad.getTitle(), ad.getDescription(), ad.getPrice(), ad.getCity(), owner.getUsername(), ad.getStatus(), ad.getViewCount(), ad.getCreatedAt().toString(), ad.getCategory());
         
         return new ApiResponse<>(true, "Ad successfully made", response);
     }
@@ -174,6 +174,19 @@ public class AdvertisementService {
         }
         else if (!ad.getOwner().getUsername().equals(username)) {
             return new ApiResponse<>(false,"User is not the owner of this ad",null);
+        }
+        
+        advertisementRepository.delete(ad);
+        
+        return new ApiResponse<>(true, "Ad successfully deleted", null);
+    }
+
+    public ApiResponse<AdvertisementResponse> adminDelete(Long id) {
+
+        Advertisement ad = advertisementRepository.findById(id).orElse(null);
+
+        if (ad == null) {
+            return new ApiResponse<>(false,"Advertisement not found",null);
         }
         
         advertisementRepository.delete(ad);

@@ -1,12 +1,16 @@
-package com.secondhand.model;
+package com.secondhand.dto;
 
-public class LoginResponse {
+public class RegisterResponse {
 
     private boolean success;
     private String message;
-    private String token;
 
-    public LoginResponse() {
+    public RegisterResponse() {
+    }
+
+    public RegisterResponse(boolean success, String message) {
+        this.success = success;
+        this.message = message;
     }
 
     public boolean isSuccess() {
@@ -23,13 +27,5 @@ public class LoginResponse {
 
     public void setMessage(String message) {
         this.message = message;
-    }
-
-    public String getToken() {
-        return token;
-    }
-
-    public void setToken(String token) {
-        this.token = token;
     }
 }

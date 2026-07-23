@@ -1,4 +1,5 @@
-package com.secondhand.model;
+package com.secondhand.dto;
+
 
 public class RegisterRequest {
 
@@ -6,8 +7,8 @@ public class RegisterRequest {
     private String password;
     private String firstName;
     private String lastName;
-    private String phone;
     private String email;
+    private String phone;
 
     public RegisterRequest() {
     }

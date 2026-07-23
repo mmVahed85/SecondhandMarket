@@ -147,4 +147,24 @@ public class UserService {
                 response
         );
     }
+
+    public ApiResponse<String> deleteUser(Long userId) {
+
+        User user = userRepository.findById(userId).orElse(null);
+
+        if (user == null) {
+            return new ApiResponse<>(false,
+                    "User not found",
+                    null);
+        }
+
+        userRepository.delete(user);
+
+        return new ApiResponse<>(
+                true,
+                "User deleted successfully",
+                null
+        );
+
+    }
 }

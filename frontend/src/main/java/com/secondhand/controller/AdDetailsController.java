@@ -1,7 +1,16 @@
 package com.secondhand.controller;
 
-import com.secondhand.model.Ad;
-import com.secondhand.util.SessionManager;
+import com.secondhand.dto.AdvertisementResponse;
+import com.secondhand.dto.ChatRoomResponse;
+import com.secondhand.dto.CreateCommentRequest;
+import com.secondhand.dto.RatingRequest;
+import com.secondhand.dto.RatingResponse;
+import com.secondhand.service.AdApi;
+import com.secondhand.service.ChatApi;
+import com.secondhand.service.CommentApi;
+import com.secondhand.service.RatingApi;
+import com.secondhand.util.ApiResponse;
+
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
@@ -14,9 +23,6 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
-
-import java.io.ByteArrayInputStream;
-import java.util.Base64;
 
 public class AdDetailsController {
 
@@ -34,7 +40,11 @@ public class AdDetailsController {
     @FXML private ComboBox<Integer> ratingComboBox;
     @FXML private TextField reviewCommentField;
 
-    private Ad currentAd;
+    private AdvertisementResponse currentAd;
+    private final ChatApi chatApi = new ChatApi();
+    private final AdApi adApi = new AdApi();
+    private final RatingApi ratingApi = new RatingApi();
+    private final CommentApi commentApi = new CommentApi();
 
     @FXML
     public void initialize() {
@@ -42,24 +52,34 @@ public class AdDetailsController {
         ratingComboBox.getItems().addAll(1, 2, 3, 4, 5);
     }
 
-    public void setAd(Ad ad) {
+    public void setAd(AdvertisementResponse ad) {
         this.currentAd = ad;
 
         titleLabel.setText(ad.getTitle());
         priceLabel.setText("قیمت: " + ad.getPrice() + " تومان");
         cityLabel.setText("شهر: " + ad.getCity());
-        categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory() : "نامشخص"));
+        categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory().name() : "نامشخص"));
         descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
-        sellerNameLabel.setText("فروشنده: " + (ad.getSellerName() != null ? ad.getSellerName() : "کاربر سامانه"));
-        sellerRatingLabel.setText("میانگین امتیاز: ۴.۵ از ۵");
+        sellerNameLabel.setText("فروشنده: " + (ad.getOwnerUsername() != null ? ad.getOwnerUsername() : "کاربر سامانه"));
+        sellerRatingLabel.setText("میانگین امتیازدهی: " + ad.getRatingCount());
 
-        if (ad.getImageBase64() != null && !ad.getImageBase64().isEmpty()) {
+        if (ad.getImages() != null && !ad.getImages().isEmpty()) {
+
             try {
-                byte[] imageBytes = Base64.getDecoder().decode(ad.getImageBase64());
-                adImageView.setImage(new Image(new ByteArrayInputStream(imageBytes)));
+
+                adImageView.setImage(
+                        new Image(
+                                ad.getImages().get(0).getUrl(),
+                                true
+                        )
+                );
+
             } catch (Exception e) {
+
                 System.err.println("خطا در بارگذاری عکس آگهی");
+
             }
+
         }
     }
 
@@ -76,34 +96,64 @@ public class AdDetailsController {
 
     @FXML
     public void addToFavorites(ActionEvent event) {
-        if (currentAd != null) {
-            SessionManager.addToFavorites(currentAd);
-            messageLabel.setStyle("-fx-text-fill: green;");
-            messageLabel.setText("این آگهی با موفقیت به لیست علاقه‌مندی‌های شما اضافه شد!");
+        ApiResponse<String> response = adApi.addFavorite(currentAd.getId());
+        if (response.isSuccess()) {
+            if (currentAd != null) {
+                messageLabel.setStyle("-fx-text-fill: green;");
+                messageLabel.setText(response.getMessage());
+            }
+        }
+        else {
+            messageLabel.setStyle("-fx-text-fill: red;");
+                messageLabel.setText(response.getMessage());
         }
     }
 
     @FXML
     public void submitRating(ActionEvent event) {
+
         Integer selectedRating = ratingComboBox.getValue();
-        String comment = reviewCommentField.getText();
 
         if (selectedRating == null) {
-            messageLabel.setStyle("-fx-text-fill: red;");
-            messageLabel.setText("خطا: لطفاً ابتدا یک امتیاز (بین ۱ تا ۵) انتخاب کنید.");
+
+            messageLabel.setStyle("-fx-text-fill:red;");
+            messageLabel.setText("لطفا امتیاز انتخاب کنید.");
             return;
+
         }
 
-        // چاپ در ترمینال برای تست
-        System.out.println("امتیاز " + selectedRating + " برای فروشنده '" + currentAd.getSellerName() + "' ثبت شد.");
-        if (comment != null && !comment.trim().isEmpty()) {
-            System.out.println("نظر ثبت شده کاربر: " + comment);
+        RatingRequest ratingRequest = new RatingRequest();
+        ratingRequest.setScore(selectedRating);
+
+        ApiResponse<RatingResponse> response =
+                ratingApi.submitRating(currentAd.getId(), ratingRequest);
+
+        if (!response.isSuccess()) {
+
+            messageLabel.setStyle("-fx-text-fill:red;");
+            messageLabel.setText(response.getMessage());
+            return;
+
         }
 
-        messageLabel.setStyle("-fx-text-fill: green;");
-        messageLabel.setText("سپاس از شما! امتیاز و نظر شما با موفقیت ثبت شد.");
+        String comment = reviewCommentField.getText().trim();
 
-        // غیرفعال کردن فیلدها و دکمه پس از ثبت
+        if (!comment.isEmpty()) {
+
+            CreateCommentRequest commentRequest =
+                    new CreateCommentRequest();
+
+            commentRequest.setText(comment);
+
+            commentApi.createComment(
+                    currentAd.getId(),
+                    commentRequest
+            );
+        }
+
+        messageLabel.setStyle("-fx-text-fill:green;");
+        messageLabel.setText("امتیاز و نظر ثبت شد.");
+
         ratingComboBox.setDisable(true);
         reviewCommentField.setDisable(true);
         ((Button) event.getSource()).setDisable(true);
@@ -111,22 +161,41 @@ public class AdDetailsController {
 
     @FXML
     public void startChat(ActionEvent event) {
+
         try {
-            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/chat.fxml"));
+
+            ApiResponse<ChatRoomResponse> response =
+                    chatApi.createOrGetRoom(currentAd.getId());
+
+            if (!response.isSuccess()) {
+
+                messageLabel.setStyle("-fx-text-fill:red;");
+                messageLabel.setText(response.getMessage());
+
+                return;
+            }
+
+            FXMLLoader loader =
+                    new FXMLLoader(getClass().getResource("/view/chat.fxml"));
+
             Parent root = loader.load();
 
-            // گرفتن کنترلر چت و پاس دادن اسم فروشنده و عنوان آگهی به آن
-            ChatController chatController = loader.getController();
-            String seller = currentAd.getSellerName() != null ? currentAd.getSellerName() : "فروشنده";
-            chatController.initData(seller, currentAd.getTitle());
+            ChatController controller = loader.getController();
 
-            Scene currentScene = ((Node) event.getSource()).getScene();
-            currentScene.setRoot(root);
-        } catch (Exception e) {
-            System.err.println("خطا در باز کردن صفحه چت:");
-            e.printStackTrace();
-            messageLabel.setStyle("-fx-text-fill: red;");
-            messageLabel.setText("خطا در باز کردن صفحه گفت‌وگو!");
+            controller.initData(response.getData());
+
+            Scene scene =
+                    ((Node) event.getSource()).getScene();
+
+            scene.setRoot(root);
+
         }
+
+        catch (Exception e) {
+
+            e.printStackTrace();
+
+        }
+
     }
 }

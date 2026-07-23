@@ -15,19 +15,33 @@ import java.util.Map;
 public class GlobalExceptionHandler {
 
     @ExceptionHandler(MethodArgumentNotValidException.class)
-    public ResponseEntity<ApiResponse<Map<String, String>>> handleValidationErrors(
-            MethodArgumentNotValidException e) {
+        public ResponseEntity<ApiResponse<Object>> handleValidationErrors(
+                MethodArgumentNotValidException e) {
 
-        Map<String, String> errors = new HashMap<>();
+        StringBuilder builder = new StringBuilder();
 
-        e.getBindingResult().getFieldErrors()
-                .forEach(error ->
-                        errors.put(error.getField(), error.getDefaultMessage()));
+        e.getBindingResult()
+                .getFieldErrors()
+                .forEach(error -> {
+
+                        if (builder.length() > 0) {
+                        builder.append("\n");
+                        }
+
+                        builder.append(error.getField())
+                                .append(": ")
+                                .append(error.getDefaultMessage());
+
+                });
 
         return ResponseEntity.badRequest().body(
-                new ApiResponse<>(false, "Validation failed", errors)
+                new ApiResponse<>(
+                        false,
+                        builder.toString(),
+                        null
+                )
         );
-    }
+        }
 
     @ExceptionHandler(RuntimeException.class)
     public ResponseEntity<ApiResponse<Object>> handleRuntimeException(RuntimeException e) {
