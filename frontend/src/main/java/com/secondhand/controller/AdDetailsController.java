@@ -2,7 +2,13 @@ package com.secondhand.controller;
 
 import com.secondhand.dto.AdvertisementResponse;
 import com.secondhand.dto.ChatRoomResponse;
+import com.secondhand.dto.CreateCommentRequest;
+import com.secondhand.dto.RatingRequest;
+import com.secondhand.dto.RatingResponse;
+import com.secondhand.service.AdApi;
 import com.secondhand.service.ChatApi;
+import com.secondhand.service.CommentApi;
+import com.secondhand.service.RatingApi;
 import com.secondhand.util.ApiResponse;
 
 import javafx.event.ActionEvent;
@@ -36,6 +42,9 @@ public class AdDetailsController {
 
     private AdvertisementResponse currentAd;
     private final ChatApi chatApi = new ChatApi();
+    private final AdApi adApi = new AdApi();
+    private final RatingApi ratingApi = new RatingApi();
+    private final CommentApi commentApi = new CommentApi();
 
     @FXML
     public void initialize() {
@@ -87,33 +96,64 @@ public class AdDetailsController {
 
     @FXML
     public void addToFavorites(ActionEvent event) {
-        if (currentAd != null) {
-            messageLabel.setStyle("-fx-text-fill: green;");
-            messageLabel.setText("این آگهی با موفقیت به لیست علاقه‌مندی‌های شما اضافه شد!");
+        ApiResponse<String> response = adApi.addFavorite(currentAd.getId());
+        if (response.isSuccess()) {
+            if (currentAd != null) {
+                messageLabel.setStyle("-fx-text-fill: green;");
+                messageLabel.setText(response.getMessage());
+            }
+        }
+        else {
+            messageLabel.setStyle("-fx-text-fill: red;");
+                messageLabel.setText(response.getMessage());
         }
     }
 
     @FXML
     public void submitRating(ActionEvent event) {
+
         Integer selectedRating = ratingComboBox.getValue();
-        String comment = reviewCommentField.getText();
 
         if (selectedRating == null) {
-            messageLabel.setStyle("-fx-text-fill: red;");
-            messageLabel.setText("خطا: لطفاً ابتدا یک امتیاز (بین ۱ تا ۵) انتخاب کنید.");
+
+            messageLabel.setStyle("-fx-text-fill:red;");
+            messageLabel.setText("لطفا امتیاز انتخاب کنید.");
             return;
+
         }
 
-        // چاپ در ترمینال برای تست
-        System.out.println("امتیاز " + selectedRating + " برای فروشنده '" + currentAd.getOwnerUsername() + "' ثبت شد.");
-        if (comment != null && !comment.trim().isEmpty()) {
-            System.out.println("نظر ثبت شده کاربر: " + comment);
+        RatingRequest ratingRequest = new RatingRequest();
+        ratingRequest.setScore(selectedRating);
+
+        ApiResponse<RatingResponse> response =
+                ratingApi.submitRating(currentAd.getId(), ratingRequest);
+
+        if (!response.isSuccess()) {
+
+            messageLabel.setStyle("-fx-text-fill:red;");
+            messageLabel.setText(response.getMessage());
+            return;
+
         }
 
-        messageLabel.setStyle("-fx-text-fill: green;");
-        messageLabel.setText("سپاس از شما! امتیاز و نظر شما با موفقیت ثبت شد.");
+        String comment = reviewCommentField.getText().trim();
 
-        // غیرفعال کردن فیلدها و دکمه پس از ثبت
+        if (!comment.isEmpty()) {
+
+            CreateCommentRequest commentRequest =
+                    new CreateCommentRequest();
+
+            commentRequest.setText(comment);
+
+            commentApi.createComment(
+                    currentAd.getId(),
+                    commentRequest
+            );
+        }
+
+        messageLabel.setStyle("-fx-text-fill:green;");
+        messageLabel.setText("امتیاز و نظر ثبت شد.");
+
         ratingComboBox.setDisable(true);
         reviewCommentField.setDisable(true);
         ((Button) event.getSource()).setDisable(true);

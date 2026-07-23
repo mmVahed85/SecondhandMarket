@@ -37,6 +37,8 @@ public class FavoritesController {
 
     private void loadFavorites() {
 
+        favoritesContainer.getChildren().clear();
+
         // دریافت لیست از حافظه برنامه
         ApiResponse<List<AdvertisementResponse>> response = adApi.getMyFavorites();
 
@@ -119,8 +121,13 @@ public class FavoritesController {
         removeButton.setMaxWidth(Double.MAX_VALUE);
         removeButton.setOnAction(e -> {
             ApiResponse<AdvertisementResponse> response = adApi.deleteFavorite(ad.getId());
-            SessionManager.getFavoriteAds().remove(ad);
-            loadFavorites(); // صفحه را رفرش می‌کنیم تا کارت فوراً غیب شود!
+            if(response.isSuccess()) {
+                loadFavorites();
+            }
+            else {
+                System.out.println(response.getMessage());
+            }
+             // صفحه را رفرش می‌کنیم تا کارت فوراً غیب شود!
         });
 
         card.getChildren().addAll(imageView, titleLabel, priceLabel, detailsButton, removeButton);

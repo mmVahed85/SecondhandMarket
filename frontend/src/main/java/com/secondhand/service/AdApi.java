@@ -83,4 +83,9 @@ public class AdApi {
 
         return apiClient.delete("/api/advertisements/" + adId + "/favorite", new TypeReference<ApiResponse<AdvertisementResponse>>() {});
     }
+
+    public ApiResponse<String> addFavorite(Long adId) {
+
+        return apiClient.post("/api/advertisements/me/favorites/" + adId + "/favorite", new TypeReference<ApiResponse<String>>() {});
+    }
 }

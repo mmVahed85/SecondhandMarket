@@ -41,6 +41,31 @@ public class ApiClient {
 
     public <T> ApiResponse<T> post(
             String endpoint,
+            TypeReference<ApiResponse<T>> typeReference) {
+
+        try {
+
+            HttpURLConnection connection =
+                    createConnection(endpoint, "POST");
+
+            connection.connect();
+
+            String response = readResponse(connection);
+
+            return objectMapper.readValue(response, typeReference);
+
+        } catch (Exception e) {
+
+            throw new RuntimeException(e);
+
+        }
+
+    }
+
+    // ---------------------- POST ----------------------
+
+    public <T> ApiResponse<T> post(
+            String endpoint,
             Object body,
             TypeReference<ApiResponse<T>> typeReference) {
 
