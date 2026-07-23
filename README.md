@@ -50,16 +50,64 @@ The frontend of this application is developed using **JavaFX**.
 You can use the following pre-configured accounts to evaluate different roles in the system:
 
 * **Admin Account (For Admin Panel access):**
-  * Username: `admin_test`
-  * Password: `123456`
+  * Username: `Manager`
+  * Password: `1234`
 
 * **Normal User 1:**
-  * Username: `user_seller`
-  * Password: `123456`
+  * Username: `J.N`
+  * Password: `jn`
 
 * **Normal User 2:**
-  * Username: `user_buyer`
+  * Username: `Amir.Z`
   * Password: `123456`
+ 
+* **Normal User 3:**
+  * Username: `Bro`
+  * Password: `123456`
+
+* **Normal User 4:**
+  * Username: `mm.Vahed`
+  * Password: `mahdi`
+
+### 📸 Screenshots
+*(Note: Images are located in the `screenshots` folder)*
+
+
+**1. Main Page:**
+![Main Page](screenshots/Main.png)
+
+**2. Register Page:**
+![Register Page](screenshots/Register.png)
+
+**3. Login Page:**
+![Login Page](screenshots/Login.png)
+
+**4. Dashboard & Ads List:**
+![Dashboard](screenshots/Dashboard.png)
+
+**5. Create Ad:**
+![Create Ad](screenshots/Create-Ad.png)
+
+**6. Ad Details 1:**
+![Ad Details 1](screenshots/Ad-details1.png)
+
+**7. Ad Details 2:**
+![Ad Details 2](screenshots/Ad-details1.png)
+
+**8. Favorits Ads 2:**
+![Favorits Ads](screenshots/Favorites-ads.png)
+
+**9. Chat List page:**
+![Chat List page](screenshots/Chat-list.png)
+
+**10. Live Chat Room:**
+![Live Chat Room](screenshots/Chat-room.png)
+
+**11. Admin Panel (Manage Ads):**
+![Admin Panel](screenshots/Admin-panel(manage ads).png)
+
+**12. Admin Panel (Manage Users):**
+![Admin Panel](screenshots/Admin-panel(manage users).png)
 
 ---
 
