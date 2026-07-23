@@ -78,3 +78,4 @@ com\secondhand\dto\LoginResponse.class
 com\secondhand\service\AdminApi$8.class
 com\secondhand\dto\RatingResponse.class
 com\secondhand\dto\ImageResponse.class
+com\secondhand\controller\ChatListController.class

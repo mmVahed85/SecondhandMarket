@@ -31,11 +31,16 @@
                   </Label>
                   <Region HBox.hgrow="ALWAYS" />
 
-                  <!-- دکمه جدید پروفایل من -->
+                  <!-- دکمه داشبورد مدیر (که قبلاً داشتید و ارور مربوط به این بود) -->
                   <Button fx:id="adminBT" mnemonicParsing="false" onAction="#goToAdminPanel" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #21f3d7ff; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="داشبورد مدیر">
                      <font><Font name="B Yekan" size="14.0" /></font>
                   </Button>
-                  
+
+                  <!-- دکمه جدید پیام‌های من -->
+                  <Button mnemonicParsing="false" onAction="#goToChatList" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #9b59b6; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="💬 پیام‌های من">
+                     <font><Font name="B Yekan" size="14.0" /></font>
+                  </Button>
+
                   <Button mnemonicParsing="false" onAction="#goToProfile" prefHeight="40.0" prefWidth="120.0" style="-fx-background-color: #2196F3; -fx-text-fill: white; -fx-font-weight: bold; -fx-background-radius: 5;" text="👤 پروفایل من">
                      <font><Font name="B Yekan" size="14.0" /></font>
                   </Button>

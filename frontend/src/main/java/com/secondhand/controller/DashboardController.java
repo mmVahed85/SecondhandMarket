@@ -240,6 +240,18 @@ public class DashboardController {
     }
 
     @FXML
+    public void goToChatList(javafx.event.ActionEvent event) {
+        try {
+            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/chat-list.fxml"));
+            javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
+            currentScene.setRoot(root);
+        } catch (Exception e) {
+            System.err.println("خطا در بارگذاری صفحه پیام‌های من:");
+            e.printStackTrace();
+        }
+    }
+
+    @FXML
     public void goToAdminPanel(ActionEvent event) {
         try {
             javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/admin-panel.fxml"));
