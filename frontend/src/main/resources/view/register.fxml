@@ -58,7 +58,7 @@
                </font>
             </TextField>
 
-            <TextField fx:id="emailField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="ایمیل (اختیاری)">
+            <TextField fx:id="emailField" alignment="CENTER" maxWidth="350.0" prefHeight="45.0" promptText="ایمیل">
                <font>
                   <Font size="14.0" />
                </font>
