@@ -58,37 +58,47 @@ public class ChatListController {
         card.setAlignment(Pos.CENTER_LEFT);
         card.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-cursor: hand;");
 
-        // وقتی موس روی کارت می‌رود کمی تغییر رنگ دهد
         card.setOnMouseEntered(e -> card.setStyle("-fx-background-color: #f8f9fa; -fx-background-radius: 10; -fx-border-color: #dcdde1; -fx-border-radius: 10; -fx-cursor: hand;"));
         card.setOnMouseExited(e -> card.setStyle("-fx-background-color: white; -fx-background-radius: 10; -fx-border-color: #e0e0e0; -fx-border-radius: 10; -fx-cursor: hand;"));
 
-        // اطلاعات سمت راست کارت (نام شخص و عنوان آگهی)
         VBox infoBox = new VBox();
-        infoBox.setSpacing(5);
+        infoBox.setSpacing(8);
 
-        Label nameLabel = new Label(chatRoom.getOtherUser());
+        // دریافت نام کاربری مستقیم از بک‌اند
+        String username = chatRoom.getOtherUser();
+
+        // نمایش نام کاربری به عنوان متن اصلی
+        Label nameLabel = new Label(username);
         nameLabel.setFont(new Font("B Yekan", 18));
         nameLabel.setStyle("-fx-font-weight: bold;");
+
+        // تگ نام کاربری
+        Label usernameTag = new Label(username);
+        usernameTag.setFont(new Font("Arial", 12));
+        usernameTag.setStyle("-fx-background-color: #ecf0f1; -fx-text-fill: #7f8c8d; -fx-padding: 3 8 3 8; -fx-background-radius: 12;");
+
+        // قرار دادن نام کاربری و تگ در یک ردیف
+        HBox nameAndTagBox = new HBox(10);
+        nameAndTagBox.setAlignment(Pos.CENTER_LEFT);
+        nameAndTagBox.getChildren().addAll(nameLabel, usernameTag);
 
         Label adTitleLabel = new Label("آگهی: " + chatRoom.getAdvertisementTitle());
         adTitleLabel.setFont(new Font("B Yekan", 14));
         adTitleLabel.setStyle("-fx-text-fill: #3498db;");
 
-        // آخرین پیام
         Label lastMessageLabel = new Label(chatRoom.getLastMessage() != null ? chatRoom.getLastMessage() : "پیامی ارسال نشده");
         lastMessageLabel.setFont(new Font("B Yekan", 14));
         lastMessageLabel.setStyle("-fx-text-fill: #7f8c8d;");
 
-        infoBox.getChildren().addAll(nameLabel, adTitleLabel, lastMessageLabel);
-        HBox.setHgrow(infoBox, Priority.ALWAYS); // پر کردن فضای خالی
+        infoBox.getChildren().addAll(nameAndTagBox, adTitleLabel, lastMessageLabel);
+        HBox.setHgrow(infoBox, Priority.ALWAYS);
 
-        // اطلاعات سمت چپ کارت (زمان آخرین پیام)
         VBox timeBox = new VBox();
         timeBox.setAlignment(Pos.TOP_LEFT);
 
         Label timeLabel = new Label("");
         if (chatRoom.getLastMessageTime() != null) {
-            DateTimeFormatter formatter = DateTimeFormatter.ofPattern("HH:mm - yyyy/MM/dd");
+            java.time.format.DateTimeFormatter formatter = java.time.format.DateTimeFormatter.ofPattern("HH:mm - yyyy/MM/dd");
             timeLabel.setText(chatRoom.getLastMessageTime().format(formatter));
         }
         timeLabel.setFont(new Font("Arial", 12));
@@ -98,7 +108,6 @@ public class ChatListController {
 
         card.getChildren().addAll(infoBox, timeBox);
 
-        // رویداد کلیک روی کارت برای باز کردن صفحه چت اصلی
         card.setOnMouseClicked(event -> openChatRoom(chatRoom, card));
 
         return card;
