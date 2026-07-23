@@ -128,7 +128,7 @@ public class ProfileController {
             try {
                 FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/edit-ad.fxml"));
                 Parent root = loader.load();
-
+                
                 // ارسال اطلاعات آگهی انتخاب شده به صفحه ویرایش
                 EditAdController editController = loader.getController();
                 editController.initData(ad);
@@ -136,8 +136,13 @@ public class ProfileController {
                 Scene currentScene = ((Node) e.getSource()).getScene();
                 currentScene.setRoot(root);
             } catch (Exception ex) {
-                System.err.println("خطا در باز کردن صفحه ویرایش:");
                 ex.printStackTrace();
+
+                Throwable cause = ex;
+                while (cause.getCause() != null) {
+                    cause = cause.getCause();
+                    System.out.println("CAUSE = " + cause);
+                }
             }
         });
 

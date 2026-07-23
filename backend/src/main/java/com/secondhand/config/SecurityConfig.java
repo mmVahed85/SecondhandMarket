@@ -34,6 +34,7 @@ public class SecurityConfig {
     public SecurityFilterChain securityFilterChain(HttpSecurity http) throws Exception {
 
         http.csrf().disable().sessionManagement().sessionCreationPolicy(SessionCreationPolicy.STATELESS).and().authorizeRequests()
+        .antMatchers("/uploads/**").permitAll()
         .antMatchers("/api/auth/**").permitAll()
         .antMatchers(HttpMethod.GET, "/api/advertisements/**").permitAll()
         .antMatchers("/api/admin/**").hasRole("ADMIN")

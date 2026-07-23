@@ -15,16 +15,32 @@ public class ImageService {
     public String saveImage(MultipartFile file) {
 
         try {
-            String fileName = UUID.randomUUID() + "_" + file.getOriginalFilename();
-            Path path = Paths.get(UPLOAD_DIR + fileName);
+
+            String originalName = file.getOriginalFilename();
+
+            if (originalName == null) {
+                throw new RuntimeException("Invalid file name");
+            }
+            
+            originalName = originalName.replaceAll("[^a-zA-Z0-9._-]", "_");
+
+            String fileName = UUID.randomUUID() + "_" + originalName;
+
+            Path path = Paths.get(UPLOAD_DIR, fileName);
+
             Files.createDirectories(path.getParent());
-            Files.copy(file.getInputStream(),path,StandardCopyOption.REPLACE_EXISTING);
+
+            Files.copy(
+                    file.getInputStream(),
+                    path,
+                    StandardCopyOption.REPLACE_EXISTING
+            );
+
             return fileName;
 
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
 
-            throw new RuntimeException("Cannot save image");
+            throw new RuntimeException("Cannot save image", e);
 
         }
 

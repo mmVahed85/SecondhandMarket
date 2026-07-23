@@ -30,6 +30,8 @@ public class DashboardController {
 
     @FXML private TilePane adsContainer;
 
+    @FXML private Button adminBT;
+    
     // المان‌های فیلتر
     @FXML private TextField searchField;
     @FXML private TextField cityFilterField;
@@ -49,6 +51,14 @@ public class DashboardController {
         sortTypeComboBox.getItems().setAll(SortType.values());
         categoryComboBox.getSelectionModel().clearSelection();
         sortTypeComboBox.getSelectionModel().clearSelection();
+        if(SessionManager.getRole().equals("ADMIN")) {
+            adminBT.setVisible(true);
+            adminBT.setManaged(true);
+        }
+        else {
+            adminBT.setVisible(false);
+            adminBT.setManaged(false);
+        }
     }
 
     private void loadAdsFromServer() {
@@ -149,8 +159,8 @@ public class DashboardController {
         card.setPrefSize(250, 300);
 
         ImageView imageView = new ImageView();
-        imageView.setFitWidth(200);
-        imageView.setFitHeight(150);
+        imageView.setFitWidth(180);
+        imageView.setFitHeight(130);
         imageView.setPreserveRatio(true);
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
@@ -159,13 +169,13 @@ public class DashboardController {
 
                 String imageUrl = ad.getImages().get(0).getUrl();
 
-                if (!imageUrl.startsWith("http")) {
-                    imageUrl = ApiConfig.BASE_URL + imageUrl;
-                }
-
                 imageView.setImage(new Image(imageUrl, true));
 
-            } catch (Exception ignored) {
+            } catch (Exception e) {
+
+                System.err.println("خطا در بارگذاری تصویر");
+                e.printStackTrace();
+
             }
 
         }
@@ -227,6 +237,18 @@ public class DashboardController {
             Scene currentScene = ((Node) event.getSource()).getScene();
             currentScene.setRoot(root);
         } catch (Exception e) { e.printStackTrace(); }
+    }
+
+    @FXML
+    public void goToAdminPanel(ActionEvent event) {
+        try {
+            javafx.scene.Parent root = javafx.fxml.FXMLLoader.load(getClass().getResource("/view/admin-panel.fxml"));
+            javafx.scene.Scene currentScene = ((javafx.scene.Node) event.getSource()).getScene();
+            currentScene.setRoot(root);
+        } catch (Exception ex) {
+            System.err.println("خطا در بارگذاری پنل مدیریت:");
+            ex.printStackTrace();
+        }
     }
 
     @FXML
