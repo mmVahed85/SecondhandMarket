@@ -34,7 +34,11 @@ public class AdminApi {
     public ApiResponse<List<AdvertisementResponse>> getPendingAdvertisements() {
 
         return apiClient.get("/api/admin/advertisements/pending", new TypeReference<ApiResponse<List<AdvertisementResponse>>>() {});
-    } 
+    }
+
+    public ApiResponse<List<AdvertisementResponse>> getAllAdvertisements() {
+        return apiClient.get("/api/admin/advertisements", new TypeReference<ApiResponse<List<AdvertisementResponse>>>() {});
+    }
 
     public ApiResponse<List<UserResponse>> getUsers() {
 

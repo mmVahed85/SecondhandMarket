@@ -1,12 +1,11 @@
 package com.secondhand.controller;
 
 import java.util.List;
+import java.util.stream.Collectors;
 
 import com.secondhand.dto.AdvertisementResponse;
-import com.secondhand.dto.UpdateAdvertisementRequest;
 import com.secondhand.dto.UserResponse;
-import com.secondhand.model.*;
-import com.secondhand.service.AdApi;
+import com.secondhand.model.AdvertisementStatus;
 import com.secondhand.service.AdminApi;
 import com.secondhand.util.ApiResponse;
 import com.secondhand.util.SessionManager;
@@ -19,6 +18,7 @@ import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
+import javafx.scene.control.ComboBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
@@ -30,6 +30,10 @@ public class AdminPanelController {
 
     @FXML private Label sectionTitleLabel;
     @FXML private Label messageLabel;
+
+    // المان‌های فیلتر و جزئیات
+    @FXML private ComboBox<String> statusFilterComboBox;
+    @FXML private Button btnViewDetails;
 
     // دکمه‌های عملیاتی
     @FXML private Button btnApprove;
@@ -43,11 +47,18 @@ public class AdminPanelController {
 
     private String currentSection = "ADS";
 
-    private ObservableList<AdvertisementResponse> mockAds;
-    private ObservableList<UserResponse> mockUsers;
+    // لیست کمکی برای فیلتر کردن بدون نیاز به ریکوئست مجدد به سرور
+    private List<AdvertisementResponse> allAdsCache;
 
     @FXML
     public void initialize() {
+        // پر کردن فیلتر وضعیت به صورت داینامیک از روی Enum بک‌اند
+        statusFilterComboBox.getItems().add("همه");
+        for (AdvertisementStatus status : AdvertisementStatus.values()) {
+            statusFilterComboBox.getItems().add(status.name());
+        }
+        statusFilterComboBox.setValue("همه");
+
         showAdsManager(null);
     }
 
@@ -58,11 +69,16 @@ public class AdminPanelController {
         sectionTitleLabel.setText("مدیریت آگهی‌ها");
         messageLabel.setText("");
 
-        // نمایش دادن دکمه‌های تایید و رد در بخش آگهی‌ها
+        // مدیریت نمایش دکمه‌ها
+        statusFilterComboBox.setVisible(true);
+        statusFilterComboBox.setManaged(true);
+        btnViewDetails.setVisible(true);
+        btnViewDetails.setManaged(true);
         btnApprove.setVisible(true);
         btnApprove.setManaged(true);
         btnReject.setVisible(true);
         btnReject.setManaged(true);
+
         btnBlock.setVisible(false);
         btnBlock.setManaged(false);
         btnUnblock.setVisible(false);
@@ -83,20 +99,22 @@ public class AdminPanelController {
         TableColumn<AdvertisementResponse, String> sellerCol = new TableColumn<>("فروشنده");
         sellerCol.setCellValueFactory(new PropertyValueFactory<>("ownerUsername"));
 
-        dataTable.getColumns().addAll(idCol, titleCol, priceCol, sellerCol);
-        
-        ApiResponse<List<AdvertisementResponse>> response = adminApi.getPendingAdvertisements();
+        // ستون وضعیت با نوع داده Enum
+        TableColumn<AdvertisementResponse, AdvertisementStatus> statusCol = new TableColumn<>("وضعیت");
+        statusCol.setCellValueFactory(new PropertyValueFactory<>("status"));
+
+        dataTable.getColumns().addAll(idCol, titleCol, priceCol, sellerCol, statusCol);
+
+        // درخواست از سرور
+        // توجه: اگر متد getAllAdvertisements را در بک‌اند ساختید، آن را جایگزین getPendingAdvertisements کنید
+        ApiResponse<List<AdvertisementResponse>> response = adminApi.getAllAdvertisements();
 
         if (response.isSuccess()) {
-
-            ObservableList<AdvertisementResponse> ads = FXCollections.observableArrayList(response.getData());
-
-            dataTable.setItems(ads);
-
+            allAdsCache = response.getData();
+            dataTable.setItems(FXCollections.observableArrayList(allAdsCache));
+            handleFilterAds(null); // اعمال فیلتر اولیه (در صورتی که روی چیزی تنظیم شده باشد)
         } else {
-
             showError(response.getMessage());
-
         }
     }
 
@@ -107,11 +125,15 @@ public class AdminPanelController {
         sectionTitleLabel.setText("مدیریت کاربران");
         messageLabel.setText("");
 
-        // مخفی کردن دکمه‌های تایید و رد در بخش کاربران
+        statusFilterComboBox.setVisible(false);
+        statusFilterComboBox.setManaged(false);
+        btnViewDetails.setVisible(false);
+        btnViewDetails.setManaged(false);
         btnApprove.setVisible(false);
         btnApprove.setManaged(false);
         btnReject.setVisible(false);
         btnReject.setManaged(false);
+
         btnBlock.setVisible(true);
         btnBlock.setManaged(true);
         btnUnblock.setVisible(true);
@@ -133,93 +155,105 @@ public class AdminPanelController {
         statusCol.setCellValueFactory(new PropertyValueFactory<>("enabled"));
 
         dataTable.getColumns().addAll(idCol, usernameCol, roleCol, statusCol);
-        
+
         ApiResponse<List<UserResponse>> response = adminApi.getUsers();
 
-            if (response.isSuccess()) {
-
-                ObservableList<UserResponse> ads = FXCollections.observableArrayList(response.getData());
-
-                dataTable.setItems(ads);
-
-            } else {
-
-                showError(response.getMessage());
-
-            }
+        if (response.isSuccess()) {
+            ObservableList<UserResponse> users = FXCollections.observableArrayList(response.getData());
+            dataTable.setItems(users);
+        } else {
+            showError(response.getMessage());
         }
+    }
 
     @FXML
-    public void handleApprove(ActionEvent event) {
+    public void handleFilterAds(ActionEvent event) {
+        if (allAdsCache == null) return;
 
-        AdvertisementResponse selectedAd =
-                (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
+        String selectedStatus = statusFilterComboBox.getValue();
+
+        if (selectedStatus == null || selectedStatus.equals("همه")) {
+            dataTable.setItems(FXCollections.observableArrayList(allAdsCache));
+        } else {
+            // مقایسه نام Enum ذخیره شده در آگهی با وضعیت انتخاب شده در منوی کشویی
+            List<AdvertisementResponse> filtered = allAdsCache.stream()
+                    .filter(ad -> ad.getStatus() != null && selectedStatus.equals(ad.getStatus().name()))
+                    .collect(Collectors.toList());
+            dataTable.setItems(FXCollections.observableArrayList(filtered));
+        }
+    }
+
+    @FXML
+    public void handleViewDetails(ActionEvent event) {
+        AdvertisementResponse selectedAd = (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
 
         if (selectedAd == null) {
             showError("لطفاً ابتدا یک آگهی را انتخاب کنید.");
             return;
         }
 
+        try {
+            FXMLLoader loader = new FXMLLoader(getClass().getResource("/view/ad-details.fxml"));
+            Parent root = loader.load();
+
+            // این دو خط، اطلاعات آگهی را به صفحه جزئیات ارسال می‌کنند
+            AdDetailsController controller = loader.getController();
+            controller.setAd(selectedAd);
+
+            Scene currentScene = ((Node) event.getSource()).getScene();
+            currentScene.setRoot(root);
+        } catch (Exception e) {
+            e.printStackTrace();
+            showError("خطا در باز کردن صفحه جزئیات آگهی.");
+        }
+    }
+
+    @FXML
+    public void handleApprove(ActionEvent event) {
+        AdvertisementResponse selectedAd = (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
+        if (selectedAd == null) {
+            showError("لطفاً ابتدا یک آگهی را انتخاب کنید.");
+            return;
+        }
         ApiResponse<AdvertisementResponse> response = adminApi.approve(selectedAd.getId());
-
         if (response.isSuccess()) {
-
             showSuccess(response.getMessage());
-
             showAdsManager(null);
-
         } else {
-
             showError(response.getMessage());
-
         }
     }
 
     @FXML
     public void handleReject(ActionEvent event) {
-
-        AdvertisementResponse selectedAd =
-                (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
-
+        AdvertisementResponse selectedAd = (AdvertisementResponse) dataTable.getSelectionModel().getSelectedItem();
         if (selectedAd == null) {
             showError("لطفاً ابتدا یک آگهی را انتخاب کنید.");
             return;
         }
-
-        ApiResponse<AdvertisementResponse> response =
-                adminApi.reject(selectedAd.getId());
-
+        ApiResponse<AdvertisementResponse> response = adminApi.reject(selectedAd.getId());
         if (response.isSuccess()) {
-
-            showSuccess("آگهی حذف شد.");
-
+            showSuccess("آگهی رد شد.");
             showAdsManager(null);
-
         } else {
-
             showError(response.getMessage());
-
         }
     }
 
     @FXML
     public void handleDelete(ActionEvent event) {
-
         Object selectedItem = dataTable.getSelectionModel().getSelectedItem();
-
         if (selectedItem == null) {
             showError("لطفاً ابتدا یک ردیف را از جدول انتخاب کنید.");
             return;
         }
 
         if (currentSection.equals("ADS")) {
-            
             ApiResponse<AdvertisementResponse> response = adminApi.deleteAd(((AdvertisementResponse) selectedItem).getId());
             if (response.isSuccess()) {
                 showSuccess(response.getMessage());
                 showAdsManager(null);
-            }
-            else {
+            } else {
                 showError(response.getMessage());
             }
         } else if (currentSection.equals("USERS")) {
@@ -227,8 +261,7 @@ public class AdminPanelController {
             if (response.isSuccess()) {
                 showSuccess(response.getMessage());
                 showUsersManager(null);
-            }
-            else {
+            } else {
                 showError(response.getMessage());
             }
         }
@@ -236,63 +269,43 @@ public class AdminPanelController {
 
     @FXML
     public void handleBlock(ActionEvent event) {
-
-        UserResponse user =
-            (UserResponse) dataTable.getSelectionModel().getSelectedItem();
-
+        UserResponse user = (UserResponse) dataTable.getSelectionModel().getSelectedItem();
         if (user == null) {
             showError("یک کاربر انتخاب کنید.");
             return;
         }
-
-        ApiResponse<String> response =
-                adminApi.blockUser(user.getId());
-
+        ApiResponse<String> response = adminApi.blockUser(user.getId());
         if (response.isSuccess()) {
-
             showSuccess(response.getMessage());
             showUsersManager(null);
-
         } else {
-
             showError(response.getMessage());
-
         }
     }
 
     @FXML
     public void handleUnblock(ActionEvent event) {
-
-        UserResponse user =
-            (UserResponse) dataTable.getSelectionModel().getSelectedItem();
-
+        UserResponse user = (UserResponse) dataTable.getSelectionModel().getSelectedItem();
         if (user == null) {
             showError("یک کاربر انتخاب کنید.");
             return;
         }
-
-        ApiResponse<String> response =
-                adminApi.unblockUser(user.getId());
-
+        ApiResponse<String> response = adminApi.unblockUser(user.getId());
         if (response.isSuccess()) {
-
             showSuccess(response.getMessage());
             showUsersManager(null);
-
         } else {
-
             showError(response.getMessage());
-
         }
     }
 
     private void showSuccess(String message) {
-        messageLabel.setStyle("-fx-text-fill: #27ae60;"); // رنگ سبز
+        messageLabel.setStyle("-fx-text-fill: #27ae60;");
         messageLabel.setText(message);
     }
 
     private void showError(String message) {
-        messageLabel.setStyle("-fx-text-fill: #e74c3c;"); // رنگ قرمز
+        messageLabel.setStyle("-fx-text-fill: #e74c3c;");
         messageLabel.setText("خطا: " + message);
     }
 
