@@ -14,9 +14,13 @@ import com.secondhand.service.CommentApi;
 import com.secondhand.service.RatingApi;
 import com.secondhand.util.ApiResponse;
 
+import javafx.animation.Animation;
+import javafx.animation.KeyFrame;
+import javafx.animation.Timeline;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
+import javafx.geometry.Pos;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
@@ -26,7 +30,9 @@ import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
+import javafx.util.Duration;
 
 public class AdDetailsController {
 
@@ -38,6 +44,7 @@ public class AdDetailsController {
     @FXML private ImageView adImageView;
     @FXML private Label sellerNameLabel;
     @FXML private Label sellerRatingLabel;
+    @FXML private Label ratingCount;
     @FXML private Label messageLabel;
     @FXML private VBox commentsBox;
 
@@ -67,24 +74,51 @@ public class AdDetailsController {
         descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
         sellerNameLabel.setText("فروشنده: " + (ad.getOwnerUsername() != null ? ad.getOwnerUsername() : "کاربر سامانه"));
         sellerRatingLabel.setText("میانگین امتیازدهی: " + ad.getAverageRating());
+        ratingCount.setText("تعداد نفرات امتیاز داده:" + ad.getRatingCount());
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
 
             try {
 
-                adImageView.setImage(
-                        new Image(
-                                ad.getImages().get(0).getUrl(),
-                                true
-                        )
-                );
+                String imageUrl = ad.getImages().get(0).getUrl();
+                System.out.println(ad.getImages().size());
+            System.out.println(ad.getImages().get(0).getUrl());
+
+                adImageView.setImage(new Image(imageUrl, true));
 
             } catch (Exception e) {
 
-                System.err.println("خطا در بارگذاری عکس آگهی");
+                System.err.println("خطا در بارگذاری تصویر");
+                e.printStackTrace();
 
             }
 
+        }
+
+        final int[] currentImage = {0};
+
+        if (ad.getImages() != null && ad.getImages().size() > 1) {
+
+            Timeline timeline = new Timeline(
+                    new KeyFrame(Duration.seconds(3), event -> {
+
+                        currentImage[0]++;
+
+                        if (currentImage[0] >= ad.getImages().size()) {
+                            currentImage[0] = 0;
+                        }
+
+                        adImageView.setImage(
+                                new Image(
+                                        ad.getImages().get(currentImage[0]).getUrl(),
+                                        true
+                                )
+                        );
+                    })
+            );
+
+            timeline.setCycleCount(Animation.INDEFINITE);
+            timeline.play();
         }
 
         loadComments();
@@ -143,6 +177,7 @@ public class AdDetailsController {
             messageLabel.setStyle("-fx-text-fill:green");
             messageLabel.setText(response.getMessage());
             sellerRatingLabel.setText("میانگین امتیازدهی: " + response.getData().getAverageScore());
+            ratingCount.setText("تعداد نفرات امتیاز داده:" + response.getData().getRatingCount());
         }
         else{
             messageLabel.setStyle("-fx-text-fill:red");

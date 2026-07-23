@@ -55,11 +55,28 @@ public class AdApi {
 
     }
 
+    public ApiResponse<String> deleteImage(Long imageId) {
+
+        return apiClient.delete(
+                "/api/advertisements/images/" + imageId,
+                new TypeReference<ApiResponse<String>>() {}
+        );
+
+    }
+
     public ApiResponse<AdvertisementResponse> updateAd(long adId, UpdateAdvertisementRequest request) {
 
         return apiClient.put(
                 "/api/advertisements/" + adId,
                 request,
+                new TypeReference<ApiResponse<AdvertisementResponse>>() {}
+        );
+    }
+
+    public ApiResponse<AdvertisementResponse> getAdvertisement(long adId) {
+
+        return apiClient.get(
+                "/api/advertisements/" + adId,
                 new TypeReference<ApiResponse<AdvertisementResponse>>() {}
         );
     }

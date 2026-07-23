@@ -16,9 +16,15 @@ import javafx.scene.control.TextArea;
 import javafx.scene.control.TextField;
 import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
+import javafx.scene.layout.FlowPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
+import javafx.scene.layout.FlowPane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.control.Button;
 
 public class CreateAdController {
 
@@ -28,10 +34,10 @@ public class CreateAdController {
     @FXML private ComboBox<Category> categoryComboBox;
     @FXML private TextArea descriptionField;
     @FXML private Label messageLabel;
+    @FXML private FlowPane imagesPane;
 
     // المان‌های مربوط به عکس
-    @FXML private ImageView imageView;
-    private File selectedImageFile;
+    private List<File> selectedImageFiles = new ArrayList<>();
 
     private final AdApi adApi = new AdApi();
 
@@ -43,32 +49,98 @@ public class CreateAdController {
     // متد باز کردن پنجره انتخاب عکس
     @FXML
     public void handleChooseImage(ActionEvent event) {
+
         FileChooser fileChooser = new FileChooser();
-        fileChooser.setTitle("انتخاب عکس آگهی");
-        // محدود کردن انتخاب به فایل‌های تصویری
-        fileChooser.getExtensionFilters().addAll(
-                new FileChooser.ExtensionFilter("Image Files", "*.png", "*.jpg", "*.jpeg")
+
+        fileChooser.setTitle("انتخاب تصاویر آگهی");
+
+        fileChooser.getExtensionFilters().add(
+                new FileChooser.ExtensionFilter(
+                        "Image Files",
+                        "*.png",
+                        "*.jpg",
+                        "*.jpeg"
+                )
         );
 
-        Stage stage = (Stage) ((Node) event.getSource()).getScene().getWindow();
-        File selectedFile = fileChooser.showOpenDialog(stage);
 
-        selectedImageFile = selectedFile;
+        Stage stage =
+                (Stage) ((Node) event.getSource())
+                        .getScene()
+                        .getWindow();
 
-        if (selectedFile != null) {
+
+        List<File> files =
+                fileChooser.showOpenMultipleDialog(stage);
+
+
+        if (files != null && !files.isEmpty()) {
+
+            selectedImageFiles.clear();
+
+            selectedImageFiles.addAll(files);
+
             try {
 
-                Image image = new Image(selectedFile.toURI().toString());
-                imageView.setImage(image);
+                // فقط اولین عکس را پیش نمایش می‌دهد
+                refreshImages();
 
-            } catch (Exception e) {
+                messageLabel.setStyle("-fx-text-fill:green;");
+                messageLabel.setText(
+                        files.size() + " عکس انتخاب شد."
+                );
 
-                messageLabel.setStyle("-fx-text-fill: red;");
-                messageLabel.setText("خطا در بارگذاری عکس.");
-
-                e.printStackTrace();
             }
+
+            catch (Exception e) {
+
+                messageLabel.setStyle("-fx-text-fill:red;");
+                messageLabel.setText("خطا در بارگذاری عکس");
+
+            }
+
         }
+
+    }
+
+    private void refreshImages() {
+
+        imagesPane.getChildren().clear();
+
+        for (File file : selectedImageFiles) {
+
+            ImageView preview = new ImageView(
+                    new Image(file.toURI().toString())
+            );
+
+            preview.setFitWidth(100);
+            preview.setFitHeight(100);
+            preview.setPreserveRatio(true);
+
+            Button remove = new Button("✖");
+
+            remove.setStyle("""
+                    -fx-background-color:red;
+                    -fx-text-fill:white;
+                    -fx-background-radius:50%;
+                    """);
+
+            remove.setOnAction(e -> {
+
+                selectedImageFiles.remove(file);
+
+                refreshImages();
+
+            });
+
+            StackPane stack = new StackPane(preview, remove);
+
+            StackPane.setAlignment(remove, javafx.geometry.Pos.TOP_RIGHT);
+
+            imagesPane.getChildren().add(stack);
+
+        }
+
     }
 
     @FXML
@@ -105,17 +177,25 @@ public class CreateAdController {
                 Long advertisementId = response.getData().getId();
                 System.out.println(response.getMessage());
 
-                if (selectedImageFile != null) {
+                if (!selectedImageFiles.isEmpty()) {
 
-                    ApiResponse<ImageResponse> imageResponse = adApi.uploadImage(advertisementId, selectedImageFile);
-                    System.out.println(imageResponse.getMessage());
-                    if (!imageResponse.isSuccess()) {
+                    boolean uploadFailed = false;
 
+                    for (File imageFile : selectedImageFiles) {
+
+                        ApiResponse<ImageResponse> imageResponse =
+                                adApi.uploadImage(advertisementId, imageFile);
+
+                        if (!imageResponse.isSuccess()) {
+                            uploadFailed = true;
+                        }
+                    }
+                    if (uploadFailed) {
                         messageLabel.setStyle("-fx-text-fill: orange;");
-                        messageLabel.setText(
-                                "آگهی ثبت شد ولی عکس آپلود نشد."
-                        );
-
+                        messageLabel.setText("آگهی ثبت شد ولی برخی از عکس‌ها آپلود نشدند.");
+                    } else {
+                        messageLabel.setStyle("-fx-text-fill: green;");
+                        messageLabel.setText("آگهی و همه تصاویر با موفقیت ثبت شدند.");
                     }
                 }
             }
@@ -127,8 +207,8 @@ public class CreateAdController {
             if(response.isSuccess()) {
                 // خالی کردن فرم برای ثبت آگهی بعدی
                 titleField.clear(); priceField.clear(); cityField.clear(); categoryComboBox.getSelectionModel().clearSelection(); descriptionField.clear();
-                selectedImageFile = null;
-                imageView.setImage(null);
+                selectedImageFiles.clear();
+                imagesPane.getChildren().clear();
             }
 
         } catch (Exception e) {
