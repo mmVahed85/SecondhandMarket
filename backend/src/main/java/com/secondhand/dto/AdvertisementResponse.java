@@ -40,7 +40,7 @@ public class AdvertisementResponse {
         this.ownerFirstname = ownerFirstname;
         this.ownerLastname = ownerLastname;
         this.ownerEmail = ownerEmail;
-        this.ownerPhone = ownerEmail;
+        this.ownerPhone = ownerPhone;
         this.status = status;
         this.viewCount = viewCount;
         this.createdAt = createdAt;
