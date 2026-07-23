@@ -89,25 +89,46 @@ You can use the following pre-configured accounts to evaluate different roles in
 ![Create Ad](screenshots/Create-Ad.png)
 
 **6. Ad Details 1:**
-![Ad Details 1](screenshots/Ad-details1.png)
+![Ad Details 1](screenshots/Ad's-details-and-rating-(3).png)
 
 **7. Ad Details 2:**
-![Ad Details 2](screenshots/Ad-details1.png)
+![Ad Details 2](screenshots/Ad's-details-and-rating-(2).png)
 
-**8. Favorits Ads 2:**
+**8. Ad Details 3:**
+![Ad Details 2](screenshots/Ad's-details-and-rating-(1).png)
+
+**9. Favorits Ads 2:**
 ![Favorits Ads](screenshots/Favorites-ads.png)
 
-**9. Chat List page:**
+**10. Chat List page:**
 ![Chat List page](screenshots/Chat-list.png)
 
-**10. Live Chat Room:**
-![Live Chat Room](screenshots/Chat-room.png)
+**11. Live Chat Room 1:**
+![Live Chat Room](screenshots/Chat-room-(2).png)
 
-**11. Admin Panel (Manage Ads):**
-![Admin Panel](screenshots/Admin-panel(manage ads).png)
+**12. Live Chat Room 2:**
+![Live Chat Room](screenshots/Chat-room-(1).png)
 
-**12. Admin Panel (Manage Users):**
-![Admin Panel](screenshots/Admin-panel(manage users).png)
+**13. Admin Panel (Manage Ads):**
+![Admin Panel](screenshots/Admin-panel(manage-ads)-(4).png)
+
+**14. Admin Panel (Manage Ads):**
+![Admin Panel](screenshots/Admin-panel(manage-ads)-(3).png)
+
+**15. Admin Panel (Manage Ads):**
+![Admin Panel](screenshots/Admin-panel(manage-ads)-(2).png)
+
+**16. Admin Panel (Manage Ads):**
+![Admin Panel](screenshots/Admin-panel(manage-ads)-(1).png)
+
+**17. Admin Panel (Manage Users):**
+![Admin Panel](screenshots/Admin-panel(manage-users).png)
+
+**18. Edit ad:**
+![Admin Panel](screenshots/Edit-Ad.png)
+
+**19. Profile:**
+![Admin Panel](screenshots/Profile.png)
 
 ---
 
@@ -148,4 +169,13 @@ The following core features have been fully implemented:
 داشتن چند تا front هم زمان باعث مشکل نیست چون spring boot خودش این را مدیریت می کند و با داشتن jwt ورودی ها چک می شود
 
 قابلیت‌های برنامه شامل:
-لاگین یا رجیستر، ثبت/ادیت/حذف آگهی، اپلود چندین عکس برای اگهی، دیدن تمام آگهی‌ها و جزئیات، علاقه‌مندی و امتیاز دادن و کامنت گذاشتن، چت کردن با مالک آگهی و صفحه‌ی تمام چت‌های داشته، صفحه علاقه‌مندی ها، فیلترهای چند تایی و ترتیب بندی، پنل مدیریت برای قبول/رد/حذف آگهی و مسدود یا عدم مسدود و حذف کاربر 
+لاگین یا رجیستر، ثبت/ادیت/حذف آگهی، اپلود چندین عکس برای اگهی، دیدن تمام آگهی‌ها و جزئیات، علاقه‌مندی و امتیاز دادن و کامنت گذاشتن، چت کردن با مالک آگهی و صفحه‌ی تمام چت‌های داشته، صفحه علاقه‌مندی ها، فیلترهای چند تایی و ترتیب بندی، پنل مدیریت برای قبول/رد/حذف آگهی و مسدود یا عدم مسدود و حذف کاربر
+
+تقسیم مسئولیت‌ها
+
+محمد مهدی واحد:
+backend & Database: کد ساختاری و کنترل، سرویس، امنیت، شیء، کانفیگ، نوع ارتباط این ها و جزئیات کد هر کدوم و عمل کرد و ارتباط با front به همراه ساخت database ها و گشتن و سیو در آنها و نوع ساخت و نگهداری عکس‌ها، ساخت dtoها هر دو طرف
+Frontend: اتصال و اسکلت اولیه ارتباط و هچنین اصلاح ساختار جواب به backend و اصلاح API ها، model
+
+جواد نجاریان:
+Frontend: ساختار بندی صفحه‌های سایت، کد های fxml، ساختار بندی پایه APIها، ساختار controller ها، ساختار util و اصلاح ارتباطی سامانه، چیدمان و اتصال بین صفحات، منطق ساده سازی و سبک کردن بعدی از command ها با قرار دهی در کنترل، ساخت چهار چوب ظاهری صفحات و پایه اپلود عکس
