@@ -44,6 +44,8 @@ C:\Users\USER\Desktop\Coding\Java\finalProject\SecondhandMarket\frontend\src\mai
 C:\Users\USER\Desktop\Coding\Java\finalProject\SecondhandMarket\frontend\src\main\java\com\secondhand\service\ApiClient.java
 C:\Users\USER\Desktop\Coding\Java\finalProject\SecondhandMarket\frontend\src\main\java\com\secondhand\service\AuthApi.java
 C:\Users\USER\Desktop\Coding\Java\finalProject\SecondhandMarket\frontend\src\main\java\com\secondhand\service\ChatApi.java
+C:\Users\USER\Desktop\Coding\Java\finalProject\SecondhandMarket\frontend\src\main\java\com\secondhand\service\CommentApi.java
+C:\Users\USER\Desktop\Coding\Java\finalProject\SecondhandMarket\frontend\src\main\java\com\secondhand\service\RatingApi.java
 C:\Users\USER\Desktop\Coding\Java\finalProject\SecondhandMarket\frontend\src\main\java\com\secondhand\service\UserApi.java
 C:\Users\USER\Desktop\Coding\Java\finalProject\SecondhandMarket\frontend\src\main\java\com\secondhand\util\ApiConfig.java
 C:\Users\USER\Desktop\Coding\Java\finalProject\SecondhandMarket\frontend\src\main\java\com\secondhand\util\ApiResponse.java

@@ -86,6 +86,6 @@ public class AdApi {
 
     public ApiResponse<String> addFavorite(Long adId) {
 
-        return apiClient.post("/api/advertisements/me/favorites/" + adId + "/favorite", new TypeReference<ApiResponse<String>>() {});
+        return apiClient.post("/api/advertisements/" + adId + "/favorite", new TypeReference<ApiResponse<String>>() {});
     }
 }

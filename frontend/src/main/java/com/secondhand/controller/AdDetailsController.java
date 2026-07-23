@@ -61,7 +61,7 @@ public class AdDetailsController {
         categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory().name() : "نامشخص"));
         descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
         sellerNameLabel.setText("فروشنده: " + (ad.getOwnerUsername() != null ? ad.getOwnerUsername() : "کاربر سامانه"));
-        sellerRatingLabel.setText("میانگین امتیازدهی: " + ad.getRatingCount());
+        sellerRatingLabel.setText("میانگین امتیازدهی: " + ad.getAverageRating());
 
         if (ad.getImages() != null && !ad.getImages().isEmpty()) {
 
@@ -97,6 +97,7 @@ public class AdDetailsController {
     @FXML
     public void addToFavorites(ActionEvent event) {
         ApiResponse<String> response = adApi.addFavorite(currentAd.getId());
+        System.err.println(response.getMessage());
         if (response.isSuccess()) {
             if (currentAd != null) {
                 messageLabel.setStyle("-fx-text-fill: green;");
@@ -105,7 +106,7 @@ public class AdDetailsController {
         }
         else {
             messageLabel.setStyle("-fx-text-fill: red;");
-                messageLabel.setText(response.getMessage());
+            messageLabel.setText(response.getMessage());
         }
     }
 

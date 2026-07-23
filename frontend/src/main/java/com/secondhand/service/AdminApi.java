@@ -28,7 +28,7 @@ public class AdminApi {
 
     public ApiResponse<String> deleteUser(Long userId) {
 
-        return apiClient.delete("/api/admin/users" + userId, new TypeReference<ApiResponse<String>>() {});
+        return apiClient.delete("/api/admin/users/" + userId, new TypeReference<ApiResponse<String>>() {});
     } 
 
     public ApiResponse<List<AdvertisementResponse>> getPendingAdvertisements() {
@@ -43,11 +43,11 @@ public class AdminApi {
 
     public ApiResponse<String> blockUser(Long userId) {
 
-        return apiClient.put("/api/admin/users" + userId + "/block", new TypeReference<ApiResponse<String>>() {});
+        return apiClient.put("/api/admin/users/" + userId + "/block", new TypeReference<ApiResponse<String>>() {});
     } 
 
     public ApiResponse<String> unblockUser(Long userId) {
 
-        return apiClient.put("/api/admin/users" + userId + "/unblock", new TypeReference<ApiResponse<String>>() {});
+        return apiClient.put("/api/admin/users/" + userId + "/unblock", new TypeReference<ApiResponse<String>>() {});
     } 
 }

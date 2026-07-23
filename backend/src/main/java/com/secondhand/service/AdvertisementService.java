@@ -48,18 +48,18 @@ public class AdvertisementService {
         response.setImages(images);
         List<Rating> ratings = ratingRepository.findByAdvertisement(ad);
 
-    double average = 0;
+        double average = 0;
 
-    for (Rating rating : ratings) {
-        average += rating.getScore();
-    }
+        for (Rating rating : ratings) {
+            average += rating.getScore();
+        }
 
-    if (!ratings.isEmpty()) {
-        average /= ratings.size();
-    }
+        if (!ratings.isEmpty()) {
+            average /= ratings.size();
+        }
 
-    response.setAverageRating(average);
-    response.setRatingCount(ratings.size());
+        response.setAverageRating(average);
+        response.setRatingCount(ratings.size());
         return response;
     }
 
