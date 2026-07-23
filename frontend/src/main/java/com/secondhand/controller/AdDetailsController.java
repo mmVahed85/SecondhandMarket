@@ -33,6 +33,8 @@ import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.util.Duration;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 
 public class AdDetailsController {
 
@@ -47,6 +49,7 @@ public class AdDetailsController {
     @FXML private Label ratingCount;
     @FXML private Label messageLabel;
     @FXML private VBox commentsBox;
+    @FXML private Label createdAtLabel;
 
     // المان‌های جدید امتیاز و نظر
     @FXML private ComboBox<Integer> ratingComboBox;
@@ -71,6 +74,29 @@ public class AdDetailsController {
         priceLabel.setText("قیمت: " + ad.getPrice() + " تومان");
         cityLabel.setText("شهر: " + ad.getCity());
         categoryLabel.setText("دسته‌بندی: " + (ad.getCategory() != null ? ad.getCategory().name() : "نامشخص"));
+        if (ad.getCreatedAt() != null && !ad.getCreatedAt().isBlank()) {
+
+            try {
+
+                LocalDateTime dateTime =
+                        LocalDateTime.parse(ad.getCreatedAt());
+
+                DateTimeFormatter formatter =
+                        DateTimeFormatter.ofPattern("yyyy/MM/dd  HH:mm");
+
+                createdAtLabel.setText("📅 زمان ثبت: " + dateTime.format(formatter));
+
+            } catch (Exception e) {
+
+                createdAtLabel.setText("📅 زمان ثبت: " + ad.getCreatedAt());
+
+            }
+
+        } else {
+
+            createdAtLabel.setText("📅 زمان ثبت: نامشخص");
+
+        }
         descriptionLabel.setText(ad.getDescription() != null ? ad.getDescription() : "توضیحاتی ثبت نشده است.");
         sellerNameLabel.setText("فروشنده: " + (ad.getOwnerUsername() != null ? ad.getOwnerUsername() : "کاربر سامانه"));
         sellerRatingLabel.setText("میانگین امتیازدهی: " + ad.getAverageRating());
